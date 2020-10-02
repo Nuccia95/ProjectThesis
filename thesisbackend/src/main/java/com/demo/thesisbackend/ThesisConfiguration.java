@@ -24,8 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "com.demo.thesisbackend" })
 @EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory", transactionManagerRef = "transactionManager", basePackages = { "com.demo.thesisbackend.dao" })
-//@EnableVaadin ({"com.example.prova.frontend"})
-public class ThesisbackendConfiguration implements EnvironmentAware {
+public class ThesisConfiguration implements EnvironmentAware {
     private Environment env;
 
     @Bean
@@ -37,8 +36,8 @@ public class ThesisbackendConfiguration implements EnvironmentAware {
     @Bean(name = "entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(final EntityManagerFactoryBuilder builder) {
 	return builder.dataSource(dataSource())//
-		.packages("com.demo.thesisbackend.bean") //$NON-NLS-1$
-		.persistenceUnit("thesisbackend") //$NON-NLS-1$
+		.packages("shared.thesiscommon") //$NON-NLS-1$
+		.persistenceUnit("thesiscommon") //$NON-NLS-1$
 		.build();
     }
 

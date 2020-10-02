@@ -1,4 +1,4 @@
-package com.demo.thesisbackend.bean;
+package shared.thesiscommon;
 
 import java.io.Serializable;
 

@@ -1,18 +1,19 @@
-package com.demo.thesisbackend.bean;
+package shared.thesiscommon;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.Id;
 
 @Entity
 @Table(name = "Users")
-public class User extends AbstractIdentifiedBean {
+public class User extends AbstractBean{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	@Id
 	private String email;
 	

@@ -30,6 +30,10 @@ import com.vaadin.flow.router.Route;
 @CssImport("./styles/shared-styles.css")
 public class LoginView extends FlexLayout {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private LoginForm loginForm;
 	private FormLayout registrationForm;
 	private FlexLayout centeringLayout;
@@ -87,9 +91,7 @@ public class LoginView extends FlexLayout {
     }
    
     private void login(LoginForm.LoginEvent event) { 	
-    	System.out.println("Login button clicked");
     	getUI().get().navigate("main");
-
         /*if (/*accessControl.signIn(event.getUsername(), event.getPassword())) {
             getUI().get().navigate("");
         } else {

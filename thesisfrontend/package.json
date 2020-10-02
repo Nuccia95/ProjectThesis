@@ -55,7 +55,8 @@
     "moment": "2.24.0",
     "@fullcalendar/daygrid": "4.4.2",
     "moment-timezone": "0.5.28",
-    "@fullcalendar/moment": "4.4.2"
+    "@fullcalendar/moment": "4.4.2",
+    "multiselect-combo-box": "2.4.2"
   },
   "devDependencies": {
     "webpack": "4.42.0",
@@ -124,7 +125,8 @@
       "moment": "2.24.0",
       "@fullcalendar/daygrid": "4.4.2",
       "moment-timezone": "0.5.28",
-      "@fullcalendar/moment": "4.4.2"
+      "@fullcalendar/moment": "4.4.2",
+      "multiselect-combo-box": "2.4.2"
     },
     "devDependencies": {
       "webpack-babel-multi-target-plugin": "2.3.3",
@@ -138,6 +140,6 @@
       "webpack-dev-server": "3.10.3",
       "chokidar": "^3.4.0"
     },
-    "hash": "859f1850eb103d1af74260f102df58a20879acc2f66c07bb546ede136383b7d2"
+    "hash": "e6ccc438611241db225f93df771a5f0139709061709654fc91fcc3a4de482351"
   }
 }

@@ -4,6 +4,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
@@ -45,6 +47,7 @@ public class EntryForm extends VerticalLayout {
 	private HorizontalLayout l5;
 	private LocalDate ld;
 	private Button inviteButton;
+	private MultiselectComboBox<String> multiselectComboBox;
 	
 	public EntryForm(LocalDate ld2) {
 		this.ld = ld2;
@@ -105,13 +108,21 @@ public class EntryForm extends VerticalLayout {
 		container.add(l2);
 		add(container);
 
-		/* buttons */
+		/* friends box*/
+		multiselectComboBox = new MultiselectComboBox<String>();
+		multiselectComboBox.setLabel("Select items");
+		multiselectComboBox.setItems("Item 1", "Item 2", "Item 3", "Item 4");
 		l5 = new HorizontalLayout();
 		inviteButton = new Button(VaadinIcon.USERS.create());
 		Label friendsLabel = new Label("Do you want to invite some friend?");
 		l5.setAlignItems(Alignment.BASELINE);
 		l5.add(inviteButton, friendsLabel);
 		add(l5);
+		
+		inviteButton.addClickListener(e -> {
+			l5.add(multiselectComboBox);
+		});
+		
 		
 		l4 = new HorizontalLayout();		
 		saveButton = new Button("Save", VaadinIcon.CHECK.create());
