@@ -1,11 +1,17 @@
 package com.demo.frontend.views.calendar;
 
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.ThemeList;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.theme.lumo.Lumo;
+
 import java.time.LocalDate;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
@@ -37,10 +43,11 @@ public class CalendarView extends VerticalLayout {
 		add(calendar);
 		manageCalendarEntry();
 	}
-	
+
 	public void manageCalendarEntry() {
 
-		// EXAMPLE: Create a initial sample entry CARICARE LE ENTRY DI QUESTO UTENTE E MOSTRARE QUELLE DEI COLLEGHI
+		// EXAMPLE: Create a initial sample entry CARICARE LE ENTRY DI QUESTO UTENTE E
+		// MOSTRARE QUELLE DEI COLLEGHI
 		Entry entry = new Entry();
 		entry.setTitle("Some event");
 		entry.setStart(LocalDate.now().withDayOfMonth(3).atTime(10, 0));
@@ -50,19 +57,19 @@ public class CalendarView extends VerticalLayout {
 
 		// Show a dialog to create new entries or modify existing ones
 		calendar.addTimeslotsSelectedListener((event) -> {
-			//day clicked
+			// day clicked
 			ld = event.getStartDateTime().toLocalDate();
 			entryDialog = new Dialog();
 			setEntryDialogOptions();
 			EntryForm entryForm = new EntryForm(ld);
 			entryDialog.add(entryForm);
-			entryDialog.open();			
+			entryDialog.open();
 			goToPicker.setValue(ld);
 			newEntry = new Entry();
-			
+
 			entryForm.getSaveButton().addClickListener(e -> {
-				if(entryForm.createCurrentEntry()!=null) {
-					newEntry = entryForm.createCurrentEntry();		
+				if (entryForm.createCurrentEntry() != null) {
+					newEntry = entryForm.createCurrentEntry();
 					calendar.addEntry(newEntry);
 					entryDialog.close();
 				}
@@ -72,19 +79,20 @@ public class CalendarView extends VerticalLayout {
 		/*
 		 * The entry click event listener is called when the user clicks on an existing
 		 * entry. The event provides the clicked event which might be then opened in a
-		 * dialog*/
+		 * dialog
+		 */
 		/* clicked entry */
 		calendar.addEntryClickedListener(e -> {
 			System.out.println(e.getEntry().getTitle());
-		});			
-		
+		});
+
 		/* drag and drop entry */
 		calendar.addEntryDroppedListener(e -> {
-			e.applyChangesOnEntry(); //CAMBIA IL GIORNO DELL'EVENTO
-			System.out.println(e.getEntry().getStart()); 
+			e.applyChangesOnEntry(); // CAMBIA IL GIORNO DELL'EVENTO
+			System.out.println(e.getEntry().getStart());
 		});
 	}
-	
+
 	public void setEntryDialogOptions() {
 		entryDialog.setDraggable(true);
 		entryDialog.setCloseOnEsc(true);
@@ -102,15 +110,27 @@ public class CalendarView extends VerticalLayout {
 			calendar.gotoDate(goToPicker.getValue());
 		});
 
-		/* PreviousMonth button - NextMonth button
-		previousMonthButton = new Button("Previous Month", VaadinIcon.ANGLE_LEFT.create());
-		previousMonthButton.addClickListener(e -> calendar.previous());
-		previousMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		nextMonthButton = new Button("Next Month", VaadinIcon.ANGLE_RIGHT.create());
-		nextMonthButton.addClickListener(e -> calendar.next());
-		nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		topBar.add(previousMonthButton, nextMonthButton);*/
+		Button themeButton = new Button(VaadinIcon.PAINT_ROLL.create());
+		ThemeList themeList = UI.getCurrent().getElement().getThemeList();
+		themeButton.addClickListener(e->{
+			if (themeList.contains(Lumo.DARK)) 
+				themeList.remove(Lumo.DARK);
+			else
+				themeList.add(Lumo.DARK);			
+		});
+		
+		topBar.add(themeButton);
+	/*
+	 * PreviousMonth button - NextMonth button previousMonthButton = new
+	 * Button("Previous Month", VaadinIcon.ANGLE_LEFT.create());
+	 * previousMonthButton.addClickListener(e -> calendar.previous());
+	 * previousMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+	 * nextMonthButton = new Button("Next Month", VaadinIcon.ANGLE_RIGHT.create());
+	 * nextMonthButton.addClickListener(e -> calendar.next());
+	 * nextMonthButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+	 * topBar.add(previousMonthButton, nextMonthButton);
+	 */
 
-		add(topBar);
+	      add(topBar);
 	}
 }

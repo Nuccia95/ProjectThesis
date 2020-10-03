@@ -110,7 +110,7 @@ public class EntryForm extends VerticalLayout {
 
 		/* friends box*/
 		multiselectComboBox = new MultiselectComboBox<String>();
-		multiselectComboBox.setLabel("Select items");
+		multiselectComboBox.setPlaceholder("@choose friends..");
 		multiselectComboBox.setItems("Item 1", "Item 2", "Item 3", "Item 4");
 		l5 = new HorizontalLayout();
 		inviteButton = new Button(VaadinIcon.USERS.create());

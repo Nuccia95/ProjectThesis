@@ -22,6 +22,12 @@ public class User extends AbstractBean{
 	private String password;
 	private String role;
 	
+	public User() {}
+	
+	public User(String email){
+		this.email = email;
+	}
+	
 	public void setEmail(String email) {
 		this.email = email;
 	}
