@@ -1,26 +1,33 @@
 package shared.thesiscommon;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "Users")
-public class User extends AbstractBean{
+public class User extends AbstractIdentifiedBean{
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Id
+	@Column(unique = true)
 	private String email;
 	
 	private String firstName;
 	private String lastName;
 	private String password;
 	private String role;
+	
+	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	private Set<Book> createdBooks;
 	
 	public User() {}
 	
@@ -68,6 +75,14 @@ public class User extends AbstractBean{
 		return role;
 	}
 
+	public Set<Book> getCreatedBooks() {
+		return createdBooks;
+	}
+
+	public void setCreatedBooks(Set<Book> createdBooks) {
+		this.createdBooks = createdBooks;
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		// TODO Auto-generated method stub
@@ -85,6 +100,5 @@ public class User extends AbstractBean{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	
 }

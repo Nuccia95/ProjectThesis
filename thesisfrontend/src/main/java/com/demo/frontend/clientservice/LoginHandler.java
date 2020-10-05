@@ -19,16 +19,18 @@ public class LoginHandler {
 	 * HttpMethod.GET, null, String.class) .getBody();
 	 * 
 	 * }*/
+	
 	public User login(User u) {
 		HttpEntity<User> request = new HttpEntity<>(u);
 		User user = restTemplate.postForObject(url + "login", request, User.class);
+		assert(user.getEmail()!=null);
 		return user;
 	}
 
 	public User registration(User u) {
 		HttpEntity<User> request = new HttpEntity<>(u);
 		User user = restTemplate.postForObject(url + "registration", request, User.class);
+		assert(user.getEmail()!=null);
 		return user;
 	}
-
 }

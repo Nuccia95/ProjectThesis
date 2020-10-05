@@ -24,9 +24,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
+import com.demo.frontend.views.calendar.FullCalendarView;
 import com.demo.frontend.views.main.MainView;
 import com.demo.frontend.views.resources.ResourcesView;
-import com.demo.frontend.views.calendar.CalendarView;
 import com.vaadin.flow.theme.lumo.Lumo;
 
 /**
@@ -59,15 +59,28 @@ public class MainView extends AppLayout {
         layout.setId("header");
         layout.getThemeList().set("dark", true);
         layout.setWidthFull();
-        layout.setSpacing(false);
         layout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         layout.add(new DrawerToggle());
         viewTitle = new H1();
         layout.add(viewTitle);
+        
+        /*Button themeButton = new Button(VaadinIcon.PAINTBRUSH.create());
+        themeButton.getElement().getStyle().set("margin-left", "auto");
+		ThemeList themeList = UI.getCurrent().getElement().getThemeList();
+		themeButton.addClickListener(e->{
+			if (themeList.contains(Lumo.DARK)) {
+				themeList.remove(Lumo.DARK);
+			}
+			else {
+				themeList.add(Lumo.DARK);			
+			}
+		});
+		layout.add(themeButton);*/
 
-        Button logoutButton = new Button("Logout", VaadinIcon.SIGN_OUT.create());
+        Button logoutButton = new Button("", VaadinIcon.SIGN_OUT.create());
         logoutButton.getElement().getStyle().set("margin-left", "auto");
+        logoutButton.getElement().getStyle().set("margin-right", "10px");
         logoutButton.addClickListener(e -> {signOut();});
 //        layout.add(new Image("images/user.svg", "Avatar"));
         layout.add(logoutButton);
@@ -102,7 +115,7 @@ public class MainView extends AppLayout {
     private Component[] createMenuItems() {
         return new Tab[] {
         		createTab("Resources", ResourcesView.class),
-        		createTab("Calendar", CalendarView.class)
+        		createTab("Calendar", FullCalendarView.class)
         };
     }
 

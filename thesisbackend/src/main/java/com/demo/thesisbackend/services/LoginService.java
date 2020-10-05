@@ -1,5 +1,7 @@
 package com.demo.thesisbackend.services;
 
+import java.util.HashSet;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demo.thesisbackend.dao.UserDAO;
@@ -16,32 +18,25 @@ public class LoginService {
 		return "OK - CI SIAMO CONNESSI";
 	}
 
-	public User addUser(User user) {
-		userDAO.save(user);
-		System.out.print("sono dentro addUser");
-		System.out.println("User: " + user.getEmail());
-		return new User("ciccio@ciccio.it");
-	}
-
 	public User login(User user) {
-		if (userDAO.existsById(user.getEmail())) {
-			User u = new User();
-			u = userDAO.findById(user.getEmail()).get();
+		User u = userDAO.findByEmail(user.getEmail());
+		System.out.println(u.getId());
+		if (u != null)
 			if (user.getPassword().equals(u.getPassword()))
 				return u;
 			else
 				return null;
-		}
-		else
-			return null;
+		return null;
 	}
 
 	public User registration(User user) {
-		if (userDAO.existsById(user.getEmail()))
-			return null;
+		User u = userDAO.findByEmail(user.getEmail());
+		if (u == null) {
+			user.setCreatedBooks(new HashSet<>());
+			return userDAO.save(user);
+		}
 		else
-			userDAO.save(user);
-		return user;
+			return null;
 	}
 
 }
