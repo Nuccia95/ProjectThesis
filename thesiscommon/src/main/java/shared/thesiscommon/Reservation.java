@@ -6,15 +6,17 @@ import java.time.LocalTime;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "Books")
-public class Book extends AbstractIdentifiedBean{
+@Table(name = "Reservations")
+public class Reservation extends AbstractIdentifiedBean{
 	
 	/**
 	 * 
 	 */
+	
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
@@ -32,7 +34,7 @@ public class Book extends AbstractIdentifiedBean{
 	private int recurring; //0/1
 	private LocalDate endDate;
 	
-	public Book() {
+	public Reservation() {
 		
 	}
 
@@ -106,7 +108,7 @@ public class Book extends AbstractIdentifiedBean{
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "Book [ " + "id=" + getId() + ", owner=" + owner.getId() + ", resourceId=" + resourceId + ", recurring=" + recurring
+				+ "]";
 	}
 }

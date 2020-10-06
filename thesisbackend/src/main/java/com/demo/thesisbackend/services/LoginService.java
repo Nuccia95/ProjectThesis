@@ -20,12 +20,12 @@ public class LoginService {
 
 	public User login(User user) {
 		User u = userDAO.findByEmail(user.getEmail());
-		System.out.println(u.getId());
-		if (u != null)
+		if (u != null) {
 			if (user.getPassword().equals(u.getPassword()))
 				return u;
 			else
 				return null;
+		}
 		return null;
 	}
 
@@ -38,5 +38,4 @@ public class LoginService {
 		else
 			return null;
 	}
-
 }

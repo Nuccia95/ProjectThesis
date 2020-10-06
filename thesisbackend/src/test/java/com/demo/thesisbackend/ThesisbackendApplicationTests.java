@@ -7,17 +7,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.demo.thesisbackend.dao.BookDAO;
+import com.demo.thesisbackend.dao.ReservationDAO;
 import com.demo.thesisbackend.dao.UserDAO;
 
-import shared.thesiscommon.Book;
+import shared.thesiscommon.Reservation;
 import shared.thesiscommon.User;
 
 @SpringBootTest
 class ThesisbackendApplicationTests {
 
 	@Autowired
-	BookDAO bookDAO;
+	ReservationDAO bookDAO;
 	
 	@Autowired
 	UserDAO userDAO;
@@ -36,7 +36,7 @@ class ThesisbackendApplicationTests {
 		u.setRole("ciao");
 		userDAO.save(u);
 		
-		Book b = new Book();
+		Reservation b = new Reservation();
 		b.setColor("red");
 		LocalDate ld = LocalDate.now();
 		b.setStartDate(ld);

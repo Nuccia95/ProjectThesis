@@ -1,4 +1,4 @@
-package com.demo.frontend.clientservice;
+package com.demo.frontend.clientservices;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -33,4 +33,5 @@ public class LoginHandler {
 		assert(user.getEmail()!=null);
 		return user;
 	}
+	
 }

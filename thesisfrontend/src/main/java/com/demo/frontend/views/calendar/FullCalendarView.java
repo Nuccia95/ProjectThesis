@@ -13,19 +13,19 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import shared.thesiscommon.Book;
+import shared.thesiscommon.Reservation;
+import shared.thesiscommon.ReservationDTO;
 import shared.thesiscommon.User;
 
-import java.io.Console;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
-import com.demo.frontend.clientservice.BookHandler;
+import com.demo.frontend.clientservices.ReservationHandler;
 import com.demo.frontend.views.main.MainView;
 
 @Route(value = "calendarView", layout = MainView.class)
@@ -48,9 +48,8 @@ public class FullCalendarView extends VerticalLayout {
 	private LocalDate ld;
 	private final String blueColor = "#3e77c1";
 	@Autowired
-	private BookHandler bookHandler;
-	@Autowired 
-	
+	private ReservationHandler reservationHandler;
+
 	public FullCalendarView() {
 		setId("calendar-view");
 		calendar = FullCalendarBuilder.create().build();
@@ -62,7 +61,7 @@ public class FullCalendarView extends VerticalLayout {
 
 	public void manageCalendarEntry() {
 
-		/*ENTRY EXAMPLE*/
+		/* ENTRY EXAMPLE */
 		Entry entry = new Entry();
 		entry.setTitle("Some event");
 		entry.setStart(LocalDate.now().withDayOfMonth(3).atTime(10, 0));
@@ -70,66 +69,69 @@ public class FullCalendarView extends VerticalLayout {
 		entry.setColor("#ff3333");
 		calendar.addEntry(entry);
 
-		/*DAY clicked*/
+		/* DAY clicked */
 		calendar.addTimeslotsSelectedListener((event) -> {
 			ld = event.getStartDateTime().toLocalDate();
 			setForm(ld);
 			entryDialog.open();
-			/* create new entry */
-			newEntry = new Entry();
+			/* Create new entry */
 			entryForm.getSaveButton().addClickListener(e -> {
-				if (entryForm.createCurrentEntry() != null) {
-					newEntry = entryForm.createCurrentEntry();
-					Book book = bookHandler.mapToBook(newEntry);
-					User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-					System.out.println("CURRENT USER " + u.getId() + " " + u.getEmail());
-					book.setOwner(u);
-					Book b = bookHandler.creteBook(book);
-					if(b != null) {
-						newEntry.setDescription(Long.toString(b.getId()));
-						calendar.addEntry(newEntry);
-						entryDialog.close();						
+				newEntry = entryForm.createCurrentEntry();
+				Reservation reservation = reservationHandler.fromEntryToReservation(newEntry);
+				if(newEntry.isRecurring())
+					for (DayOfWeek day : newEntry.getRecurringDaysOfWeeks()) {
+						reservation.setDayOfWeek(day.toString());
+						User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
+						ReservationDTO rdto = new ReservationDTO(reservation, u.getId());
+						reservationHandler.createReservation(rdto);
 					}
+				else {
+					User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
+					ReservationDTO rdto = new ReservationDTO(reservation, u.getId());
+					reservationHandler.createReservation(rdto);
 				}
+				calendar.addEntry(newEntry);
+				entryDialog.close();
 			});
 		});
-		
-		/*EXISTING ENTRY clicked*/
+
+		/* EXISTING ENTRY clicked */
 		calendar.addEntryClickedListener(e -> {
 			System.out.println(e.getEntry().getTitle());
 			LocalDate ld1 = null;
-			if(e.getEntry().isRecurring())
+			if (e.getEntry().isRecurring())
 				ld1 = e.getEntry().getRecurringStartDate(Timezone.UTC);
 			else
 				ld1 = e.getEntry().getStart().toLocalDate();
-			
+
 			setForm(ld1);
 			entryForm.fillExistingEntry(e.getEntry());
 			entryDialog.open();
 		});
 
-		/*DRAG & DROP entry*/
+		/* DRAG & DROP entry */
 		calendar.addEntryDroppedListener(e -> {
 			/* change the day of the event */
-			e.applyChangesOnEntry(); 
+			e.applyChangesOnEntry();
 			LocalDate ld2;
-			if(e.getEntry().isRecurring())
+			if (e.getEntry().isRecurring())
 				ld2 = e.getEntry().getRecurringStartDate(Timezone.UTC);
 			else
 				ld2 = e.getEntry().getStart().toLocalDate();
-			
+
 			System.out.println("New date: " + e.getEntry().getStart());
 			setConfirmChangeDialog(ld2);
 		});
 	}
 
+	/* UTILS */
 	public void setForm(LocalDate ld) {
 		entryDialog = setNewDialog();
 		entryForm = new EntryForm(ld);
 		entryDialog.add(entryForm);
 		goToPicker.setValue(ld);
 	}
-	
+
 	public Dialog setNewDialog() {
 		Dialog d = new Dialog();
 		d.setDraggable(true);
@@ -137,33 +139,32 @@ public class FullCalendarView extends VerticalLayout {
 		d.setCloseOnOutsideClick(true);
 		return d;
 	}
-	
+
 	public void setConfirmChangeDialog(LocalDate newDate) {
 		VerticalLayout container = new VerticalLayout();
 		container.setFlexGrow(1, container);
 		confirmChangeDialog = setNewDialog();
-		
-		H4 description = new H4("Update the event date to " + newDate.toString() +" ?");
+
+		H4 description = new H4("Update the event date to " + newDate.toString() + " ?");
 		container.add(description);
-		
-		
+
 		HorizontalLayout buttonsContainer = new HorizontalLayout();
 		Icon confirmIcon = new Icon(VaadinIcon.CHECK);
 		confirmIcon.setColor(blueColor);
 		confirmButton = new Button(confirmIcon);
-		
+
 		Icon closeIcon = new Icon(VaadinIcon.CLOSE);
 		closeIcon.setColor(blueColor);
 		Button closeButton = new Button(closeIcon);
-		
+
 		buttonsContainer.add(confirmButton, closeButton);
 		container.add(buttonsContainer);
 		container.setAlignSelf(Alignment.END, buttonsContainer);
 		confirmChangeDialog.add(container);
 		confirmChangeDialog.open();
-		
+
 		closeButton.addClickListener(e -> confirmChangeDialog.close());
-		
+
 	}
 
 	public void createTopBar() {
@@ -173,25 +174,25 @@ public class FullCalendarView extends VerticalLayout {
 		H3 title = new H3(goToPicker.getValue().getMonth().toString());
 		title.getElement().getStyle().set("fontWeight", "bold");
 		title.getElement().getStyle().set("color", blueColor);
-		
+
 		goToPicker.addValueChangeListener(e -> {
 			calendar.gotoDate(goToPicker.getValue());
 			title.setText(goToPicker.getValue().getMonth().toString());
 		});
-		
+
 		topBar.setAlignItems(Alignment.BASELINE);
 		topBar.add(title, goToPicker);
 		add(topBar);
-		//ArrayList<CalendarView> calendarViews = new ArrayList<>(Arrays.asList(CalendarViewImpl.values()));
-        
-       /* ComboBox<CalendarView> comboBoxView = new ComboBox<>("", calendarViews);
-        comboBoxView.setValue(CalendarViewImpl.DAY_GRID_MONTH);
-        comboBoxView.setWidth("300px");
-        comboBoxView.addValueChangeListener(e -> {
-            CalendarView value = e.getValue();
-            calendar.changeView(value == null ? CalendarViewImpl.DAY_GRID_MONTH : value);
-        });
-        //topBar.add(comboBoxView);*/
+		// ArrayList<CalendarView> calendarViews = new
+		// ArrayList<>(Arrays.asList(CalendarViewImpl.values()));
+
+		/*
+		 * ComboBox<CalendarView> comboBoxView = new ComboBox<>("", calendarViews);
+		 * comboBoxView.setValue(CalendarViewImpl.DAY_GRID_MONTH);
+		 * comboBoxView.setWidth("300px"); comboBoxView.addValueChangeListener(e -> {
+		 * CalendarView value = e.getValue(); calendar.changeView(value == null ?
+		 * CalendarViewImpl.DAY_GRID_MONTH : value); }); //topBar.add(comboBoxView);
+		 */
 	}
 
 }

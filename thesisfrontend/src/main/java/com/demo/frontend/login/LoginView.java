@@ -2,7 +2,7 @@ package com.demo.frontend.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.demo.frontend.clientservice.LoginHandler;
+import com.demo.frontend.clientservices.LoginHandler;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -59,7 +59,6 @@ public class LoginView extends FlexLayout {
 				Notification.show("Passwords don't match");
 			else {
 				User userResult = loginHandler.registration(registrationForm.getUserForm());
-
 				if (userResult == null)
 					Notification.show("Error in registration, try again");
 				else {

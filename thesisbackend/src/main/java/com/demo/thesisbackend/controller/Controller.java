@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.demo.thesisbackend.services.BookService;
+import com.demo.thesisbackend.services.ReservationService;
 import com.demo.thesisbackend.services.LoginService;
 
-import shared.thesiscommon.Book;
+import shared.thesiscommon.Reservation;
+import shared.thesiscommon.ReservationDTO;
 import shared.thesiscommon.User;
 @CrossOrigin("*")
 @RestController
@@ -21,7 +22,7 @@ public class Controller {
 	private LoginService loginService;
 	
 	@Autowired
-	private BookService bookService;
+	private ReservationService reservationService;
 	
 	@GetMapping("/hello")
 	public String hello() {
@@ -38,14 +39,14 @@ public class Controller {
 		return loginService.registration(user);
 	}
 	
-	@RequestMapping(value="/createBook", method = RequestMethod.POST)
-	public Book createBook(@RequestBody Book book) {
-		return bookService.createBook(book);
+	@RequestMapping(value="/createReservation", method = RequestMethod.POST)
+	public Reservation createBook(@RequestBody ReservationDTO bookDTO) {
+		return reservationService.createReservation(bookDTO);
 	}
 	
 	@RequestMapping(value="/deleteBook", method = RequestMethod.POST)
-	public void deleteBook(@RequestBody Book book) {
-		bookService.deleteBook(book);
+	public void deleteBook(@RequestBody Reservation book) {
+		reservationService.deleteBook(book);
 	}
 
 }

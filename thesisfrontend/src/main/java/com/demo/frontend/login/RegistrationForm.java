@@ -1,8 +1,5 @@
 package com.demo.frontend.login;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.demo.frontend.clientservice.LoginHandler;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -17,9 +14,6 @@ import com.vaadin.flow.component.textfield.TextField;
 import shared.thesiscommon.User;
 
 public class RegistrationForm {
-	
-	@Autowired
-	private LoginHandler loginHandler;
 
 	private H2 title;
 	/* containers */

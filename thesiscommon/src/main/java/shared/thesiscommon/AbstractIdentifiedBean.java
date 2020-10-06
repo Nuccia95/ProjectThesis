@@ -66,4 +66,8 @@ public abstract class AbstractIdentifiedBean extends AbstractBean {
 		}
 		return true;
 	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
 }
