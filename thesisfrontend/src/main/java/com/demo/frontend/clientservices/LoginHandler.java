@@ -14,11 +14,6 @@ public class LoginHandler {
 	private RestTemplate restTemplate;
 	private final String url = "http://localhost:9999/";
 
-	/*
-	 * public String hello() { return restTemplate.exchange(url + "hello",
-	 * HttpMethod.GET, null, String.class) .getBody();
-	 * 
-	 * }*/
 	
 	public User login(User u) {
 		HttpEntity<User> request = new HttpEntity<>(u);

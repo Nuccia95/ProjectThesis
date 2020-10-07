@@ -1,7 +1,6 @@
 package com.demo.thesisbackend;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,7 @@ class ThesisbackendApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
+	/*@Test
 	void createBook() {
 		User u = new User();
 		u.setEmail("vvv@gmail.com");
@@ -48,6 +47,14 @@ class ThesisbackendApplicationTests {
 		
 		bookDAO.save(b);
 		
-	}
+	}*/
+	
+	/*@Test
+	public void prova(){
+		LocalDate start = LocalDate.now();
+		System.out.println("Start: " + start + " " + start.getDayOfWeek());
+		start = start.plusDays(1);
+		System.out.println("Start + 1: " + start + " " + start.getDayOfWeek());
+	}*/
 
 }

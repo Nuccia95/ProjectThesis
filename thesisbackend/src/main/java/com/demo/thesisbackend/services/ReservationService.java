@@ -1,5 +1,8 @@
 package com.demo.thesisbackend.services;
 
+import java.time.LocalDate;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demo.thesisbackend.dao.ReservationDAO;
@@ -18,16 +21,25 @@ public class ReservationService {
 	private UserDAO userDAO;
 
 	public Reservation createReservation(ReservationDTO reservationDTO) {
-		
 		User u = userDAO.findById(reservationDTO.getOwnerId()).get();
 		Reservation r = reservationDTO.getReservation();
 		r.setOwner(u);
 		return reservationDAO.save(r);
-		
 	}
 	
-	public void deleteBook(Reservation book) {
-		reservationDAO.delete(book);
+	public Reservation updateDate(ReservationDTO reservationDTO) {
+		Long id = reservationDTO.getReservation().getId();
+		LocalDate newDate = reservationDTO.getReservation().getStartDate();
+		Reservation r = reservationDAO.findById(id).get();
+		r.setStartDate(newDate);
+		return reservationDAO.save(r);
 	}
-
+	
+	public Set<Reservation> getReservationsByOwner(String id){
+		Long ownerId = Long.parseLong(id);
+		System.out.println("Owner id: " + ownerId);
+		User u = userDAO.findById(ownerId).get();
+		return reservationDAO.findByOwner(u);
+	}
+	
 }

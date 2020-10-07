@@ -12,5 +12,6 @@ import shared.thesiscommon.User;
 public interface ReservationDAO extends CrudRepository<Reservation, Long> {
 	
 	Set<Reservation> findByOwner(User u);
+	
 
 }

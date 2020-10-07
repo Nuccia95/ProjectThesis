@@ -31,12 +31,12 @@ public class Reservation extends AbstractIdentifiedBean{
 	private LocalTime startTime;
 	private LocalTime endTime;
 	/* recurring event */
-	private int recurring; //0/1
+	private boolean firstOfRecurrences;
+	private boolean recurring;
 	private LocalDate endDate;
+	private boolean editable;
 	
-	public Reservation() {
-		
-	}
+	public Reservation() {}
 
 	public String getResourceId() {
 		return resourceId;
@@ -74,12 +74,7 @@ public class Reservation extends AbstractIdentifiedBean{
 	public void setEndTime(LocalTime endTime) {
 		this.endTime = endTime;
 	}
-	public int getRecurring() {
-		return recurring;
-	}
-	public void setRecurring(int recurring) {
-		this.recurring = recurring;
-	}
+
 	public LocalDate getEndDate() {
 		return endDate;
 	}
@@ -93,6 +88,30 @@ public class Reservation extends AbstractIdentifiedBean{
 
 	public void setOwner(User owner) {
 		this.owner = owner;
+	}
+	
+	public boolean isFirstOfRecurrences() {
+		return firstOfRecurrences;
+	}
+
+	public void setFirstOfRecurrences(boolean firstOfRecurrences) {
+		this.firstOfRecurrences = firstOfRecurrences;
+	}
+
+	public boolean isRecurring() {
+		return recurring;
+	}
+
+	public void setRecurring(boolean recurring) {
+		this.recurring = recurring;
+	}
+	
+	public boolean isEditable() {
+		return editable;
+	}
+
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 	@Override
@@ -108,7 +127,7 @@ public class Reservation extends AbstractIdentifiedBean{
 
 	@Override
 	public String toString() {
-		return "Book [ " + "id=" + getId() + ", owner=" + owner.getId() + ", resourceId=" + resourceId + ", recurring=" + recurring
+		return "Reservation [ resourceId=" + resourceId + ", recurring=" + recurring
 				+ "]";
 	}
 }

@@ -27,8 +27,5 @@ public class ReservationDTO {
 	public void setOwnerId(Long ownerId) {
 		this.ownerId = ownerId;
 	}
-	
-	
-	
 
 }

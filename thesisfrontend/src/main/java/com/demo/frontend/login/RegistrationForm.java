@@ -16,12 +16,10 @@ import shared.thesiscommon.User;
 public class RegistrationForm {
 
 	private H2 title;
-	/* containers */
 	private HorizontalLayout c;
 	private HorizontalLayout c2;
 	private HorizontalLayout c3;
 	private VerticalLayout container;
-	
 	private TextField firstnameField;
 	private TextField lastnameField;
 	private TextField roleField;
@@ -29,11 +27,9 @@ public class RegistrationForm {
 	private PasswordField passwordField1;
 	private PasswordField passwordField2;
 	private FormLayout registrationForm;
-
 	private Button submitButton;
 	
-	public RegistrationForm() {
-	}
+	public RegistrationForm() {}
 	
 	public void buildRegistrationForm() {
 		title = new H2("SignUp");

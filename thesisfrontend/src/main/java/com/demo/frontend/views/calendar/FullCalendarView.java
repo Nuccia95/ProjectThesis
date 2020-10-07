@@ -11,24 +11,17 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.server.VaadinSession;
-
 import shared.thesiscommon.Reservation;
-import shared.thesiscommon.ReservationDTO;
-import shared.thesiscommon.User;
-
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.Timezone;
-
 import com.demo.frontend.clientservices.ReservationHandler;
 import com.demo.frontend.views.main.MainView;
 
-@Route(value = "calendarView", layout = MainView.class)
+@Route(value = "fullCalendarView", layout = MainView.class)
 @PageTitle("Calendar")
 public class FullCalendarView extends VerticalLayout {
 
@@ -40,15 +33,17 @@ public class FullCalendarView extends VerticalLayout {
 	private FullCalendar calendar;
 	private HorizontalLayout topBar;
 	private DatePicker goToPicker;
-	private Dialog entryDialog;
-	private Dialog confirmChangeDialog;
-	private Button confirmButton;
+	private Dialog createEntryDialog;
+	private Dialog changeEntryDateDialog;
+	private Dialog deleteEntryDialog;
+	private Button confirmUpdateDateButton;
 	private EntryForm entryForm;
 	private Entry newEntry;
 	private LocalDate ld;
 	private final String blueColor = "#3e77c1";
 	@Autowired
 	private ReservationHandler reservationHandler;
+	Button button = new Button("CLICK");
 
 	public FullCalendarView() {
 		setId("calendar-view");
@@ -67,68 +62,69 @@ public class FullCalendarView extends VerticalLayout {
 		entry.setStart(LocalDate.now().withDayOfMonth(3).atTime(10, 0));
 		entry.setEnd(entry.getStart().plusHours(2));
 		entry.setColor("#ff3333");
+		entry.setEditable(false);
 		calendar.addEntry(entry);
 
-		/* DAY clicked */
+		/* CREATE NEW ENTRY on day clicked */
 		calendar.addTimeslotsSelectedListener((event) -> {
 			ld = event.getStartDateTime().toLocalDate();
 			setForm(ld);
-			entryDialog.open();
-			/* Create new entry */
+			createEntryDialog.open();
 			entryForm.getSaveButton().addClickListener(e -> {
 				newEntry = entryForm.createCurrentEntry();
 				Reservation reservation = reservationHandler.fromEntryToReservation(newEntry);
-				if(newEntry.isRecurring())
-					for (DayOfWeek day : newEntry.getRecurringDaysOfWeeks()) {
-						reservation.setDayOfWeek(day.toString());
-						User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-						ReservationDTO rdto = new ReservationDTO(reservation, u.getId());
-						reservationHandler.createReservation(rdto);
-					}
+				Reservation output;
+				if (newEntry.isRecurring())
+					reservationHandler.createRecurringReservation(calendar, newEntry, reservation);
 				else {
-					User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-					ReservationDTO rdto = new ReservationDTO(reservation, u.getId());
-					reservationHandler.createReservation(rdto);
+					output = reservationHandler.createReservation(reservation);
+					newEntry.setDescription(output.getId().toString());
 				}
+
 				calendar.addEntry(newEntry);
-				entryDialog.close();
+				createEntryDialog.close();
 			});
 		});
 
 		/* EXISTING ENTRY clicked */
 		calendar.addEntryClickedListener(e -> {
-			System.out.println(e.getEntry().getTitle());
-			LocalDate ld1 = null;
-			if (e.getEntry().isRecurring())
-				ld1 = e.getEntry().getRecurringStartDate(Timezone.UTC);
-			else
-				ld1 = e.getEntry().getStart().toLocalDate();
+			if (e.getEntry().isEditable()) {
+				System.out.println("Entry clicked: " + e.getEntry().getTitle());
+				LocalDate ld1 = null;
+				if (e.getEntry().isRecurring())
+					ld1 = e.getEntry().getRecurringStartDate(Timezone.UTC);
+				else
+					ld1 = e.getEntry().getStart().toLocalDate();
 
-			setForm(ld1);
-			entryForm.fillExistingEntry(e.getEntry());
-			entryDialog.open();
+				setForm(ld1);
+				entryForm.fillExistingEntry(e.getEntry());
+				createEntryDialog.open();
+			}
 		});
 
 		/* DRAG & DROP entry */
 		calendar.addEntryDroppedListener(e -> {
 			/* change the day of the event */
 			e.applyChangesOnEntry();
-			LocalDate ld2;
+			LocalDate newDate;
 			if (e.getEntry().isRecurring())
-				ld2 = e.getEntry().getRecurringStartDate(Timezone.UTC);
+				newDate = e.getEntry().getRecurringStartDate(Timezone.UTC);
 			else
-				ld2 = e.getEntry().getStart().toLocalDate();
-
-			System.out.println("New date: " + e.getEntry().getStart());
-			setConfirmChangeDialog(ld2);
+				newDate = e.getEntry().getStart().toLocalDate();
+			buildUpdateDateDialog(newDate);
+			confirmUpdateDateButton.addClickListener(evnt -> {
+				Reservation reservation = reservationHandler.fromEntryToReservation(e.getEntry());
+				reservationHandler.updateReservationDate(reservation);
+				changeEntryDateDialog.close();
+			});
 		});
 	}
 
 	/* UTILS */
 	public void setForm(LocalDate ld) {
-		entryDialog = setNewDialog();
+		createEntryDialog = setNewDialog();
 		entryForm = new EntryForm(ld);
-		entryDialog.add(entryForm);
+		createEntryDialog.add(entryForm);
 		goToPicker.setValue(ld);
 	}
 
@@ -140,10 +136,10 @@ public class FullCalendarView extends VerticalLayout {
 		return d;
 	}
 
-	public void setConfirmChangeDialog(LocalDate newDate) {
+	public void buildUpdateDateDialog(LocalDate newDate) {
 		VerticalLayout container = new VerticalLayout();
 		container.setFlexGrow(1, container);
-		confirmChangeDialog = setNewDialog();
+		changeEntryDateDialog = setNewDialog();
 
 		H4 description = new H4("Update the event date to " + newDate.toString() + " ?");
 		container.add(description);
@@ -151,20 +147,19 @@ public class FullCalendarView extends VerticalLayout {
 		HorizontalLayout buttonsContainer = new HorizontalLayout();
 		Icon confirmIcon = new Icon(VaadinIcon.CHECK);
 		confirmIcon.setColor(blueColor);
-		confirmButton = new Button(confirmIcon);
+		confirmUpdateDateButton = new Button(confirmIcon);
 
 		Icon closeIcon = new Icon(VaadinIcon.CLOSE);
 		closeIcon.setColor(blueColor);
 		Button closeButton = new Button(closeIcon);
 
-		buttonsContainer.add(confirmButton, closeButton);
+		buttonsContainer.add(confirmUpdateDateButton, closeButton);
 		container.add(buttonsContainer);
 		container.setAlignSelf(Alignment.END, buttonsContainer);
-		confirmChangeDialog.add(container);
-		confirmChangeDialog.open();
+		changeEntryDateDialog.add(container);
+		changeEntryDateDialog.open();
 
-		closeButton.addClickListener(e -> confirmChangeDialog.close());
-
+		closeButton.addClickListener(e -> changeEntryDateDialog.close());
 	}
 
 	public void createTopBar() {
@@ -181,8 +176,9 @@ public class FullCalendarView extends VerticalLayout {
 		});
 
 		topBar.setAlignItems(Alignment.BASELINE);
-		topBar.add(title, goToPicker);
+		topBar.add(title, goToPicker, button);
 		add(topBar);
+		button.addClickListener(e -> reservationHandler.getReservationByOwner());
 		// ArrayList<CalendarView> calendarViews = new
 		// ArrayList<>(Arrays.asList(CalendarViewImpl.values()));
 

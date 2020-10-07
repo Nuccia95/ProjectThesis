@@ -46,7 +46,8 @@ public class LoginView extends FlexLayout {
 		centeringLayout.setAlignItems(Alignment.CENTER);
 		buildUI();
 	}
-
+	
+	/*Layout*/
 	private void buildUI() {
 		setSizeFull();
 		setClassName("login-screen");
@@ -54,19 +55,7 @@ public class LoginView extends FlexLayout {
 		loginForm = new LoginForm();
 		registrationForm = new RegistrationForm();
 		registrationForm.buildRegistrationForm();
-		registrationForm.getSubmitButton().addClickListener(e -> {
-			if (!registrationForm.passwordsMatch())
-				Notification.show("Passwords don't match");
-			else {
-				User userResult = loginHandler.registration(registrationForm.getUserForm());
-				if (userResult == null)
-					Notification.show("Error in registration, try again");
-				else {
-					VaadinSession.getCurrent().setAttribute("currentUser", userResult);
-					getUI().get().navigate("main");
-				}
-			}
-		});
+		registration();
 		centeringLayout.add(registrationForm.getForm());
 		add(centeringLayout);
 		registrationForm.getForm().setVisible(false);
@@ -109,13 +98,12 @@ public class LoginView extends FlexLayout {
 				logFormVisible = true;
 			}
 		});
-
 		loginInformation.add(title);
 		loginInformation.add(info, registrationButton, loginButton);
-
 		return loginInformation;
-	}
-
+	}	
+	
+	/*Methods*/
 	private void login(LoginForm.LoginEvent event) {
 		User u = new User();
 		u.setEmail(event.getUsername());
@@ -125,9 +113,23 @@ public class LoginView extends FlexLayout {
 			Notification.show("Error in login, try again");
 		else {
 			VaadinSession.getCurrent().setAttribute("currentUser", userResult);
-			getUI().get().navigate("main");
+			getUI().get().navigate("fullCalendarView");
 		}
 	}
-
 	
+	public void registration() {
+		registrationForm.getSubmitButton().addClickListener(e -> {
+			if (!registrationForm.passwordsMatch())
+				Notification.show("Passwords don't match");
+			else {
+				User userResult = loginHandler.registration(registrationForm.getUserForm());
+				if (userResult == null)
+					Notification.show("Error in registration, try again");
+				else {
+					VaadinSession.getCurrent().setAttribute("currentUser", userResult);
+					getUI().get().navigate("fullCalendarView");
+				}
+			}
+		});
+	}
 }

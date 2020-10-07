@@ -1,11 +1,14 @@
 package com.demo.thesisbackend.controller;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.thesisbackend.services.ReservationService;
@@ -40,13 +43,21 @@ public class Controller {
 	}
 	
 	@RequestMapping(value="/createReservation", method = RequestMethod.POST)
-	public Reservation createBook(@RequestBody ReservationDTO bookDTO) {
-		return reservationService.createReservation(bookDTO);
+	public Reservation createBook(@RequestBody ReservationDTO reservationDTO) {
+		return reservationService.createReservation(reservationDTO);
 	}
 	
-	@RequestMapping(value="/deleteBook", method = RequestMethod.POST)
-	public void deleteBook(@RequestBody Reservation book) {
-		reservationService.deleteBook(book);
+	@RequestMapping(value="/updateDate", method = RequestMethod.POST)
+	public Reservation updateDate(@RequestBody ReservationDTO reservationDTO) {
+		return reservationService.updateDate(reservationDTO);
+	}
+	
+	@GetMapping(value="/getReservationsByOwner")
+	public Set<Reservation> updateDate(@RequestParam String id) {
+		System.out.println("controller");
+		return reservationService.getReservationsByOwner(id);
 	}
 
+
+	
 }
