@@ -170,6 +170,7 @@ public class EntryForm extends VerticalLayout {
 		newEntry = new Entry();
 		newEntry.setColor(comboBoxColors.getValue());
 		newEntry.setTitle(comboBoxResources.getValue());
+		newEntry.setEditable(true);
 
 		if (checkBoxRecurring.getValue()) {
 			newEntry.setRecurring(true);

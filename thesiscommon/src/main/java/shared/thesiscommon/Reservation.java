@@ -31,7 +31,7 @@ public class Reservation extends AbstractIdentifiedBean{
 	private LocalTime startTime;
 	private LocalTime endTime;
 	/* recurring event */
-	private boolean firstOfRecurrences;
+	private long groupId;
 	private boolean recurring;
 	private LocalDate endDate;
 	private boolean editable;
@@ -89,14 +89,6 @@ public class Reservation extends AbstractIdentifiedBean{
 	public void setOwner(User owner) {
 		this.owner = owner;
 	}
-	
-	public boolean isFirstOfRecurrences() {
-		return firstOfRecurrences;
-	}
-
-	public void setFirstOfRecurrences(boolean firstOfRecurrences) {
-		this.firstOfRecurrences = firstOfRecurrences;
-	}
 
 	public boolean isRecurring() {
 		return recurring;
@@ -114,6 +106,14 @@ public class Reservation extends AbstractIdentifiedBean{
 		this.editable = editable;
 	}
 
+	public long getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(long groupId) {
+		this.groupId = groupId;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		return false;
@@ -127,7 +127,7 @@ public class Reservation extends AbstractIdentifiedBean{
 
 	@Override
 	public String toString() {
-		return "Reservation [ resourceId=" + resourceId + ", recurring=" + recurring
+		return "Reservation [ resourceId=" + resourceId + ", recurring=" + recurring + ", groupId=" + groupId 
 				+ "]";
 	}
 }

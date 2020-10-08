@@ -23,14 +23,8 @@ public class Controller {
 	
 	@Autowired
 	private LoginService loginService;
-	
 	@Autowired
 	private ReservationService reservationService;
-	
-	@GetMapping("/hello")
-	public String hello() {
-		return loginService.hello();
-	}
 	
 	@RequestMapping(value="/login", method = RequestMethod.POST)
 	public User login(@RequestBody User user) {
@@ -58,6 +52,4 @@ public class Controller {
 		return reservationService.getReservationsByOwner(id);
 	}
 
-
-	
 }
