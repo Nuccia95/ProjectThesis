@@ -1,4 +1,4 @@
-package shared.thesiscommon;
+package shared.thesiscommon.bean;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;

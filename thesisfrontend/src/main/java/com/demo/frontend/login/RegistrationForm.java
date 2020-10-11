@@ -11,7 +11,7 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 
-import shared.thesiscommon.User;
+import shared.thesiscommon.bean.User;
 
 public class RegistrationForm {
 

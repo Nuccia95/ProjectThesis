@@ -9,9 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.demo.thesisbackend.dao.ReservationDAO;
 import com.demo.thesisbackend.dao.UserDAO;
 
-import shared.thesiscommon.Reservation;
-import shared.thesiscommon.User;
-
 @SpringBootTest
 class ThesisbackendApplicationTests {
 

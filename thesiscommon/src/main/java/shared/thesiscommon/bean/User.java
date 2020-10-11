@@ -1,4 +1,4 @@
-package shared.thesiscommon;
+package shared.thesiscommon.bean;
 
 import java.util.Set;
 

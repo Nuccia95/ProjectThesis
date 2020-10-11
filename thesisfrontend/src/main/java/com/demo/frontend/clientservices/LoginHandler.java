@@ -5,7 +5,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import shared.thesiscommon.User;
+import shared.thesiscommon.bean.User;
 
 @Service
 public class LoginHandler {

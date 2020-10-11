@@ -18,6 +18,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -34,6 +35,7 @@ public class EntryForm extends VerticalLayout {
 	private Entry newEntry;
 	private H3 title;
 	private H3 selectedDate;
+	private Span formDescription;
 	private HorizontalLayout titleContainer;
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
@@ -43,39 +45,73 @@ public class EntryForm extends VerticalLayout {
 	private Checkbox checkBoxRecurring;
 	private CheckboxGroup<DayOfWeek> checkBoxDays;
 	private DatePicker endDatePicker;
+	private HorizontalLayout container;
 	private VerticalLayout l1;
 	private VerticalLayout l2;
 	private VerticalLayout l3;
-	private HorizontalLayout container;
 	private HorizontalLayout l4;
 	private HorizontalLayout l5;
 	private LocalDate ld;
 	private Button inviteButton;
-	private MultiselectComboBox<String> multiselectComboBox;
+	private Button deleteEntryButton;
+	private MultiselectComboBox<String> multiselectComboBoxFriends;
 	private final String blueColor = "#3e77c1";
+	private Icon iconFriends;
+	private Icon iconCheck;
 
 	public EntryForm(LocalDate ld2) {
 		this.ld = ld2;
+		initComponents();
 		createEntryForm();
+	}
+	
+	public void initComponents() {
+		setSpacing(false);
+		formDescription = new Span();
+		formDescription.getElement().getStyle().set("padding", "2px 10px");
+		formDescription.getElement().getStyle().set("font-size", "14px");
+		container = new HorizontalLayout();
+		container.setSpacing(false);
+		container.setAlignItems(Alignment.START);
+		container.setMaxWidth("900px");
+		container.setMaxHeight("710px");
+		titleContainer = new HorizontalLayout();
+		checkBoxRecurring = new Checkbox();
+		checkBoxRecurring.getElement().getStyle().set("font-size", "14px");
+		l1 = new VerticalLayout();
+		l2 = new VerticalLayout();
+		l3 = new VerticalLayout();
+		l4 = new HorizontalLayout();
+		l5 = new HorizontalLayout();
+		l5.setSpacing(false);
+		comboBoxResources = new ComboBox<>();
+		comboBoxColors = new ComboBox<>();
+		endTimePicker = new TimePicker();
+		multiselectComboBoxFriends = new MultiselectComboBox<String>();
+		multiselectComboBoxFriends.getElement().getStyle().set("padding", "5px");
+		endDatePicker = new DatePicker();
+		checkBoxDays = new CheckboxGroup<>();
+		checkBoxDays.getElement().getStyle().set("font-size", "14px");
+		iconFriends = new Icon(VaadinIcon.USERS);
+		iconFriends.setColor(blueColor);
+		iconCheck = new Icon(VaadinIcon.CHECK);
+		iconCheck.setColor(blueColor);
 	}
 
 	public void createEntryForm() {
-		setSpacing(false);
-		setAlignItems(Alignment.AUTO);
-		container = new HorizontalLayout();
+		formDescription.setText("New Reservation");
+		formDescription.getElement().getStyle().set("color","var(--lumo-success-color)");
+		formDescription.getElement().getStyle().set("background", "var(--lumo-success-color-10pct)");
+		add(formDescription);
 		
 		/* Form Title */
-		titleContainer = new HorizontalLayout();
-		title = new H3("EVENT:");
-		title.getElement().getStyle().set("fontWeight", "bold");
+		title = new H3("Start date:");
 		selectedDate = new H3(ld.toString());
-		selectedDate.getElement().getStyle().set("color", blueColor);
 		selectedDate.getElement().getStyle().set("fontWeight", "bold");
 		titleContainer.add(title, selectedDate);
 		add(titleContainer);
-
+		
 		/* Recurring event */
-		checkBoxRecurring = new Checkbox();
 		checkBoxRecurring.setLabel("Recurring event?");
 		checkBoxRecurring.setValue(false);
 		checkBoxRecurring.addValueChangeListener(e -> {
@@ -87,60 +123,50 @@ public class EntryForm extends VerticalLayout {
 			}
 		});
 		add(checkBoxRecurring);
+		add(container);
 
 		/* Resources */
-		l1 = new VerticalLayout();
 		l1.setSpacing(false);
-		comboBoxResources = new ComboBox<>();
+		comboBoxResources.setRequired(true);
 		comboBoxResources.setItems("Server A", "Laboratorio 1", "Server B");
 		comboBoxResources.setLabel("Resources");
 
 		/* Event Colors */
-		comboBoxColors = new ComboBox<>();
-		comboBoxColors.setItems("dodgerblue", "gray", "orange", "tomato", "violet");
-		comboBoxColors.setLabel("Event Color");
+		comboBoxColors.setItems("dodgerblue", "green", "orange", "red", "violet");
+		comboBoxColors.setLabel("Color");
 		l1.add(comboBoxResources, comboBoxColors);
 		container.add(l1);
 
 		/* Start time / End time */
-		l2 = new VerticalLayout();
 		l2.setSpacing(false);
 		l2.setAlignItems(Alignment.BASELINE);
 		startTimePicker = new TimePicker();
+		startTimePicker.setRequired(true);
 		startTimePicker.setLabel("Start Time");
 		startTimePicker.setMinTime(LocalTime.of(7, 0));
 		startTimePicker.setMaxTime(LocalTime.of(23, 0));
-
-		endTimePicker = new TimePicker();
+		endTimePicker.setRequired(true);
 		endTimePicker.setLabel("End Time");
 		endTimePicker.setMinTime(LocalTime.of(7, 0));
 		endTimePicker.setMaxTime(LocalTime.of(23, 0));
-
 		l2.add(startTimePicker, endTimePicker);
 		container.add(l2);
-		add(container);
 
-		/* Friends box */
-		multiselectComboBox = new MultiselectComboBox<String>();
-		multiselectComboBox.setPlaceholder("@choose friends..");
-		multiselectComboBox.setItems("Item 1", "Item 2", "Item 3", "Item 4");
-		l5 = new HorizontalLayout();
-		Icon i = new Icon(VaadinIcon.USERS);
-		i.setColor(blueColor);
-		inviteButton = new Button(i);
-		Label friendsLabel = new Label("Do you want to invite some friend?");
+		/* Friends box */	
+		multiselectComboBoxFriends.setPlaceholder("@choose friends..");
+		multiselectComboBoxFriends.setItems("Item 1", "Item 2", "Item 3", "Item 4");
+		inviteButton = new Button(iconFriends);
+		inviteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		Label friendsLabel = new Label("Do you want to invite some friends? ");
+		friendsLabel.getElement().getStyle().set("font-size", "14px");
 		l5.setAlignItems(Alignment.BASELINE);
 		l5.add(inviteButton, friendsLabel);
 		add(l5);
-
 		inviteButton.addClickListener(e -> {
-			l5.add(multiselectComboBox);
+			l5.add(multiselectComboBoxFriends);
 		});
-
-		l4 = new HorizontalLayout();
-		Icon i2 = new Icon(VaadinIcon.CHECK);
-		i2.setColor(blueColor);
-		saveButton = new Button("Save", i2);
+		
+		saveButton = new Button("Save", iconCheck);
 		saveButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		l4.add(saveButton);
 		setAlignSelf(Alignment.END, l4);
@@ -148,18 +174,17 @@ public class EntryForm extends VerticalLayout {
 	}
 
 	public void addInfoRecurringEvent() {
-		l3 = new VerticalLayout();
-		endDatePicker = new DatePicker();
-		endDatePicker.setLabel("End Date Recurring Event");
-		l3.add(endDatePicker);
-		checkBoxDays = new CheckboxGroup<>();
+		l3.setVisible(true);
+		endDatePicker.setVisible(true);
+		endDatePicker.setRequired(true);
+		checkBoxDays.setRequired(true);
+		endDatePicker.setLabel("End Date");
+		/* Days */
 		checkBoxDays.setLabel("Days");
-		checkBoxDays.setSizeUndefined();
-		checkBoxDays.setItems(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY,
-				DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
+		checkBoxDays.setItems(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, 
+				DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
 		checkBoxDays.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
-		l3.add(checkBoxDays);
-		//l3.setSpacing(false);
+		l3.add(endDatePicker, checkBoxDays);
 		container.add(l3);
 	}
 
@@ -188,23 +213,26 @@ public class EntryForm extends VerticalLayout {
 	}
 
 	public void fillExistingEntry(Entry entry) {
+		formDescription.setText("Edit Reservation");
+		formDescription.getElement().getStyle().set("color","#cccc00");
+		formDescription.getElement().getStyle().set("background", "#ffffe6");
+		checkBoxRecurring.setVisible(false);
 		comboBoxResources.setValue(entry.getTitle());
 		comboBoxColors.setValue(entry.getColor());
-		if (entry.isRecurring()) {
-			addInfoRecurringEvent();
-			endDatePicker.setValue(entry.getRecurringEndDate(Timezone.UTC));
-			startTimePicker.setValue(entry.getRecurringStartTime());
-			endTimePicker.setValue(entry.getRecurringEndTime());
-			checkBoxDays.setValue(entry.getRecurringDaysOfWeeks());
-			
-		} else {
-			startTimePicker.setValue(entry.getStart().toLocalTime());
-			endTimePicker.setValue(entry.getEnd().toLocalTime());
-		}
+		startTimePicker.setValue(entry.getStart().toLocalTime());
+		endTimePicker.setValue(entry.getEnd().toLocalTime());
+		Icon i2 = new Icon(VaadinIcon.TRASH);
+		deleteEntryButton = new Button("Delete", i2);
+		deleteEntryButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		l4.add(deleteEntryButton);
 	}
 
 	public Button getSaveButton() {
 		return saveButton;
+	}
+	
+	public Button getDeleteEntryButton() {
+		return deleteEntryButton;
 	}
 
 }

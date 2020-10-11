@@ -7,3 +7,9 @@
   display: block;
   padding: var(--lumo-space-m) var(--lumo-space-l);
 }
+
+.fc-sun { 
+color:#337ab7;  
+border-color: black;  
+background-color: #ffa58c; 
+}

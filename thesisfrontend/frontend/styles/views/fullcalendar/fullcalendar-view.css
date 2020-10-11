@@ -1,0 +1,6 @@
+@charset "ISO-8859-1";
+html{
+    /* light blue to be used instead of default light yellow*/
+    --fc-unthemed_tdfc-today-background: #b3e6ff !important;
+    
+}

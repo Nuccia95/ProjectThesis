@@ -5,7 +5,8 @@ import java.util.HashSet;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.demo.thesisbackend.dao.UserDAO;
-import shared.thesiscommon.User;
+
+import shared.thesiscommon.bean.User;
 
 @Service
 public class LoginService {

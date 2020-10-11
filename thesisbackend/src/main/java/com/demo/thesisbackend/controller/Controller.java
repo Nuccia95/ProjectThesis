@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.thesisbackend.services.ReservationService;
+
+import shared.thesiscommon.bean.Reservation;
+import shared.thesiscommon.bean.User;
+
 import com.demo.thesisbackend.services.LoginService;
 
-import shared.thesiscommon.Reservation;
-import shared.thesiscommon.ReservationDTO;
-import shared.thesiscommon.User;
+
 @CrossOrigin("*")
 @RestController
 public class Controller {
@@ -37,19 +39,32 @@ public class Controller {
 	}
 	
 	@RequestMapping(value="/createReservation", method = RequestMethod.POST)
-	public Reservation createBook(@RequestBody ReservationDTO reservationDTO) {
-		return reservationService.createReservation(reservationDTO);
+	public Reservation createReservation(@RequestBody Reservation reservation) {
+		return reservationService.createReservation(reservation);
 	}
 	
 	@RequestMapping(value="/updateDate", method = RequestMethod.POST)
-	public Reservation updateDate(@RequestBody ReservationDTO reservationDTO) {
-		return reservationService.updateDate(reservationDTO);
+	public Reservation updateDate(@RequestBody Reservation reservation) {
+		return reservationService.updateDate(reservation);
+	}
+	
+	@RequestMapping(value="/updateSingleReservation", method = RequestMethod.POST)
+	public Reservation updateSingleReservation(@RequestBody Reservation reservation) {
+		return reservationService.updateSingleReservation(reservation);
+	}
+	
+	@RequestMapping(value="/deleteReservation", method = RequestMethod.POST)
+	public void deleteReservation(@RequestBody Reservation reservation) {
+		 reservationService.deleteReservation(reservation);
+	}
+	
+	@RequestMapping(value="/deleteRecurringReservations", method = RequestMethod.POST)
+	public void deleteRecurringReservations(@RequestBody Reservation reservation) {
+		 reservationService.deleteRecurringReservations(reservation);
 	}
 	
 	@GetMapping(value="/getReservationsByOwner")
 	public Set<Reservation> updateDate(@RequestParam String id) {
-		System.out.println("controller");
 		return reservationService.getReservationsByOwner(id);
 	}
-
 }

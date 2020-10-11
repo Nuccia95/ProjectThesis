@@ -18,7 +18,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.VaadinSession;
 
-import shared.thesiscommon.User;
+import shared.thesiscommon.bean.User;
 
 /**
  * UI content when the user is not logged in yet.
@@ -108,13 +108,14 @@ public class LoginView extends FlexLayout {
 		User u = new User();
 		u.setEmail(event.getUsername());
 		u.setPassword(event.getPassword());
-		User userResult = loginHandler.login(u);
+		getUI().get().navigate("fullCalendarView");
+		/*User userResult = loginHandler.login(u);
 		if (userResult == null)
 			Notification.show("Error in login, try again");
 		else {
 			VaadinSession.getCurrent().setAttribute("currentUser", userResult);
 			getUI().get().navigate("fullCalendarView");
-		}
+		}*/
 	}
 	
 	public void registration() {
