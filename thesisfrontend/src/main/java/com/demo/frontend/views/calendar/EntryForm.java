@@ -111,6 +111,7 @@ public class EntryForm extends VerticalLayout {
 		titleContainer.add(title, selectedDate);
 		add(titleContainer);
 		
+		
 		/* Recurring event */
 		checkBoxRecurring.setLabel("Recurring event?");
 		checkBoxRecurring.setValue(false);
