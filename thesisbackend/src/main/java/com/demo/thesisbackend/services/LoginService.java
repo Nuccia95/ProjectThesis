@@ -13,11 +13,8 @@ public class LoginService {
 
 	@Autowired
 	private UserDAO userDAO;
-
-	public String hello() {
-		System.out.print("HELLO NUCCIA");
-		return "OK - CI SIAMO CONNESSI";
-	}
+	private String ADMIN = "nuccia@gmail.com";
+	private String ADMIN_PASS = "nuccia";
 
 	public User login(User user) {
 		User u = userDAO.findByEmail(user.getEmail());
@@ -31,8 +28,18 @@ public class LoginService {
 	}
 
 	public User registration(User user) {
+		
+		String email = user.getEmail();
+		String password = user.getPassword();
+		
 		User u = userDAO.findByEmail(user.getEmail());
 		if (u == null) {
+			if(email.equals(ADMIN) && password.equals(ADMIN_PASS)) {
+				user.setRole("ADMIN");
+				System.out.println(user.getRole());
+			}
+			else
+				user.setRole("USER");
 			user.setCreatedBooks(new HashSet<>());
 			return userDAO.save(user);
 		}

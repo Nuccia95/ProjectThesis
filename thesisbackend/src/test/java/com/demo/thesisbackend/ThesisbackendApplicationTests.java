@@ -46,12 +46,12 @@ class ThesisbackendApplicationTests {
 		
 	}*/
 	
-	/*@Test
+	@Test
 	public void prova(){
-		LocalDate start = LocalDate.now();
-		System.out.println("Start: " + start + " " + start.getDayOfWeek());
-		start = start.plusDays(1);
-		System.out.println("Start + 1: " + start + " " + start.getDayOfWeek());
-	}*/
+		String ADMIN = "nuccia@gmail.com";
+		String email = "nuccia@gmail.com";
+		if(email.equals(ADMIN))
+			System.out.println("uguali");
+	}
 
 }
