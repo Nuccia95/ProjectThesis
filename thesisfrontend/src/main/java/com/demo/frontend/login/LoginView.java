@@ -109,13 +109,13 @@ public class LoginView extends FlexLayout {
 		u.setEmail(event.getUsername());
 		u.setPassword(event.getPassword());
 		getUI().get().navigate("fullCalendarView");
-		/*User userResult = loginHandler.login(u);
+		User userResult = loginHandler.login(u);
 		if (userResult == null)
 			Notification.show("Error in login, try again");
 		else {
-			VaadinSession.getCurrent().setAttribute("currentUser", userResult);
+			CurrentUser.set(userResult, true);
 			getUI().get().navigate("fullCalendarView");
-		}*/
+		}
 	}
 	
 	public void registration() {
@@ -127,7 +127,7 @@ public class LoginView extends FlexLayout {
 				if (userResult == null)
 					Notification.show("Error in registration, try again");
 				else {
-					VaadinSession.getCurrent().setAttribute("currentUser", userResult);
+					CurrentUser.set(userResult, true);
 					getUI().get().navigate("fullCalendarView");
 				}
 			}

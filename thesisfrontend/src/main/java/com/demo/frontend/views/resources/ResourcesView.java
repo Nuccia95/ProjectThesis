@@ -2,6 +2,8 @@ package com.demo.frontend.views.resources;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import com.demo.frontend.login.CurrentUser;
 import com.demo.frontend.views.main.MainView;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
@@ -74,6 +76,8 @@ public class ResourcesView extends HorizontalLayout {
 		filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
 
 		newResourceButton = new Button("New resource");
+		if(CurrentUser.getRole().equals("USER"))
+			newResourceButton.setEnabled(false);
 		// Setting theme variant of new production button to LUMO_PRIMARY that
 		// changes its background color to blue and its text color to white
 		newResourceButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

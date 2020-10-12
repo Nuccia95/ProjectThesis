@@ -27,7 +27,7 @@ public final class CurrentUser
 	 * The attribute key used to store the username in the session.
 	 */
 	public static final String CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser.class.getCanonicalName();
-	public static final String CURRENT_CODE_SESSION_ATTRIBUTE_KEY = "CurrentUserCode";
+	//public static final String CURRENT_CODE_SESSION_ATTRIBUTE_KEY = "CurrentUserCode";
 
 	/*public static boolean checkFunctionalities(final SystemFunctionality... sfs)
 	{
@@ -47,6 +47,10 @@ public final class CurrentUser
 
 	public static User get(final UI ui){
 		return (User) ui.getSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
+	}
+	
+	public static String getRole() {
+		return get().getRole();
 	}
 
 	/**
@@ -121,7 +125,7 @@ public final class CurrentUser
 	 * selected if the current user has more than one device installed) and
 	 * stores it in the current session.
 	 */
-	public static void setCode(String code)
+	/**public static void setCode(String code)
 	{
 		logger.info("Set code:" + code);
 		if (code == null)
@@ -133,7 +137,7 @@ public final class CurrentUser
 		{
 			UI.getCurrent().getSession().setAttribute(CURRENT_CODE_SESSION_ATTRIBUTE_KEY, code);
 		}
-	}
+	}*/
 
 
 	private static void handleCookie(final String cookie_name, final String cookie_value)
