@@ -1,4 +1,4 @@
-package com.demo.frontend.login;
+package com.demo.frontend.view.login;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;

@@ -1,4 +1,4 @@
-package com.demo.frontend.login;
+package com.demo.frontend.view.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

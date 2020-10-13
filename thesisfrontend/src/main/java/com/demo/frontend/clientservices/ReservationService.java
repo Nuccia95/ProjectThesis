@@ -9,7 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.vaadin.stefan.fullcalendar.Entry;
 
-import com.demo.frontend.login.CurrentUser;
+import com.demo.frontend.view.login.CurrentUser;
 
 import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.User;
