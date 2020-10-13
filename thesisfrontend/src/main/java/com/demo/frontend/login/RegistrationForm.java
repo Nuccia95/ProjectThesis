@@ -2,6 +2,7 @@ package com.demo.frontend.login;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -13,6 +14,7 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import shared.thesiscommon.bean.User;
 
+@CssImport("./styles/views/login/login-view.css")
 public class RegistrationForm {
 
 	private H2 title;
@@ -22,27 +24,30 @@ public class RegistrationForm {
 	private VerticalLayout container;
 	private TextField firstnameField;
 	private TextField lastnameField;
-	private TextField roleField;
 	private EmailField emailField;
 	private PasswordField passwordField1;
 	private PasswordField passwordField2;
 	private FormLayout registrationForm;
 	private Button submitButton;
 	
-	public RegistrationForm() {}
+	public RegistrationForm() {
+	}
 	
 	public void buildRegistrationForm() {
-		title = new H2("SignUp");
+		title = new H2("Sign up");
 		/* containers */
 		c = new HorizontalLayout();
 		c2 = new HorizontalLayout();
+		c2.setSizeFull();
 		c3 = new HorizontalLayout();
 		container = new VerticalLayout();
+		container.setId("registration-form");
+		container.setSpacing(false);
 		
 		firstnameField = new TextField("First name");
 		lastnameField = new TextField("Last name");
-		roleField = new TextField("Role");
 		emailField = new EmailField("Email");
+		emailField.setSizeFull();
 		emailField.setRequiredIndicatorVisible(true);
 		emailField.setPlaceholder("@");
 		passwordField1 = new PasswordField("Wanted password");
@@ -51,13 +56,14 @@ public class RegistrationForm {
 		passwordField2.setRequiredIndicatorVisible(true);
 		submitButton = new Button("SignUp");
 		submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		submitButton.setSizeFull();
 		c.add(firstnameField, lastnameField);
-		c2.add(emailField, roleField);
+		c2.add(emailField);
 		c3.add(passwordField1, passwordField2);
-		container.add(c, c2, c3);
-		container.setAlignItems(Alignment.CENTER);
-		registrationForm = new FormLayout(title, container, submitButton);
-		registrationForm.setMaxWidth("400px");
+		container.add(title, c, c2, c3, submitButton);
+		container.setAlignSelf(Alignment.CENTER, submitButton);
+		container.setAlignSelf(Alignment.START, title);
+		registrationForm = new FormLayout(container);
 		registrationForm.setColspan(submitButton, 2);
 			
 	}
@@ -71,7 +77,6 @@ public class RegistrationForm {
 		u.setEmail(emailField.getValue());
 		u.setFirstName(firstnameField.getValue());
 		u.setLastName(lastnameField.getValue());
-		u.setRole(roleField.getValue());
 		u.setPassword(passwordField1.getValue());	
 		return u;
 	}

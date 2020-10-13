@@ -9,6 +9,7 @@ import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
+import com.demo.frontend.utils.SpanDescription;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -18,7 +19,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -34,9 +34,7 @@ public class EntryForm extends VerticalLayout {
 
 	private Entry newEntry;
 	private H3 title;
-	private H3 selectedDate;
-	private Span formDescription;
-	private HorizontalLayout titleContainer;
+	private SpanDescription spanDescription;
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
 	private Button saveButton;
@@ -59,23 +57,20 @@ public class EntryForm extends VerticalLayout {
 	private Icon iconFriends;
 	private Icon iconCheck;
 
-	public EntryForm(LocalDate ld2) {
-		this.ld = ld2;
+	public EntryForm(LocalDate date) {
+		this.ld = date;
 		initComponents();
 		createEntryForm();
 	}
 	
 	public void initComponents() {
 		setSpacing(false);
-		formDescription = new Span();
-		formDescription.getElement().getStyle().set("padding", "2px 10px");
-		formDescription.getElement().getStyle().set("font-size", "14px");
+		spanDescription = new SpanDescription();
 		container = new HorizontalLayout();
 		container.setSpacing(false);
 		container.setAlignItems(Alignment.START);
 		container.setMaxWidth("900px");
 		container.setMaxHeight("710px");
-		titleContainer = new HorizontalLayout();
 		checkBoxRecurring = new Checkbox();
 		checkBoxRecurring.getElement().getStyle().set("font-size", "14px");
 		l1 = new VerticalLayout();
@@ -99,25 +94,20 @@ public class EntryForm extends VerticalLayout {
 	}
 
 	public void createEntryForm() {
-		formDescription.setText("New Reservation");
-		formDescription.getElement().getStyle().set("color","var(--lumo-success-color)");
-		formDescription.getElement().getStyle().set("background", "var(--lumo-success-color-10pct)");
-		add(formDescription);
+
+		add(spanDescription.build("CREATE"));
 		
 		/* Form Title */
-		title = new H3("Start date:");
-		selectedDate = new H3(ld.toString());
-		selectedDate.getElement().getStyle().set("fontWeight", "bold");
-		titleContainer.add(title, selectedDate);
-		add(titleContainer);
-		
+		title = new H3("Start date: " + ld);
+		title.getElement().getStyle().set("fontWeight", "bold");
+		add(title);
 		
 		/* Recurring event */
 		checkBoxRecurring.setLabel("Recurring event?");
 		checkBoxRecurring.setValue(false);
 		checkBoxRecurring.addValueChangeListener(e -> {
 			if (e.getValue())
-				addInfoRecurringEvent();
+				addFieldRecurringEvent();
 			else {
 				l3.setVisible(false);
 				endDatePicker.setVisible(false);
@@ -174,7 +164,7 @@ public class EntryForm extends VerticalLayout {
 		add(l4);
 	}
 
-	public void addInfoRecurringEvent() {
+	public void addFieldRecurringEvent() {
 		l3.setVisible(true);
 		endDatePicker.setVisible(true);
 		endDatePicker.setRequired(true);
@@ -213,10 +203,11 @@ public class EntryForm extends VerticalLayout {
 		return newEntry;
 	}
 
+	/* Fill form with value of existing entry */
 	public void fillExistingEntry(Entry entry) {
-		formDescription.setText("Edit Reservation");
-		formDescription.getElement().getStyle().set("color","#cccc00");
-		formDescription.getElement().getStyle().set("background", "#ffffe6");
+		
+		spanDescription.setSpanEdit();
+		
 		checkBoxRecurring.setVisible(false);
 		comboBoxResources.setValue(entry.getTitle());
 		comboBoxColors.setValue(entry.getColor());
@@ -227,6 +218,7 @@ public class EntryForm extends VerticalLayout {
 		deleteEntryButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		l4.add(deleteEntryButton);
 	}
+	
 
 	public Button getSaveButton() {
 		return saveButton;

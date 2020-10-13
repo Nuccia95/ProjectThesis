@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import shared.thesiscommon.bean.User;
 
 @Service
-public class LoginHandler {
+public class LoginService {
 
 	@Autowired
 	private RestTemplate restTemplate;

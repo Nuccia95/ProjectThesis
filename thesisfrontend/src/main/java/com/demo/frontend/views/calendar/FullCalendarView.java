@@ -7,12 +7,11 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -21,13 +20,16 @@ import shared.thesiscommon.bean.Reservation;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.Timezone;
-import com.demo.frontend.clientservices.ReservationHandler;
+import com.demo.frontend.clientservices.ReservationService;
+import com.demo.frontend.utils.QuestionDialog;
 import com.demo.frontend.views.main.MainView;
 
 @Route(value = "fullCalendarView", layout = MainView.class)
@@ -40,43 +42,42 @@ public class FullCalendarView extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@Autowired
+	private ReservationService reservationService;
+
 	private FullCalendar calendar;
-	private HorizontalLayout titleContainer;
+	
+	private HorizontalLayout topBarContainer;
 	private DatePicker goToPicker;
+	
 	private Dialog createEntryDialog;
-	private Dialog changeEntryDateDialog;
-	private Dialog deleteEntryDialog;
-	private Button confirmUpdateDateButton;
-	private Button cancelUpdateDateButton;
-	private Button deleteRecurringEntryButton;
 	private EntryForm entryForm;
+	private QuestionDialog moveEntryDialog;
+	private QuestionDialog removeEntryDialog;
+	
 	private Entry currentEntry;
 	private LocalDate ld;
-	private final String blueColor = "#3e77c1";
-	@Autowired
-	private ReservationHandler reservationHandler;
+	
 
 	public FullCalendarView() {
 		setSpacing(false);
-		setId("calendar-view");
-		calendar = FullCalendarBuilder.create().build();
+		setClassName("fullcalendar-view");
+		createTopBar();
+		createCalendar();
+		setFlexGrow(1, topBarContainer, calendar);
+		manageCalendarEntries();
+	}
+	
+	public void createCalendar() {
+		calendar = FullCalendarBuilder.create().withAutoBrowserTimezone().withEntryLimit(3).build();
+		calendar.setId("calendar");
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
-		createTopBar();
 		add(calendar);
-		setFlexGrow(1, titleContainer, calendar);
-		manageCalendarEntries();
 	}
 
 	public void manageCalendarEntries() {
-		Entry entry = new Entry();
-		entry.setTitle("Some event");
-		entry.setStart(LocalDate.now().withDayOfMonth(3).atTime(10, 0), calendar.getTimezone());
-		entry.setEnd(entry.getStart().plusHours(2), calendar.getTimezone());
-		entry.setColor("grey");
-		entry.setEditable(true);
-		calendar.addEntry(entry);
-
+	
 		/* CREATE NEW RESERVATION */
 		calendar.addTimeslotsSelectedListener((event) -> {
 			ld = event.getStartDateTime().toLocalDate();
@@ -84,14 +85,10 @@ public class FullCalendarView extends VerticalLayout {
 			createEntryDialog.open();
 			entryForm.getSaveButton().addClickListener(e -> {
 				currentEntry = entryForm.createCurrentEntry();
-				Reservation reservation = reservationHandler.fromEntryToReservation(currentEntry);
 				if (currentEntry.isRecurring())
-					createRecurringReservations(currentEntry, reservation);
-				else {
-					Reservation r = reservationHandler.createReservation(reservation);
-					Entry singleEntry = reservationHandler.fromReservationToEntry(r);
-					calendar.addEntry(singleEntry);
-				}
+					createRecurringReservations(currentEntry);
+				else
+					createSingleReservation(currentEntry);
 				createEntryDialog.close();
 			});
 		});
@@ -100,44 +97,42 @@ public class FullCalendarView extends VerticalLayout {
 		calendar.addEntryClickedListener(e -> {
 			/* delete recurring reservations */
 			if (e.getEntry().isRecurring() && e.getEntry().getDescription().equals("0")) {
-				buildDeleteEntryDialog();
-				deleteRecurringEntryButton.addClickListener(ev -> {
-					Reservation reservation = reservationHandler.fromEntryToReservation(e.getEntry());
-					reservation.setId(Long.parseLong(e.getEntry().getId()));
-					reservationHandler.deleteRecurringReservations(reservation);
+				
+				removeEntryDialog = new QuestionDialog("Do you want to delete this reservation?", VaadinIcon.TRASH, VaadinIcon.CLOSE, "REMOVE");
+				
+				removeEntryDialog.getConfirmButton().addClickListener(ev -> {
+					Reservation reservation = reservationService.mapEntryToReservation(e.getEntry());
+					reservationService.deleteRecurringReservations(reservation);
 					for (Entry recurrEntry : calendar.getEntries())
-						// da fare: se l id dell entry è uguale a quello dell user;
 						if (recurrEntry.getDescription() != null)
 							if (recurrEntry.getDescription().equals(reservation.getId().toString()))
 								calendar.removeEntry(recurrEntry);
 					calendar.removeEntry(e.getEntry());
-					deleteEntryDialog.close();
+					removeEntryDialog.close();
+				});
+				removeEntryDialog.getCancelButton().addClickListener(ev -> {
+					removeEntryDialog.close();
 				});
 			}
 			/* edit single reservation */
 			if (e.getEntry().isEditable()) {
 				LocalDate ld1 = null;
-				if (e.getEntry().isRecurring())
-					ld1 = e.getEntry().getRecurringStartDate(Timezone.UTC);
-				else
-					ld1 = e.getEntry().getStart().toLocalDate();
+				ld1 = e.getEntry().getStart().toLocalDate();
 				setForm(ld1);
 				entryForm.fillExistingEntry(e.getEntry());
 				createEntryDialog.open();
 				entryForm.getSaveButton().addClickListener(ev -> {
 					currentEntry = entryForm.createCurrentEntry();
-					Reservation reservation = reservationHandler.fromEntryToReservation(currentEntry);
-					reservation.setId(Long.parseLong(e.getEntry().getId()));
-					Reservation r = reservationHandler.updateSingleReservation(reservation);
-					Entry singleEntry = reservationHandler.fromReservationToEntry(r);
+					Reservation reservation = reservationService.mapEntryToReservation(currentEntry);
+					Reservation r = reservationService.updateSingleReservation(reservation);
+					Entry singleEntry = reservationService.mapReservationToEntry(r);
 					calendar.removeEntry(e.getEntry());
 					calendar.addEntry(singleEntry);
 					createEntryDialog.close();
 				});
 				entryForm.getDeleteEntryButton().addClickListener(ev -> {
-					Reservation reservation = reservationHandler.fromEntryToReservation(e.getEntry());
-					reservation.setId(Long.parseLong(e.getEntry().getId()));
-					reservationHandler.deleteReservation(reservation);
+					Reservation reservation = reservationService.mapEntryToReservation(e.getEntry());
+					reservationService.deleteReservation(reservation);
 					calendar.removeEntry(e.getEntry());
 					createEntryDialog.close();
 				});
@@ -150,14 +145,15 @@ public class FullCalendarView extends VerticalLayout {
 			if (e.getEntry().isEditable()) {
 				e.applyChangesOnEntry();
 				LocalDate newDate = e.getEntry().getStart().toLocalDate();
-				buildUpdateDateDialog(newDate);
-				confirmUpdateDateButton.addClickListener(evnt -> {
-					Reservation reservation = reservationHandler.fromEntryToReservation(e.getEntry());
-					reservation.setId(Long.parseLong(e.getEntry().getId()));
-					reservationHandler.updateReservationDate(reservation);
-					changeEntryDateDialog.close();
+				
+				moveEntryDialog = new QuestionDialog( "Update the event date to " + newDate + "?", VaadinIcon.CHECK, VaadinIcon.CLOSE, "MOVE");
+				
+				moveEntryDialog.getConfirmButton().addClickListener(evnt -> {
+					Reservation reservation = reservationService.mapEntryToReservation(e.getEntry());
+					reservationService.updateReservationDate(reservation);
+					moveEntryDialog.close();
 				});
-				cancelUpdateDateButton.addClickListener(evnt -> {
+				moveEntryDialog.getCancelButton().addClickListener(evnt -> {
 					calendar.removeEntry(e.getEntry());
 					Entry oldEntry = e.getEntry();
 					LocalDateTime ldtstart = LocalDateTime.of(oldDate, oldEntry.getStart().toLocalTime());
@@ -165,29 +161,54 @@ public class FullCalendarView extends VerticalLayout {
 					oldEntry.setStart(ldtstart);
 					oldEntry.setEnd(ldtend);
 					calendar.addEntry(oldEntry);
-					changeEntryDateDialog.close();
+					moveEntryDialog.close();
 				});
 			}
 		});
+		
+		/* Limited number of entries displayed */
+        calendar.addLimitedEntriesClickedListener(event -> {
+            Collection<Entry> entries = calendar.getEntries(event.getClickedDate());
+            if (!entries.isEmpty()) {
+                Dialog dialog = new Dialog();
+                VerticalLayout dialogLayout = new VerticalLayout();
+                dialogLayout.setDefaultHorizontalComponentAlignment(Alignment.STRETCH);
+                for (Entry e : entries) {
+                	Button b = createClickableEntry(e);
+                	b.addClickListener(click -> {
+                		setForm(event.getClickedDate());
+                		entryForm.fillExistingEntry(e);
+        				createEntryDialog.open();
+                	});
+                	dialogLayout.add(b);
+                }
+                dialog.add(dialogLayout);
+                dialog.open();
+            }
+        });
 	}
 
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
 		super.onAttach(attachEvent);
-		// The page is loaded in this moment
-		setCurrentUserReservations();
-	}
-
-	public void setCurrentUserReservations() {
-		Reservation[] reservations = reservationHandler.getReservationByOwner();
+		/* Current user reservations */
+		/*Reservation[] reservations = reservationService.getReservationByOwner();
 		if (reservations != null)
 			for (Reservation reservation : reservations) {
-				Entry e = reservationHandler.fromReservationToEntry(reservation);
+				Entry e = reservationService.mapReservationToEntry(reservation);
 				calendar.addEntry(e);
-			}
+			}*/
+	}
+	
+	public void createSingleReservation(Entry newEntry) {
+		Reservation reservation = reservationService.mapEntryToReservation(currentEntry);
+		Reservation r = reservationService.createReservation(reservation);
+		Entry singleEntry = reservationService.mapReservationToEntry(r);
+		calendar.addEntry(singleEntry);
 	}
 
-	public void createRecurringReservations(Entry newEntry, Reservation reservation) {
+	public void createRecurringReservations(Entry newEntry) {
+		Reservation reservation = reservationService.mapEntryToReservation(currentEntry);
 		LocalDate start = newEntry.getRecurringStartDate(Timezone.UTC);
 		LocalDate end = newEntry.getRecurringEndDate(Timezone.UTC);
 		Long groupId = null;
@@ -202,10 +223,10 @@ public class FullCalendarView extends VerticalLayout {
 				reservation.setEditable(false);
 				if (groupId != null)
 					reservation.setGroupId(groupId);
-				Reservation createdReservation = reservationHandler.createReservation(reservation);
+				Reservation createdReservation = reservationService.createReservation(reservation);
 				if (groupId == null)
 					groupId = createdReservation.getId();
-				Entry e = reservationHandler.fromReservationToEntry(createdReservation);
+				Entry e = reservationService.mapReservationToEntry(createdReservation);
 				calendar.addEntry(e);
 			}
 			start = start.plusDays(1);
@@ -214,122 +235,63 @@ public class FullCalendarView extends VerticalLayout {
 
 	/* COMPONENTS */
 	public void createTopBar() {
-		titleContainer = new HorizontalLayout();
-		HorizontalLayout buttonsContainer = new HorizontalLayout();
-		HorizontalLayout topBarContainer = new HorizontalLayout();
+		topBarContainer = new HorizontalLayout();		
 		topBarContainer.setSizeFull();
-		buttonsContainer.getElement().getStyle().set("margin-left", "auto");
-		titleContainer.getElement().getStyle().set("margin-right", "auto");
+		
+		HorizontalLayout buttonsContainer = new HorizontalLayout();
 		goToPicker = new DatePicker();
 		goToPicker.setValue(LocalDate.now());
 		goToPicker.setVisible(false);
 
-		H3 title = new H3(goToPicker.getValue().getMonth().toString());
-		H3 date = new H3(goToPicker.getValue().toString());
+		H3 title = new H3(goToPicker.getValue().getMonth() + " " + goToPicker.getValue().getDayOfMonth() + ", " +
+				goToPicker.getValue().getYear());
 		title.getElement().getStyle().set("fontWeight", "bold");
-		title.getElement().getStyle().set("color", "black");
-		date.getElement().getStyle().set("fontWeight", "bold");
-		date.getElement().getStyle().set("color", blueColor);
 
 		goToPicker.addValueChangeListener(e -> {
 			calendar.gotoDate(goToPicker.getValue());
-			title.setText(goToPicker.getValue().getMonth().toString());
-			date.setText(goToPicker.getValue().toString());
+			/* update date */
+			title.setText(goToPicker.getValue().getMonth() + " " + goToPicker.getValue().getDayOfMonth() + ", " +
+					goToPicker.getValue().getYear());
 			goToPicker.setVisible(false);
 		});
 
 		Icon i = new Icon(VaadinIcon.CALENDAR_USER);
-		i.setColor(blueColor);
+		i.setColor("#3e77c1");
 		Button goToButton = new Button("Go To");
 		goToButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		goToButton.setIcon(i);
-		titleContainer.add(goToButton);
 		goToButton.addClickListener(e -> {
 			goToPicker.setVisible(true);
 			goToPicker.open();
 		});
-		buttonsContainer.setAlignItems(Alignment.BASELINE);
+
 		buttonsContainer.add(goToButton, goToPicker);
-		titleContainer.add(title, date);
-		titleContainer.setAlignItems(Alignment.BASELINE);
-		topBarContainer.add(titleContainer, buttonsContainer);
+		buttonsContainer.getElement().getStyle().set("margin-left", "auto");
 		topBarContainer.setAlignSelf(Alignment.END, buttonsContainer);
+		topBarContainer.add(title, buttonsContainer);
 		add(topBarContainer);
 	}
+	
+	public Button createClickableEntry(Entry entry) {
+		Button button = new Button(entry.getTitle());
+		button.setId("clickable-entry");
+		Style style = button.getStyle();
+        style.set("background-color", Optional.ofNullable(entry.getColor()).orElse("rgb(58, 135, 173)"));
+        style.set("color", "white");
+        style.set("font-size", "12px");
+        style.set("height", "20px");
+        style.set("border", "0 none black");
+        style.set("border-radius", "3px");
+        style.set("text-align", "left");
+        style.set("margin", "1px");
+        return button;
+	}
 
-	public void setForm(LocalDate ld) {
-		createEntryDialog = setNewDialog();
-		entryForm = new EntryForm(ld);
+	public void setForm(LocalDate date) {
+		createEntryDialog = new Dialog();
+		entryForm = new EntryForm(date);
 		createEntryDialog.add(entryForm);
-		goToPicker.setValue(ld);
+		goToPicker.setValue(date);
 	}
 
-	public Dialog setNewDialog() {
-		Dialog d = new Dialog();
-		d.setDraggable(true);
-		d.setCloseOnEsc(true);
-		d.setCloseOnOutsideClick(true);
-		return d;
-	}
-
-	public void buildUpdateDateDialog(LocalDate newDate) {
-		VerticalLayout container = new VerticalLayout();
-		container.setFlexGrow(1, container);
-		container.setSpacing(false);
-		changeEntryDateDialog = setNewDialog();
-
-		Span span = new Span("Move to");
-		span.getElement().getStyle().set("padding", "2px 10px");
-		span.getElement().getStyle().set("font-size", "14px");
-		span.getElement().getStyle().set("color", "#ff751a");
-		span.getElement().getStyle().set("background", "#ffe6cc");
-		changeEntryDateDialog.add(span);
-
-		Span description = new Span("Update the event date to " + newDate.toString() + "?");
-		container.add(description);
-
-		HorizontalLayout buttonsContainer = new HorizontalLayout();
-		buttonsContainer.setSpacing(false);
-		Icon confirmIcon = new Icon(VaadinIcon.CHECK);
-		confirmIcon.setColor(blueColor);
-		confirmUpdateDateButton = new Button(confirmIcon);
-		confirmUpdateDateButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
-		Icon closeIcon = new Icon(VaadinIcon.CLOSE);
-		closeIcon.setColor(blueColor);
-		cancelUpdateDateButton = new Button(closeIcon);
-		cancelUpdateDateButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
-		buttonsContainer.add(confirmUpdateDateButton, cancelUpdateDateButton);
-		container.add(buttonsContainer);
-		container.setAlignSelf(Alignment.END, buttonsContainer);
-		changeEntryDateDialog.add(container);
-		changeEntryDateDialog.open();
-	}
-
-	public void buildDeleteEntryDialog() {
-		VerticalLayout container = new VerticalLayout();
-		container.setFlexGrow(1, container);
-		deleteEntryDialog = setNewDialog();
-
-		H4 description = new H4("Do you want to delete this reservation?");
-		container.add(description);
-
-		HorizontalLayout buttonsContainer = new HorizontalLayout();
-		Icon confirmIcon = new Icon(VaadinIcon.TRASH);
-		confirmIcon.setColor(blueColor);
-		deleteRecurringEntryButton = new Button(confirmIcon);
-
-		Icon closeIcon = new Icon(VaadinIcon.CLOSE);
-		closeIcon.setColor(blueColor);
-		Button closeButton = new Button(closeIcon);
-		closeButton.addClickListener(e -> deleteEntryDialog.close());
-
-		buttonsContainer.add(deleteRecurringEntryButton, closeButton);
-		container.add(buttonsContainer);
-		container.setAlignSelf(Alignment.END, buttonsContainer);
-
-		deleteEntryDialog.add(container);
-		deleteEntryDialog.open();
-	}
 }

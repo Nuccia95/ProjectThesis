@@ -10,13 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.demo.thesisbackend.services.ReservationService;
-
 import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.User;
-
-import com.demo.thesisbackend.services.LoginService;
+import com.demo.thesisbackend.managers.LoginManager;
+import com.demo.thesisbackend.managers.ReservationManager;
 
 
 @CrossOrigin("*")
@@ -24,47 +21,47 @@ import com.demo.thesisbackend.services.LoginService;
 public class Controller {
 	
 	@Autowired
-	private LoginService loginService;
+	private LoginManager loginManager;
 	@Autowired
-	private ReservationService reservationService;
+	private ReservationManager reservationManager;
 	
 	@RequestMapping(value="/login", method = RequestMethod.POST)
 	public User login(@RequestBody User user) {
-		return loginService.login(user);
+		return loginManager.login(user);
 	}
 	
 	@RequestMapping(value="/registration", method = RequestMethod.POST)
 	public User registration(@RequestBody User user) {
-		return loginService.registration(user);
+		return loginManager.registration(user);
 	}
 	
 	@RequestMapping(value="/createReservation", method = RequestMethod.POST)
 	public Reservation createReservation(@RequestBody Reservation reservation) {
-		return reservationService.createReservation(reservation);
+		return reservationManager.createReservation(reservation);
 	}
 	
 	@RequestMapping(value="/updateDate", method = RequestMethod.POST)
 	public Reservation updateDate(@RequestBody Reservation reservation) {
-		return reservationService.updateDate(reservation);
+		return reservationManager.updateDate(reservation);
 	}
 	
 	@RequestMapping(value="/updateSingleReservation", method = RequestMethod.POST)
 	public Reservation updateSingleReservation(@RequestBody Reservation reservation) {
-		return reservationService.updateSingleReservation(reservation);
+		return reservationManager.updateReservation(reservation);
 	}
 	
 	@RequestMapping(value="/deleteReservation", method = RequestMethod.POST)
 	public void deleteReservation(@RequestBody Reservation reservation) {
-		 reservationService.deleteReservation(reservation);
+		 reservationManager.deleteReservation(reservation);
 	}
 	
-	@RequestMapping(value="/deleteRecurringReservations", method = RequestMethod.POST)
+	@RequestMapping(value="/deleteRecurringReservation", method = RequestMethod.POST)
 	public void deleteRecurringReservations(@RequestBody Reservation reservation) {
-		 reservationService.deleteRecurringReservations(reservation);
+		 reservationManager.deleteRecurringReservation(reservation);
 	}
 	
 	@GetMapping(value="/getReservationsByOwner")
 	public Set<Reservation> updateDate(@RequestParam String id) {
-		return reservationService.getReservationsByOwner(id);
+		return reservationManager.getReservationsByOwner(id);
 	}
 }

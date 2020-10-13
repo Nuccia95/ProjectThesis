@@ -9,72 +9,62 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.vaadin.stefan.fullcalendar.Entry;
 
-import com.vaadin.flow.server.VaadinSession;
+import com.demo.frontend.login.CurrentUser;
 
 import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.User;
 
 @Service
-public class ReservationHandler {
+public class ReservationService {
 
 	@Autowired
 	private RestTemplate restTemplate;
 	private final String url = "http://localhost:9999/";
 
 	public Reservation createReservation(Reservation reservation) {
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-		//ReservationDTO rdto = new ReservationDTO(reservation, id);
-		Long id = (long) 1;
-		reservation.setOwnerId(id);
+		reservation.setOwnerId(CurrentUser.get().getId());
 		HttpEntity<Reservation> request = new HttpEntity<>(reservation);
 		Reservation r = restTemplate.postForObject(url + "createReservation", request, Reservation.class);
 		return r;
 	}
 	
 	public Reservation updateReservationDate(Reservation reservation) {
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-		Long id = (long) 1;
-		reservation.setOwnerId(id);
+		reservation.setOwnerId(CurrentUser.get().getId());
 		HttpEntity<Reservation> request = new HttpEntity<>(reservation);
 		Reservation r = restTemplate.postForObject(url + "updateDate", request, Reservation.class);
 		return r;
 	}
 	
 	public Reservation updateSingleReservation(Reservation reservation) {
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-		Long id = (long) 1;
-		reservation.setOwnerId(id);
+		reservation.setOwnerId(CurrentUser.get().getId());
 		HttpEntity<Reservation> request = new HttpEntity<>(reservation);
 		Reservation r = restTemplate.postForObject(url + "updateSingleReservation", request, Reservation.class);
 		return r;
 	}
 
 	public Reservation[] getReservationByOwner(){
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
+		User u = CurrentUser.get();
+		System.out.println(u);
 		UriComponentsBuilder builder = UriComponentsBuilder
 				.fromUriString( url + "getReservationsByOwner")
-				.queryParam("id", "1");
+				.queryParam("id", u.getId().toString());
 		return restTemplate.getForObject(builder.toUriString(), Reservation[].class);
 	}
 	
 	public void deleteReservation(Reservation reservation) {
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-		Long id = (long) 1;
-		reservation.setOwnerId(id);
+		reservation.setOwnerId(CurrentUser.get().getId());
 		HttpEntity<Reservation> request = new HttpEntity<>(reservation);
 		restTemplate.postForObject(url + "deleteReservation", request, Reservation.class);
 	}
 	
 	public void deleteRecurringReservations(Reservation reservation) {
-		//User u = (User) VaadinSession.getCurrent().getAttribute("currentUser");
-		Long id = (long) 1;
-		reservation.setOwnerId(id);
+		reservation.setOwnerId(CurrentUser.get().getId());
 		HttpEntity<Reservation> request = new HttpEntity<>(reservation);
-		restTemplate.postForObject(url + "deleteRecurringReservations", request, Reservation.class);
+		restTemplate.postForObject(url + "deleteRecurringReservation", request, Reservation.class);
 	}
 	
 	/* UTILS */
-	public Reservation fromEntryToReservation(Entry entry) {	
+	public Reservation mapEntryToReservation(Entry entry) {	
 		Reservation reservation = new Reservation();
 		reservation.setColor(entry.getColor());
 		reservation.setResourceName(entry.getTitle());
@@ -95,7 +85,7 @@ public class ReservationHandler {
 		return reservation;
 	}
 
-	public Entry fromReservationToEntry(Reservation reservation) {
+	public Entry mapReservationToEntry(Reservation reservation) {
 		Entry entry = new Entry(reservation.getId().toString());
 		
 		Long groupId = reservation.getGroupId();

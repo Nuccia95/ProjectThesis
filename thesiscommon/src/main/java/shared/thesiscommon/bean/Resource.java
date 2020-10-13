@@ -26,6 +26,12 @@ public class Resource extends AbstractIdentifiedBean {
 	@OneToMany(mappedBy = "resource", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<Reservation> reservations;
 	
+	public Resource(String name, String description, Integer seatsAvailable) {
+		this.name = name;
+		this.description = description;
+		this.seatsAvailable = seatsAvailable;
+	}
+	
 	public final String getName() {
 		return name;
 	}

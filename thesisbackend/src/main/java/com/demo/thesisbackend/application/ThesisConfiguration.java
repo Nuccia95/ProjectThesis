@@ -1,4 +1,4 @@
-package com.demo.thesisbackend;
+package com.demo.thesisbackend.application;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;

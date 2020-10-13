@@ -1,0 +1,40 @@
+#login-view{
+	background: #e6eeff;
+}
+
+#registration-form{
+	background:white;
+	margin-top:100px;
+}
+
+#registration-form h2{
+	color:black;
+}
+
+.login-information {
+    min-width: 300px;
+    flex: 0;
+    background: #1f3d7a;
+}
+
+.login-information H1,H2{
+	color:white;
+}
+
+/* Stack login-screen vertically on narrow screen */
+@media (max-width: 800px) {
+
+    .login-screen {
+        flex-direction: column;
+    }
+
+    .login-information {
+        display: block;
+    }
+}
+
+body {
+
+    /* Used by the menu and form overlays */
+    --overlay-box-shadow: 0 0 3px 2px var(--lumo-contrast-10pct);
+}
