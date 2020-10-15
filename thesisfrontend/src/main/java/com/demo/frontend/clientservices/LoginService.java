@@ -1,5 +1,9 @@
 package com.demo.frontend.clientservices;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
@@ -8,25 +12,33 @@ import org.springframework.web.client.RestTemplate;
 import shared.thesiscommon.bean.User;
 
 @Service
-public class LoginService {
+public class LoginService implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Autowired
 	private RestTemplate restTemplate;
-	private final String url = "http://localhost:9999/";
+	private static final String URL = "http://localhost:9999/";
 
 	
 	public User login(User u) {
 		HttpEntity<User> request = new HttpEntity<>(u);
-		User user = restTemplate.postForObject(url + "login", request, User.class);
-		assert(user.getEmail()!=null);
-		return user;
+		return restTemplate.postForObject(URL + "login", request, User.class);
 	}
 
 	public User registration(User u) {
 		HttpEntity<User> request = new HttpEntity<>(u);
-		User user = restTemplate.postForObject(url + "registration", request, User.class);
-		assert(user.getEmail()!=null);
-		return user;
+		return restTemplate.postForObject(URL + "registration", request, User.class);
+	}
+	
+	public List<String> getAllEmails() {
+		List<String> emails = new ArrayList<>();
+		String[] allEmails = restTemplate.getForObject(URL + "getAllEmails", String[].class);
+		for (String email : allEmails)
+			emails.add(email);
+		return emails;
 	}
 	
 }

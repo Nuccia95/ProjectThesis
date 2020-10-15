@@ -3,9 +3,9 @@ package com.demo.frontend.view.login;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.demo.frontend.clientservices.LoginService;
+import com.demo.frontend.utils.AppButton;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
@@ -31,15 +31,19 @@ public class LoginView extends FlexLayout {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	@Autowired
+	private LoginService loginService;
+
 	private LoginForm loginForm;
 	private RegistrationForm registrationForm;
 	private FlexLayout centeringLayout;
 	private boolean logFormVisible;
-	@Autowired
-	private LoginService loginService;
+	private AppButton appButton;
 
 	public LoginView() {
 		setId("login-view");
+		appButton = new AppButton();
 		centeringLayout = new FlexLayout();
 		centeringLayout.setSizeFull();
 		centeringLayout.setJustifyContentMode(JustifyContentMode.CENTER);
@@ -77,8 +81,8 @@ public class LoginView extends FlexLayout {
 
 		H1 title = new H1("Welcome in APP-NAME");
 		H2 info = new H2("You don't have an account?");
-		Button registrationButton = new Button("SignUp");
-		registrationButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		
+		Button registrationButton = appButton.set("SignUp", VaadinIcon.SIGN_IN.create());
 		registrationButton.addClickListener(e -> {
 			if (logFormVisible) {
 				loginForm.setVisible(false);
@@ -87,8 +91,7 @@ public class LoginView extends FlexLayout {
 			registrationForm.getForm().setVisible(true);
 		});
 
-		Button loginButton = new Button("Login", VaadinIcon.SIGN_IN.create());
-		loginButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		Button loginButton = appButton.set("Login", VaadinIcon.SIGN_IN.create());
 		loginButton.addClickListener(e -> {
 			if (!logFormVisible) {
 				registrationForm.getForm().setVisible(false);
@@ -105,14 +108,16 @@ public class LoginView extends FlexLayout {
 		User u = new User();
 		u.setEmail(event.getUsername());
 		u.setPassword(event.getPassword());
-		getUI().get().navigate("fullCalendarView");
-		/*User userResult = loginService.login(u);
-		if (userResult == null)
-			Notification.show("Error in login, try again");
+		User userResult = loginService.login(u);
+		if (userResult == null) {
+			Notification.show("Error in login, try again");	
+			getUI().get().navigate("");
+		}
 		else {
 			CurrentUser.set(userResult, true);
-			getUI().get().navigate("main");
-		}*/
+			System.out.println(CurrentUser.get().getEmail());
+			getUI().get().navigate("fullCalendarView");
+		}
 	}
 	
 	public void registration() {
@@ -121,11 +126,13 @@ public class LoginView extends FlexLayout {
 				Notification.show("Passwords don't match");
 			else {
 				User userResult = loginService.registration(registrationForm.getUserForm());
-				if (userResult == null)
+				if (userResult == null) {
 					Notification.show("Error in registration, try again");
+					getUI().get().navigate("");
+				}
 				else {
 					CurrentUser.set(userResult, true);
-					getUI().get().navigate("main");
+					getUI().get().navigate("fullCalendarView");
 				}
 			}
 		});

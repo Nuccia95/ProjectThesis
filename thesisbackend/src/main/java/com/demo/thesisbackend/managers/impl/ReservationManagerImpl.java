@@ -1,5 +1,6 @@
 package com.demo.thesisbackend.managers.impl;
 
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,62 +8,64 @@ import org.springframework.stereotype.Component;
 
 import com.demo.thesisbackend.dao.ReservationDAO;
 import com.demo.thesisbackend.dao.ResourceDAO;
-import com.demo.thesisbackend.dao.UserDAO;
 import com.demo.thesisbackend.managers.ReservationManager;
 
 import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.Resource;
-import shared.thesiscommon.bean.User;
+
 @Component
-public class ReservationManagerImpl implements ReservationManager{
-	
+public class ReservationManagerImpl implements ReservationManager {
+
 	@Autowired
 	private ReservationDAO reservationDAO;
-	@Autowired
-	private UserDAO userDAO;
 	@Autowired
 	private ResourceDAO resourceDAO;
 
 	@Override
 	public Reservation createReservation(Reservation reservation) {
-		User owner = userDAO.findById(reservation.getOwnerId()).get();
-		Resource resource = resourceDAO.findByName(reservation.getResourceName());
-		reservation.setOwner(owner);
+		Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 		reservation.setResource(resource);
 		return reservationDAO.save(reservation);
 	}
 
 	@Override
 	public Reservation updateReservation(Reservation reservation) {
-		Reservation r = reservationDAO.findById(reservation.getId()).get();
-		Resource resource = resourceDAO.findByName(reservation.getResourceName());
-		r.setResource(resource);
-		r.setColor(reservation.getColor());
-		r.setStartDate(reservation.getStartDate());
-		r.setEndDate(reservation.getEndDate());
-		r.setStartTime(reservation.getStartTime());
-		r.setEndTime(reservation.getEndTime());
-		return reservationDAO.save(r);
+		Optional<Reservation> r = reservationDAO.findById(reservation.getId());
+		if (r.isPresent()) {
+			Reservation res = r.get();
+			Resource resource = resourceDAO.findByName(reservation.getResource().getName());
+			res.setResource(resource);
+			res.setColor(reservation.getColor());
+			res.setStartDate(reservation.getStartDate());
+			res.setEndDate(reservation.getEndDate());
+			res.setStartTime(reservation.getStartTime());
+			res.setEndTime(reservation.getEndTime());
+			return reservationDAO.save(res);
+		}
+		return null;
 	}
 
 	@Override
 	public Reservation updateDate(Reservation reservation) {
-		Reservation r = reservationDAO.findById(reservation.getId()).get();
-		r.setStartDate(reservation.getStartDate());
-		r.setEndDate(reservation.getStartDate());
-		return reservationDAO.save(r);
+		Optional<Reservation> r = reservationDAO.findById(reservation.getId());
+		if(r.isPresent()) {
+			Reservation res = r.get();
+			res.setStartDate(reservation.getStartDate());
+			res.setEndDate(reservation.getStartDate());			
+			return reservationDAO.save(res);
+		}
+		return null;
 	}
 
 	@Override
 	public void deleteReservation(Reservation reservation) {
 		reservationDAO.deleteById(reservation.getId());
-		
+
 	}
 
 	@Override
 	public void deleteRecurringReservation(Reservation reservation) {
-		User u = userDAO.findById(reservation.getOwnerId()).get();
-		Set<Reservation> res = reservationDAO.findByOwner(u);
+		Set<Reservation> res = reservationDAO.findByOwnerId(reservation.getOwner().getId());
 		for (Reservation r : res)
 			if (r.getGroupId() == reservation.getId())
 				reservationDAO.deleteById(r.getId());
@@ -70,9 +73,12 @@ public class ReservationManagerImpl implements ReservationManager{
 	}
 
 	@Override
-	public Set<Reservation> getReservationsByOwner(String id) {
-		User u = userDAO.findById(Long.parseLong(id)).get();
-		return reservationDAO.findByOwner(u);
+	public Set<Reservation> getReservationsByOwner(long id) {
+		Set<Reservation> res = reservationDAO.findByOwnerId(id);
+		for (Reservation reservation : res)
+			System.out.println("current owner reservations: " + reservation.getResource().getId() + " " + 
+						reservation.getResource().getName());
+		return res;
 	}
 
 }

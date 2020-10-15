@@ -6,10 +6,6 @@ import java.time.LocalTime;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @Entity
 @Table(name = "Reservations")
@@ -22,11 +18,9 @@ public class Reservation extends AbstractIdentifiedBean {
 	private static final long serialVersionUID = 1L;
 
 	@ManyToOne
-	@JsonIgnore
 	private User owner;
 
 	@ManyToOne
-	@JsonIgnore
 	private Resource resource;
 
 	private String dayOfWeek;
@@ -40,14 +34,9 @@ public class Reservation extends AbstractIdentifiedBean {
 	private LocalDate endDate;
 	private boolean editable;
 	
-	@Transient
-	@JsonSerialize
-	private Long ownerId;
-	@Transient
-	@JsonSerialize
-	private String resourceName;
-
+	
 	public Reservation() {
+		
 	}
 
 	public String getDayOfWeek() {
@@ -130,28 +119,12 @@ public class Reservation extends AbstractIdentifiedBean {
 		this.groupId = groupId;
 	}
 
-	public final Resource getResource() {
+	public Resource getResource() {
 		return resource;
 	}
 
-	public final void setResource(Resource resource) {
+	public void setResource(Resource resource) {
 		this.resource = resource;
-	}
-	
-	public final Long getOwnerId() {
-		return ownerId;
-	}
-
-	public final void setOwnerId(Long ownerId) {
-		this.ownerId = ownerId;
-	}
-
-	public final String getResourceName() {
-		return resourceName;
-	}
-
-	public final void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
 	}
 
 	@Override

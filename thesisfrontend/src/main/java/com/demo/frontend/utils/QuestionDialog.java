@@ -4,50 +4,46 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
-public class QuestionDialog {
+public class QuestionDialog extends Dialog {
 	
-	private Dialog dialog;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private VerticalLayout container;
 	private H4 question;
 	private HorizontalLayout buttonsContainer;
-	private Icon confirmIcon;
-	private Icon cancelIcon;
 	private SpanDescription spanDescription;
+
+	private AppButton appButton;
 	private Button confirmButton;
 	private Button cancelButton;
-	private final String blueColor = "#3e77c1";
 	
-	public QuestionDialog(String q, VaadinIcon confirm, VaadinIcon cancel, String type) {
-		dialog = new Dialog();
-		container = new VerticalLayout();
-		buttonsContainer = new HorizontalLayout();
-		question = new H4(q);
+	/* Question Dialog */
+	public QuestionDialog(String quest, Icon confirm,  Icon cancel, String type) {
 
-		confirmIcon = new Icon(confirm);
-		confirmIcon.setColor(blueColor);
-		cancelIcon = new Icon(cancel);
-		cancelIcon.setColor("");
+		container = new VerticalLayout();
+		appButton = new AppButton();
+		buttonsContainer = new HorizontalLayout();
+		question = new H4(quest);
+
 		spanDescription = new SpanDescription();
 		spanDescription.build(type);
 		
-		confirmButton = new Button(confirmIcon);
-		cancelButton = new Button(cancelIcon);
+		confirmButton = appButton.set("", confirm);
+		cancelButton = appButton.set("", cancel);
 		buttonsContainer.add(confirmButton, cancelButton);
-		container.setAlignSelf(Alignment.END, buttonsContainer);
 		
+		container.setAlignSelf(Alignment.END, buttonsContainer);
 		container.add(question, buttonsContainer);
 		
-		dialog.add(spanDescription.build(type), container);
-		dialog.open();
-	}
-	
-	public void close() {
-		dialog.close();
+		add(spanDescription.build(type), container);
+		open();
 	}
 	
 	public Button getConfirmButton() {

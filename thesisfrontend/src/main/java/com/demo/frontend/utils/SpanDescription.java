@@ -2,11 +2,9 @@ package com.demo.frontend.utils;
 
 import com.vaadin.flow.component.html.Span;
 
-public class SpanDescription {
+public class SpanDescription{
 	
 	private Span description;
-	
-	public SpanDescription() {}
 	
 	public Span build(String type) {
 		description = new Span();
@@ -14,12 +12,12 @@ public class SpanDescription {
 		description.getElement().getStyle().set("font-size", "14px");
 		switch (type) {
 		case "CREATE":
-			description.setText("New Reservation");
+			description.setText("New");
 			description.getElement().getStyle().set("color","var(--lumo-success-color)");
 			description.getElement().getStyle().set("background", "var(--lumo-success-color-10pct)");
 			break;
 		case "EDIT":
-			description.setText("Edit Reservation");
+			description.setText("Edit");
 			description.getElement().getStyle().set("color","#cccc00");
 			description.getElement().getStyle().set("background", "#ffffe6");
 			break;
@@ -34,14 +32,9 @@ public class SpanDescription {
 			description.getElement().getStyle().set("background", "#ff9999");
 			break;
 		case "LIMITED":
-			description.setText("Remove");
+			description.setText("Limited");
 			description.getElement().getStyle().set("color", "#24478f");
 			description.getElement().getStyle().set("background", "#99bbff");
-			break;
-		case "CREATE_RESOURCE":
-			description.setText("New Resource");
-			description.getElement().getStyle().set("color","var(--lumo-success-color)");
-			description.getElement().getStyle().set("background", "var(--lumo-success-color-10pct)");
 			break;
 		default:
 			break;
@@ -50,7 +43,7 @@ public class SpanDescription {
 	}
 	
 	public void setSpanEdit() {
-		description.setText("Edit Reservation");
+		description.setText("Edit");
 		description.getElement().getStyle().set("color","#cccc00");
 		description.getElement().getStyle().set("background", "#ffffe6");
 	}

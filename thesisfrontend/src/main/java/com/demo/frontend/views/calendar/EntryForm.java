@@ -4,14 +4,15 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
+import com.demo.frontend.utils.AppButton;
 import com.demo.frontend.utils.SpanDescription;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
 import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
@@ -19,7 +20,6 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -31,7 +31,7 @@ public class EntryForm extends VerticalLayout {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	private Entry newEntry;
 	private H3 title;
 	private SpanDescription spanDescription;
@@ -49,22 +49,21 @@ public class EntryForm extends VerticalLayout {
 	private VerticalLayout l3;
 	private HorizontalLayout l4;
 	private HorizontalLayout l5;
-	private LocalDate ld;
+	private LocalDate localDate;
 	private Button inviteButton;
 	private Button deleteEntryButton;
 	private MultiselectComboBox<String> multiselectComboBoxFriends;
-	private final String blueColor = "#3e77c1";
-	private Icon iconFriends;
-	private Icon iconCheck;
+	private AppButton appButton;
 
 	public EntryForm(LocalDate date) {
-		this.ld = date;
+		this.localDate = date;
 		initComponents();
-		createEntryForm();
+		buildForm();
 	}
 	
 	public void initComponents() {
 		setSpacing(false);
+		appButton = new AppButton();
 		spanDescription = new SpanDescription();
 		container = new HorizontalLayout();
 		container.setSpacing(false);
@@ -87,18 +86,14 @@ public class EntryForm extends VerticalLayout {
 		endDatePicker = new DatePicker();
 		checkBoxDays = new CheckboxGroup<>();
 		checkBoxDays.getElement().getStyle().set("font-size", "14px");
-		iconFriends = new Icon(VaadinIcon.USERS);
-		iconFriends.setColor(blueColor);
-		iconCheck = new Icon(VaadinIcon.CHECK);
-		iconCheck.setColor(blueColor);
 	}
 
-	public void createEntryForm() {
+	public void buildForm() {
 
 		add(spanDescription.build("CREATE"));
 		
 		/* Form Title */
-		title = new H3("Start date: " + ld);
+		title = new H3("Start date: " + localDate);
 		title.getElement().getStyle().set("fontWeight", "bold");
 		add(title);
 		
@@ -106,7 +101,7 @@ public class EntryForm extends VerticalLayout {
 		checkBoxRecurring.setLabel("Recurring event?");
 		checkBoxRecurring.setValue(false);
 		checkBoxRecurring.addValueChangeListener(e -> {
-			if (e.getValue())
+			if (Boolean.TRUE.equals(e.getValue()))
 				addFieldRecurringEvent();
 			else {
 				l3.setVisible(false);
@@ -119,7 +114,6 @@ public class EntryForm extends VerticalLayout {
 		/* Resources */
 		l1.setSpacing(false);
 		comboBoxResources.setRequired(true);
-		comboBoxResources.setItems("Server A", "Laboratorio 1", "Server B");
 		comboBoxResources.setLabel("Resources");
 
 		/* Event Colors */
@@ -145,9 +139,8 @@ public class EntryForm extends VerticalLayout {
 
 		/* Friends box */	
 		multiselectComboBoxFriends.setPlaceholder("@choose friends..");
-		multiselectComboBoxFriends.setItems("Item 1", "Item 2", "Item 3", "Item 4");
-		inviteButton = new Button(iconFriends);
-		inviteButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		
+		inviteButton = appButton.set("", VaadinIcon.USERS.create());		
 		Label friendsLabel = new Label("Do you want to invite some friends? ");
 		friendsLabel.getElement().getStyle().set("font-size", "14px");
 		l5.setAlignItems(Alignment.BASELINE);
@@ -157,8 +150,7 @@ public class EntryForm extends VerticalLayout {
 			l5.add(multiselectComboBoxFriends);
 		});
 		
-		saveButton = new Button("Save", iconCheck);
-		saveButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		saveButton = appButton.set("Save", VaadinIcon.CHECK.create());
 		l4.add(saveButton);
 		setAlignSelf(Alignment.END, l4);
 		add(l4);
@@ -180,8 +172,8 @@ public class EntryForm extends VerticalLayout {
 	}
 
 	public Entry createCurrentEntry() {
-		LocalDateTime lstart = LocalDateTime.of(ld, startTimePicker.getValue());
-		LocalDateTime lend = LocalDateTime.of(ld, endTimePicker.getValue());
+		LocalDateTime lstart = LocalDateTime.of(localDate, startTimePicker.getValue());
+		LocalDateTime lend = LocalDateTime.of(localDate, endTimePicker.getValue());
 
 		newEntry = new Entry();
 		newEntry.setColor(comboBoxColors.getValue());
@@ -190,7 +182,7 @@ public class EntryForm extends VerticalLayout {
 
 		if (checkBoxRecurring.getValue()) {
 			newEntry.setRecurring(true);
-			newEntry.setRecurringStartDate(ld, Timezone.UTC);
+			newEntry.setRecurringStartDate(localDate, Timezone.UTC);
 			newEntry.setRecurringStartTime(startTimePicker.getValue());
 			newEntry.setRecurringEndDate(endDatePicker.getValue(), Timezone.UTC);
 			newEntry.setRecurringEndTime(endTimePicker.getValue());
@@ -205,21 +197,28 @@ public class EntryForm extends VerticalLayout {
 
 	/* Fill form with value of existing entry */
 	public void fillExistingEntry(Entry entry) {
-		
 		spanDescription.setSpanEdit();
-		
 		checkBoxRecurring.setVisible(false);
 		comboBoxResources.setValue(entry.getTitle());
 		comboBoxColors.setValue(entry.getColor());
 		startTimePicker.setValue(entry.getStart().toLocalTime());
 		endTimePicker.setValue(entry.getEnd().toLocalTime());
-		Icon i2 = new Icon(VaadinIcon.TRASH);
-		deleteEntryButton = new Button("Delete", i2);
-		deleteEntryButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		deleteEntryButton = appButton.set("Delete", VaadinIcon.TRASH.create());
 		l4.add(deleteEntryButton);
 	}
 	
-
+	public void setDate(LocalDate ld) {
+		this.localDate = ld;
+	}
+	
+	public void setResources(List<String> resources) {
+		comboBoxResources.setItems(resources);
+	}
+	
+	public void setFriends(List<String> emails) {
+		multiselectComboBoxFriends.setItems(emails);
+	}
+	
 	public Button getSaveButton() {
 		return saveButton;
 	}

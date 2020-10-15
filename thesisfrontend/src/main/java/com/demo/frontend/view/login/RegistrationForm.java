@@ -1,10 +1,11 @@
 package com.demo.frontend.view.login;
 
+import com.demo.frontend.utils.AppButton;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
@@ -29,40 +30,47 @@ public class RegistrationForm {
 	private PasswordField passwordField2;
 	private FormLayout registrationForm;
 	private Button submitButton;
+	private AppButton appButton;
 	
 	public RegistrationForm() {
+		appButton = new AppButton();
+		c = new HorizontalLayout();
+		c2 = new HorizontalLayout();
+		c3 = new HorizontalLayout();
 	}
 	
 	public void buildRegistrationForm() {
 		title = new H2("Sign up");
 		/* containers */
-		c = new HorizontalLayout();
-		c2 = new HorizontalLayout();
+		
 		c2.setSizeFull();
-		c3 = new HorizontalLayout();
 		container = new VerticalLayout();
 		container.setId("registration-form");
 		container.setSpacing(false);
 		
 		firstnameField = new TextField("First name");
 		lastnameField = new TextField("Last name");
+		
 		emailField = new EmailField("Email");
 		emailField.setSizeFull();
 		emailField.setRequiredIndicatorVisible(true);
 		emailField.setPlaceholder("@");
+		
 		passwordField1 = new PasswordField("Wanted password");
 		passwordField1.setRequiredIndicatorVisible(true);
 		passwordField2 = new PasswordField("Password again");
 		passwordField2.setRequiredIndicatorVisible(true);
-		submitButton = new Button("SignUp");
-		submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+		
+		submitButton = appButton.set("SignUp", VaadinIcon.SIGN_IN.create());
 		submitButton.setSizeFull();
+		
 		c.add(firstnameField, lastnameField);
 		c2.add(emailField);
 		c3.add(passwordField1, passwordField2);
 		container.add(title, c, c2, c3, submitButton);
 		container.setAlignSelf(Alignment.CENTER, submitButton);
 		container.setAlignSelf(Alignment.START, title);
+		
 		registrationForm = new FormLayout(container);
 		registrationForm.setColspan(submitButton, 2);
 			

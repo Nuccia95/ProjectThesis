@@ -27,12 +27,6 @@ public final class CurrentUser
 	 * The attribute key used to store the username in the session.
 	 */
 	public static final String CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser.class.getCanonicalName();
-	//public static final String CURRENT_CODE_SESSION_ATTRIBUTE_KEY = "CurrentUserCode";
-
-	/*public static boolean checkFunctionalities(final SystemFunctionality... sfs)
-	{
-		return get().checkFunctionalities(sfs);
-	}*/
 
 	/**
 	 * Returns the name of the current user stored in the current session, or an
@@ -49,8 +43,8 @@ public final class CurrentUser
 		return (User) ui.getSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
 	}
 	
-	public static String getRole() {
-		return get().getRole();
+	public static boolean isAdmin() {
+		return get().getAdmin();
 	}
 
 	/**

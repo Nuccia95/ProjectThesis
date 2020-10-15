@@ -1,20 +1,20 @@
 package com.demo.thesisbackend.controller;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import shared.thesiscommon.bean.Reservation;
+import shared.thesiscommon.bean.Resource;
 import shared.thesiscommon.bean.User;
 import com.demo.thesisbackend.managers.LoginManager;
 import com.demo.thesisbackend.managers.ReservationManager;
-
+import com.demo.thesisbackend.managers.ResourceManager;
 
 @CrossOrigin("*")
 @RestController
@@ -24,44 +24,72 @@ public class Controller {
 	private LoginManager loginManager;
 	@Autowired
 	private ReservationManager reservationManager;
+	@Autowired
+	private ResourceManager resourceManager;
 	
-	@RequestMapping(value="/login", method = RequestMethod.POST)
-	public User login(@RequestBody User user) {
-		return loginManager.login(user);
+	@PostMapping("/login")
+	public User login(final HttpEntity<User> user) {
+		return loginManager.login(user.getBody());
 	}
 	
-	@RequestMapping(value="/registration", method = RequestMethod.POST)
-	public User registration(@RequestBody User user) {
-		return loginManager.registration(user);
+	@PostMapping("/registration")
+	public User registration(final HttpEntity<User> user) {
+		return loginManager.registration(user.getBody());
 	}
 	
-	@RequestMapping(value="/createReservation", method = RequestMethod.POST)
-	public Reservation createReservation(@RequestBody Reservation reservation) {
-		return reservationManager.createReservation(reservation);
+	@PostMapping("/createReservation")
+	public Reservation createReservation(final HttpEntity<Reservation> reservation) {
+		return reservationManager.createReservation(reservation.getBody());
 	}
 	
-	@RequestMapping(value="/updateDate", method = RequestMethod.POST)
-	public Reservation updateDate(@RequestBody Reservation reservation) {
-		return reservationManager.updateDate(reservation);
+	@PostMapping("/updateDate")
+	public Reservation updateDate(final HttpEntity<Reservation> reservation) {
+		return reservationManager.updateDate(reservation.getBody());
 	}
 	
-	@RequestMapping(value="/updateSingleReservation", method = RequestMethod.POST)
-	public Reservation updateSingleReservation(@RequestBody Reservation reservation) {
-		return reservationManager.updateReservation(reservation);
+	@PostMapping("/updateSingleReservation")
+	public Reservation updateSingleReservation(final HttpEntity<Reservation> reservation) {
+		return reservationManager.updateReservation(reservation.getBody());
 	}
 	
-	@RequestMapping(value="/deleteReservation", method = RequestMethod.POST)
-	public void deleteReservation(@RequestBody Reservation reservation) {
-		 reservationManager.deleteReservation(reservation);
+	@PostMapping("/deleteReservation")
+	public void deleteReservation(final HttpEntity<Reservation> reservation) {
+		 reservationManager.deleteReservation(reservation.getBody());
 	}
 	
-	@RequestMapping(value="/deleteRecurringReservation", method = RequestMethod.POST)
-	public void deleteRecurringReservations(@RequestBody Reservation reservation) {
-		 reservationManager.deleteRecurringReservation(reservation);
+	@PostMapping("/deleteRecurringReservation")
+	public void deleteRecurringReservations(final HttpEntity<Reservation> reservation) {
+		 reservationManager.deleteRecurringReservation(reservation.getBody());
 	}
 	
 	@GetMapping(value="/getReservationsByOwner")
-	public Set<Reservation> updateDate(@RequestParam String id) {
+	public Set<Reservation> getByOwner(final long id) {
 		return reservationManager.getReservationsByOwner(id);
 	}
+	
+	@PostMapping("/createResource")
+	public Resource createResource(final HttpEntity<Resource> resource) {
+		return resourceManager.createResource(resource.getBody());
+	}
+	
+	@PostMapping("/deleteResource")
+	public void deleteResource(final HttpEntity<Resource> resource) {
+		resourceManager.deleteResource(resource.getBody());
+	}
+	
+	@GetMapping(value="/getAllResources")
+	public List<Resource> getAllResources(){
+		return resourceManager.getAllResources();
+	}
+	
+	@GetMapping(value="/getResourcesNames")
+	public List<String> getResourcesNames() {
+		return resourceManager.getResourcesNames();
+	}
+	
+	@GetMapping(value="/getAllEmails")
+	public List<String> getAllEmails() {
+		return loginManager.getAllEmails();
+	}
+	
 }

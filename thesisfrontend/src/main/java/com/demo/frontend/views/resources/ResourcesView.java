@@ -1,14 +1,21 @@
 package com.demo.frontend.views.resources;
 
-import java.util.ArrayList;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.demo.frontend.clientservices.ResourceService;
+import com.demo.frontend.utils.AppButton;
+import com.demo.frontend.utils.QuestionDialog;
 import com.demo.frontend.views.main.MainView;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -20,6 +27,7 @@ import com.vaadin.flow.router.Route;
 import shared.thesiscommon.bean.Resource;
 
 @Route(value = "resourcesView", layout = MainView.class)
+@CssImport("./styles/views/resources/resources-view.css")
 @PageTitle("Resources")
 public class ResourcesView extends VerticalLayout {
 
@@ -28,56 +36,96 @@ public class ResourcesView extends VerticalLayout {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@Autowired
+	private ResourceService resourceService;
+
 	private TextField filter;
 	private Button newResourceButton;
 	private Grid<Resource> grid;
 	private ResourceForm resourcesForm;
 	private Dialog formDialog;
+	private AppButton appButton;
+	private QuestionDialog deleteResourceDialog;
+	List<Resource> resources;
 	
 	public ResourcesView() {
 		setSizeFull();
+		appButton = new AppButton();
+		add(createTopBar());
+	}
+	
+	@Override
+	protected void onAttach(AttachEvent attachEvent) {
+		super.onAttach(attachEvent);
 		setGrid();
-		add(createTopBar(), grid);
-		manageResources();
 	}
 	
 	public void setGrid() {
 		grid = new Grid<>();
 		grid.setSizeFull();
-        grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
+		
+		resources = resourceService.getAll();
+		grid.setItems(resources);
+        
+		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
         grid.addColumn(Resource::getDescription).setHeader("Description");
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available");
-		/* riempi griglia */
-		ArrayList<Resource> resources = new ArrayList<Resource>();
-		resources.add(new Resource("Server A", "...", 0));
-		resources.add(new Resource("Server B", "...", 0));
-		grid.setItems(resources);
+		grid.addComponentColumn(this::trashIcon);
+		add(grid);
 	}
 	
-	public void manageResources() {
-		grid.addItemClickListener(event -> {
-			setForm();
-			resourcesForm.showExistingResource(event.getItem());
-			formDialog.open();
-			System.out.println(event.getItem().getName());
-		});
+	public Div trashIcon(Resource res) {
+		Div buttonsContainer = new Div();
+		buttonsContainer.setId("container-icons");
+		
+		Button trashButt = appButton.set("", VaadinIcon.TRASH.create());
+		
+		trashButt.addClickListener(click -> {
+			deleteResourceDialog = new QuestionDialog("Do you want to delete this resource?", 
+					VaadinIcon.CHECK.create(), VaadinIcon.CLOSE.create(), "REMOVE");
+			
+			/* Delete resource */
+			deleteResourceDialog.getConfirmButton().addClickListener(ev -> {
+				resourceService.deleteResource(res);
+				resources.remove(res);
+				grid.getDataProvider().refreshAll();
+				deleteResourceDialog.close();
+			});
+			
+			/* Close dialog */
+			deleteResourceDialog.getCancelButton().addClickListener(ev -> {
+				deleteResourceDialog.close();
+			});
+		});	
+		
+		buttonsContainer.add(trashButt);
+		return buttonsContainer;
 	}
 
 	public HorizontalLayout createTopBar() {
 		filter = new TextField();
-		filter.setPlaceholder("Filter name, seats available ..");
+		filter.setPlaceholder("Filter resources by name, seats available ..");
 		filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
 
-		newResourceButton = new Button("New resource");
+		newResourceButton = appButton.set("Add", VaadinIcon.PLUS_CIRCLE.create());
+
 //		if(CurrentUser.getRole().equals("USER"))
 //			newResourceButton.setEnabled(false);
-		// Setting theme variant of new production button to LUMO_PRIMARY that
-		// changes its background color to blue and its text color to white
-		newResourceButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		newResourceButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
 		newResourceButton.addClickListener(ev -> {
 			setForm();
 			formDialog.open();
+			/* create resource */
+			resourcesForm.getSaveButton().addClickListener(e -> {
+				Resource newRes = resourcesForm.getData();
+				Resource r = resourceService.createResource(newRes);
+				resources.add(r);
+				grid.getDataProvider().refreshAll();
+				formDialog.close();
+			});
+			
+			resourcesForm.getCancelButton().addClickListener(e -> {
+				formDialog.close();
+			});
 		});
 		
 		final HorizontalLayout topLayout = new HorizontalLayout();
@@ -98,6 +146,5 @@ public class ResourcesView extends VerticalLayout {
 		resourcesForm = new ResourceForm();
 		formDialog.add(resourcesForm);
 	}
-	
 
 }

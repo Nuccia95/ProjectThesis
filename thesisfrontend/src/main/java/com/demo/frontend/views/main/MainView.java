@@ -88,8 +88,8 @@ public class MainView extends AppLayout {
 
     private static Tab[] getAvailableTabs() {
         return new Tab[] {
-            createTab("CALENDAR", FullCalendarView.class),
-            createTab("RESOURCES", ResourcesView.class)
+        	createTab("RESOURCES", ResourcesView.class),
+            createTab("CALENDAR", FullCalendarView.class)
         };
     }
 

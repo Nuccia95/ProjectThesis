@@ -16,7 +16,7 @@ public interface ReservationManager {
 	
 	public void deleteRecurringReservation(Reservation reservation);
 	
-	public Set<Reservation> getReservationsByOwner(String id);
+	public Set<Reservation> getReservationsByOwner(final long id);
 	
 
 }

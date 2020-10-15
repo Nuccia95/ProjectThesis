@@ -1,12 +1,7 @@
 package shared.thesiscommon.bean;
 
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -24,13 +19,9 @@ public class User extends AbstractIdentifiedBean {
 	private String firstName;
 	private String lastName;
 	private String password;
-	private String role;
+	private Boolean admin;
 
-	@OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<Reservation> createdReservations;
-
-	public User() {
-	}
+	public User() {}
 
 	public User(String email) {
 		this.email = email;
@@ -68,20 +59,12 @@ public class User extends AbstractIdentifiedBean {
 		return password;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public Boolean getAdmin() {
+		return admin;
 	}
 
-	public String getRole() {
-		return role;
-	}
-
-	public Set<Reservation> getCreatedBooks() {
-		return createdReservations;
-	}
-
-	public void setCreatedBooks(Set<Reservation> createdBooks) {
-		this.createdReservations = createdBooks;
+	public void setAdmin(Boolean admin) {
+		this.admin = admin;
 	}
 
 	@Override
@@ -98,9 +81,8 @@ public class User extends AbstractIdentifiedBean {
 
 	@Override
 	public String toString() {
-		return "User [" + "id=" + getId() + ",email=" + email + ", firstName=" + firstName + ", lastName=" + lastName +
-				", password=" + password + ", role=" + role
-				+ "]";
+		return "User [" + "id=" + getId() + ",email=" + email + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", password=" + password + ", admin=" + admin + "]";
 	}
 
 }

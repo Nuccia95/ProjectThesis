@@ -251,3 +251,5 @@
 [0930/102426.925:ERROR:crash_report_database_win.cc(469)] failed to stat report
 [0930/102426.925:ERROR:crash_report_database_win.cc(469)] failed to stat report
 [1013/173512.051:ERROR:directory_reader_win.cc(43)] FindFirstFile: Impossibile trovare il percorso specificato. (0x3)
+[1014/152410.789:ERROR:directory_reader_win.cc(43)] FindFirstFile: Impossibile trovare il percorso specificato. (0x3)
+[1014/183114.983:ERROR:directory_reader_win.cc(43)] FindFirstFile: Impossibile trovare il percorso specificato. (0x3)
