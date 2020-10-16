@@ -21,6 +21,8 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.vaadin.stefan.fullcalendar.CalendarView;
+import org.vaadin.stefan.fullcalendar.CalendarViewImpl;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
@@ -72,7 +74,13 @@ public class FullCalendarView extends VerticalLayout {
 		calendar.setId("calendar");
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
-		add(calendar);
+		calendar.setSizeFull();
+	    add(calendar);
+		topBar.getViewBox().addValueChangeListener(e -> {
+	        CalendarView value = e.getValue();
+	        calendar.changeView(value == null ? CalendarViewImpl.DAY_GRID_MONTH : value);
+	    });
+		calendar.changeView(CalendarViewImpl.DAY_GRID_MONTH);
 	}
 
 	public void manageCalendarEntries() {

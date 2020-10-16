@@ -5,15 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Resources")
+@Table(name = Resource.TABLE_NAME)
 public class Resource extends AbstractIdentifiedBean {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
-	@Column(unique = true)
+	public static final String TABLE_NAME = "resources"; //$NON-NLS-1$
+	
+	@Column(unique = true, nullable = false)
 	private String name;
 	private String description;
 	private Integer seatsAvailable;

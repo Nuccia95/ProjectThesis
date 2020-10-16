@@ -1,14 +1,17 @@
 package com.demo.thesisbackend.managers.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.demo.thesisbackend.dao.ProfileDAO;
 import com.demo.thesisbackend.dao.UserDAO;
 import com.demo.thesisbackend.managers.LoginManager;
 
+import shared.thesiscommon.bean.Profile;
 import shared.thesiscommon.bean.User;
 
 @Component
@@ -16,35 +19,40 @@ public class LoginManagerImpl implements LoginManager {
 
 	@Autowired
 	private UserDAO userDAO;
-	private String admin = "nuccia@gmail.com";
-	private String adminPass = "nuccia";
+	@Autowired 
+	private ProfileDAO profileDAO;
 
 	@Override
 	public User login(User user) {
 		User u = userDAO.findByEmail(user.getEmail());
-		if (u != null) {
-			if (user.getPassword().equals(u.getPassword()))
+		if (u != null)
+			if(Arrays.equals(user.getPassword(), u.getPassword()))
 				return u;
-			else
-				return null;
-		}
 		return null;
 	}
 
 	@Override
 	public User registration(User user) {
-		String email = user.getEmail();
-		String password = user.getPassword();
-
+		
 		User u = userDAO.findByEmail(user.getEmail());
-		if (u == null) {
-			if (email.equals(admin) && password.equals(adminPass))
-				user.setAdmin(true);
-			else
-				user.setAdmin(false);
-			return userDAO.save(user);
+		if(u == null) {
+			switch (user.getRole()) {
+			case "VIEWER":
+				Profile viewerProfile = profileDAO.findByName(User.VIEWER_USERNAME);
+				user.setUsername(User.ADMIN_USERNAME);
+				user.setProfile(viewerProfile);
+				break;
+			case "MANAGER":
+				Profile managerProfile = profileDAO.findByName(User.VIEWER_USERNAME);
+				user.setUsername(User.VIEWER_USERNAME);
+				user.setProfile(managerProfile);
+				break;
+			default:
+				break;
+			}
 		}
-		return null;
+		
+		return userDAO.save(user);
 	}
 
 	@Override

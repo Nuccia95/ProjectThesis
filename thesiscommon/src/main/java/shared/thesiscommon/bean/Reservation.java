@@ -8,15 +8,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "Reservations")
+@Table(name = Reservation.TABLE_NAME)
 public class Reservation extends AbstractIdentifiedBean {
 
-	/**
-	 * 
-	 */
-
 	private static final long serialVersionUID = 1L;
-
+	
+	public static final String TABLE_NAME = "reservations"; //$NON-NLS-1$
+	
 	@ManyToOne
 	private User owner;
 

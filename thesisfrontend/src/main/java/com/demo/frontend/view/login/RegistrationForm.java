@@ -14,6 +14,7 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 
 import shared.thesiscommon.bean.User;
+import shared.thesiscommon.utils.PasswordEncoder;
 
 @CssImport("./styles/views/login/login-view.css")
 public class RegistrationForm {
@@ -85,7 +86,9 @@ public class RegistrationForm {
 		u.setEmail(emailField.getValue());
 		u.setFirstName(firstnameField.getValue());
 		u.setLastName(lastnameField.getValue());
-		u.setPassword(passwordField1.getValue());	
+		
+		byte[] password = PasswordEncoder.encode(passwordField1.getValue());
+		u.setPassword(password);
 		return u;
 	}
 	

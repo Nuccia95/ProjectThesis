@@ -10,6 +10,7 @@ import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinService;
 
 import shared.thesiscommon.bean.User;
+import shared.thesiscommon.utils.TextUtils;
 
 /**
  * Class for retrieving and setting the name of the current user of the current
@@ -23,18 +24,10 @@ public final class CurrentUser
 {
 
 	private static Logger logger = LoggerFactory.getLogger(CurrentUser.class);
-	/**
-	 * The attribute key used to store the username in the session.
-	 */
+
 	public static final String CURRENT_USER_SESSION_ATTRIBUTE_KEY = CurrentUser.class.getCanonicalName();
 
-	/**
-	 * Returns the name of the current user stored in the current session, or an
-	 * empty string if no user name is stored.
-	 *
-	 * @throws IllegalStateException
-	 *             if the current session cannot be accessed.
-	 */
+
 	public static User get(){
 		return (User) UI.getCurrent().getSession().getAttribute(CURRENT_USER_SESSION_ATTRIBUTE_KEY);
 	}
@@ -47,30 +40,15 @@ public final class CurrentUser
 		return get().getAdmin();
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @return it returns the value of the given cookie name
-	 */
-	public static String getCookieValue(final String name)
-	{
+	public static String getCookieValue(final String name){
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
 		for (Cookie c : cookies)
-		{
 			if (c.getName().equals(name))
-			{
 				return c.getValue();
-			}
-		}
 		return "";
 	}
 
-	/**
-	 *
-	 * @return true if cookie is saved
-	 */
-	public static boolean LoginCookiesArePresent()
-	{
+	public static boolean LoginCookiesArePresent(){
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
 		if (cookies != null)
 			for (Cookie c : cookies){
@@ -80,23 +58,10 @@ public final class CurrentUser
 		return false;
 	}
 
-	/**
-	 * Sets the name of the current user and stores it in the current session.
-	 * Using a {@code null} username will remove the username from the session.
-	 *
-	 * @throws IllegalStateException
-	 *             if the current session cannot be accessed.
-	 */
 	public static void set(final User login){
 		set(login, false);
 	}
 
-	/**
-	 * @param login
-	 *            same of the previous
-	 * @param rememberMe
-	 *            set cookies
-	 */
 	public static void set(final User login, final boolean rememberMe)
 	{
 		logger.info("Set user:" + login);
@@ -109,31 +74,11 @@ public final class CurrentUser
 
 		if (rememberMe){
 			handleCookie("username", login.getEmail());
-			//handleCookie("password", TextUtils.decode(login.getPassword()));
-			handleCookie("password", login.getPassword());
+			handleCookie("password", TextUtils.decode(login.getPassword()));
 		}
 	}
 
-	/**
-	 * Sets the code of the current user's device (or the code of the device
-	 * selected if the current user has more than one device installed) and
-	 * stores it in the current session.
-	 */
-	/**public static void setCode(String code)
-	{
-		logger.info("Set code:" + code);
-		if (code == null)
-		{
-			UI.getCurrent().getSession().setAttribute(CURRENT_CODE_SESSION_ATTRIBUTE_KEY, null);
-			handleCookie("username", "");
-			handleCookie("password", "");
-		} else
-		{
-			UI.getCurrent().getSession().setAttribute(CURRENT_CODE_SESSION_ATTRIBUTE_KEY, code);
-		}
-	}*/
-
-
+	
 	private static void handleCookie(final String cookie_name, final String cookie_value)
 	{
 		// Create a new cookie

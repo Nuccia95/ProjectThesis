@@ -2,7 +2,6 @@ package com.demo.frontend.view.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-
 import com.demo.frontend.clientservices.ClientService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -14,8 +13,8 @@ import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-
 import shared.thesiscommon.bean.User;
+import shared.thesiscommon.utils.PasswordEncoder;
 
 /**
  * UI content when the user is not logged in yet.
@@ -75,36 +74,19 @@ public class LoginView extends FlexLayout {
 	
 	private void login(LoginForm.LoginEvent event) {
 		User u = new User();
+		
 		u.setEmail(event.getUsername());
-		u.setPassword(event.getPassword());
+		byte[] password = PasswordEncoder.encode(event.getPassword());
+		u.setPassword(password);
+		
 		HttpEntity<User> user = new HttpEntity<>(u);
 		User userResult = clientService.login(user);
-		if (userResult == null) {
+		if (userResult == null)
 			Notification.show("Error in login, try again");	
-			getUI().get().navigate("");
-		}
 		else {
 			CurrentUser.set(userResult, true);
 			System.out.println(CurrentUser.get().getEmail());
 			getUI().get().navigate("fullCalendarView");
 		}
 	}
-	
-	/*public void registration() {
-		registrationForm.getSubmitButton().addClickListener(e -> {
-			if (!registrationForm.passwordsMatch())
-				Notification.show("Passwords don't match");
-			else {
-				User userResult = loginService.registration(registrationForm.getUserForm());
-				if (userResult == null) {
-					Notification.show("Error in registration, try again");
-					getUI().get().navigate("");
-				}
-				else {
-					CurrentUser.set(userResult, true);
-					getUI().get().navigate("fullCalendarView");
-				}
-			}
-		});
-	}*/
 }
