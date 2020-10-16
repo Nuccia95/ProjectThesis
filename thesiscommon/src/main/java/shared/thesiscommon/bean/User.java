@@ -18,8 +18,9 @@ public class User extends AbstractIdentifiedBean {
 
 	private String firstName;
 	private String lastName;
-	private String password;
 	private Boolean admin;
+
+	private String password;
 
 	public User() {}
 

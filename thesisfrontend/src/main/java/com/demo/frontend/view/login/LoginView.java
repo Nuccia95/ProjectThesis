@@ -1,15 +1,13 @@
 package com.demo.frontend.view.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 
-import com.demo.frontend.clientservices.LoginService;
-import com.demo.frontend.utils.AppButton;
+import com.demo.frontend.clientservices.ClientService;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
@@ -33,17 +31,13 @@ public class LoginView extends FlexLayout {
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
-	private LoginService loginService;
+	private ClientService clientService;
 
 	private LoginForm loginForm;
-	private RegistrationForm registrationForm;
 	private FlexLayout centeringLayout;
-	private boolean logFormVisible;
-	private AppButton appButton;
 
 	public LoginView() {
 		setId("login-view");
-		appButton = new AppButton();
 		centeringLayout = new FlexLayout();
 		centeringLayout.setSizeFull();
 		centeringLayout.setJustifyContentMode(JustifyContentMode.CENTER);
@@ -51,22 +45,14 @@ public class LoginView extends FlexLayout {
 		buildUI();
 	}
 	
-	/*Layout*/
+	
 	private void buildUI() {
 		setSizeFull();
 		setClassName("login-screen");
 		Component panel = buildPanel();
 		loginForm = new LoginForm();
-		registrationForm = new RegistrationForm();
-		registrationForm.buildRegistrationForm();
-		registration();
-		centeringLayout.add(registrationForm.getForm());
-		add(centeringLayout);
-		registrationForm.getForm().setVisible(false);
-		logFormVisible = true;
 		builLoginForm();
-		add(panel);
-		add(centeringLayout);
+		add(panel, centeringLayout);
 	}
 
 	private void builLoginForm() {
@@ -80,27 +66,10 @@ public class LoginView extends FlexLayout {
 		loginInformation.setClassName("login-information");
 
 		H1 title = new H1("Welcome in APP-NAME");
-		H2 info = new H2("You don't have an account?");
-		
-		Button registrationButton = appButton.set("SignUp", VaadinIcon.SIGN_IN.create());
-		registrationButton.addClickListener(e -> {
-			if (logFormVisible) {
-				loginForm.setVisible(false);
-				logFormVisible = false;
-			}
-			registrationForm.getForm().setVisible(true);
-		});
+		H2 info = new H2("description");
 
-		Button loginButton = appButton.set("Login", VaadinIcon.SIGN_IN.create());
-		loginButton.addClickListener(e -> {
-			if (!logFormVisible) {
-				registrationForm.getForm().setVisible(false);
-				loginForm.setVisible(true);
-				logFormVisible = true;
-			}
-		});
 		loginInformation.add(title);
-		loginInformation.add(info, registrationButton, loginButton);
+		loginInformation.add(info);
 		return loginInformation;
 	}	
 	
@@ -108,7 +77,8 @@ public class LoginView extends FlexLayout {
 		User u = new User();
 		u.setEmail(event.getUsername());
 		u.setPassword(event.getPassword());
-		User userResult = loginService.login(u);
+		HttpEntity<User> user = new HttpEntity<>(u);
+		User userResult = clientService.login(user);
 		if (userResult == null) {
 			Notification.show("Error in login, try again");	
 			getUI().get().navigate("");
@@ -120,7 +90,7 @@ public class LoginView extends FlexLayout {
 		}
 	}
 	
-	public void registration() {
+	/*public void registration() {
 		registrationForm.getSubmitButton().addClickListener(e -> {
 			if (!registrationForm.passwordsMatch())
 				Notification.show("Passwords don't match");
@@ -136,5 +106,5 @@ public class LoginView extends FlexLayout {
 				}
 			}
 		});
-	}
+	}*/
 }

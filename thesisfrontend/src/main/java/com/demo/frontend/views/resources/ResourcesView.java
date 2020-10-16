@@ -3,8 +3,9 @@ package com.demo.frontend.views.resources;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 
-import com.demo.frontend.clientservices.ResourceService;
+import com.demo.frontend.clientservices.ClientService;
 import com.demo.frontend.utils.AppButton;
 import com.demo.frontend.utils.QuestionDialog;
 import com.demo.frontend.views.main.MainView;
@@ -37,7 +38,7 @@ public class ResourcesView extends VerticalLayout {
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
-	private ResourceService resourceService;
+	private ClientService clientService;
 
 	private TextField filter;
 	private Button newResourceButton;
@@ -64,7 +65,7 @@ public class ResourcesView extends VerticalLayout {
 		grid = new Grid<>();
 		grid.setSizeFull();
 		
-		resources = resourceService.getAll();
+		resources = clientService.getAllResources();
 		grid.setItems(resources);
         
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
@@ -86,7 +87,9 @@ public class ResourcesView extends VerticalLayout {
 			
 			/* Delete resource */
 			deleteResourceDialog.getConfirmButton().addClickListener(ev -> {
-				resourceService.deleteResource(res);
+				
+				HttpEntity<Resource> resource = new HttpEntity<>(res);
+				clientService.deleteResource(resource);
 				resources.remove(res);
 				grid.getDataProvider().refreshAll();
 				deleteResourceDialog.close();
@@ -117,7 +120,9 @@ public class ResourcesView extends VerticalLayout {
 			/* create resource */
 			resourcesForm.getSaveButton().addClickListener(e -> {
 				Resource newRes = resourcesForm.getData();
-				Resource r = resourceService.createResource(newRes);
+				
+				HttpEntity<Resource> resource = new HttpEntity<>(newRes);
+				Resource r = clientService.createResource(resource);
 				resources.add(r);
 				grid.getDataProvider().refreshAll();
 				formDialog.close();

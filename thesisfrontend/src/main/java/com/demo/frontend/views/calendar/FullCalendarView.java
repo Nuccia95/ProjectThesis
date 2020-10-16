@@ -17,17 +17,18 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
-import com.demo.frontend.clientservices.LoginService;
-import com.demo.frontend.clientservices.ReservationService;
-import com.demo.frontend.clientservices.ResourceService;
+import com.demo.frontend.clientservices.ClientService;
 import com.demo.frontend.utils.QuestionDialog;
+import com.demo.frontend.view.login.CurrentUser;
 import com.demo.frontend.views.main.MainView;
 
 @Route(value = "fullCalendarView", layout = MainView.class)
@@ -41,11 +42,7 @@ public class FullCalendarView extends VerticalLayout {
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
-	private ReservationService reservationService;
-	@Autowired
-	private LoginService loginService;
-	@Autowired
-	private ResourceService resourceService;
+	private ClientService clientService;
 
 	private FullCalendar calendar;
 	private MapCalendarEvent mapCalEvent;
@@ -103,8 +100,13 @@ public class FullCalendarView extends VerticalLayout {
 						VaadinIcon.TRASH.create(), VaadinIcon.CLOSE.create(), "REMOVE");
 
 				removeEntryDialog.getConfirmButton().addClickListener(ev -> {
+					
 					Reservation reservation = mapCalEvent.mapEntryToReservation(e.getEntry());
-					reservationService.deleteRecurringReservations(reservation);
+					reservation.setOwner(CurrentUser.get());
+					HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+					
+					clientService.deleteRecurringReservations(res);
+					
 					for (Entry recurrEntry : calendar.getEntries())
 						if (recurrEntry.getDescription() != null)
 							if (recurrEntry.getDescription().equals(reservation.getId().toString()))
@@ -129,7 +131,11 @@ public class FullCalendarView extends VerticalLayout {
 					currentEntry = entryForm.createCurrentEntry();
 					Reservation reservation = mapCalEvent.mapEntryToReservation(currentEntry);
 					reservation.setId(Long.parseLong(entryId));
-					Reservation r = reservationService.updateSingleReservation(reservation);
+					reservation.setOwner(CurrentUser.get());
+					
+					HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+					Reservation r = clientService.updateSingleReservation(res);
+					
 					Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 					calendar.removeEntry(e.getEntry());
 					calendar.addEntry(singleEntry);
@@ -137,7 +143,11 @@ public class FullCalendarView extends VerticalLayout {
 				});
 				entryForm.getDeleteEntryButton().addClickListener(ev -> {
 					Reservation reservation = mapCalEvent.mapEntryToReservation(e.getEntry());
-					reservationService.deleteReservation(reservation);
+					reservation.setOwner(CurrentUser.get());
+					
+					HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+					clientService.deleteReservation(res);
+					
 					calendar.removeEntry(e.getEntry());
 					createEntryDialog.close();
 				});
@@ -157,7 +167,11 @@ public class FullCalendarView extends VerticalLayout {
 				moveEntryDialog.getConfirmButton().addClickListener(evnt -> {
 					Reservation reservation = mapCalEvent.mapEntryToReservation(e.getEntry());
 					reservation.setId(Long.parseLong(e.getEntry().getId()));
-					reservationService.updateReservationDate(reservation);
+					reservation.setOwner(CurrentUser.get());
+					
+					HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+					clientService.updateDate(res);
+					
 					moveEntryDialog.close();
 				});
 				moveEntryDialog.getCancelButton().addClickListener(evnt -> {
@@ -197,8 +211,8 @@ public class FullCalendarView extends VerticalLayout {
 
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
-		super.onAttach(attachEvent);
-		Reservation[] reservations = reservationService.getReservationByOwner();
+		super.onAttach(attachEvent); 
+		Set<Reservation> reservations = clientService.getByOwner(CurrentUser.get().getId());		
 		if (reservations != null)
 			for (Reservation reservation : reservations) {
 				Entry e = mapCalEvent.mapReservationToEntry(reservation);
@@ -208,7 +222,11 @@ public class FullCalendarView extends VerticalLayout {
 
 	public void createSingleReservation(Entry newEntry) {
 		Reservation reservation = mapCalEvent.mapEntryToReservation(newEntry);
-		Reservation r = reservationService.createReservation(reservation);
+		reservation.setOwner(CurrentUser.get());
+		
+		HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+		Reservation r = clientService.createReservation(res);
+		
 		Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 		calendar.addEntry(singleEntry);
 	}
@@ -229,7 +247,10 @@ public class FullCalendarView extends VerticalLayout {
 				reservation.setEditable(false);
 				if (groupId != null)
 					reservation.setGroupId(groupId);
-				Reservation createdReservation = reservationService.createReservation(reservation);
+				
+				HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+				Reservation createdReservation = clientService.createReservation(res);
+				
 				if (groupId == null)
 					groupId = createdReservation.getId();
 				Entry e = mapCalEvent.mapReservationToEntry(createdReservation);
@@ -257,8 +278,8 @@ public class FullCalendarView extends VerticalLayout {
 	public void setForm(LocalDate date) {
 		createEntryDialog = new Dialog();
 		entryForm = new EntryForm(date);
-		entryForm.setFriends(loginService.getAllEmails());
-		entryForm.setResources(resourceService.getResourcesNames());
+		entryForm.setFriends(clientService.getAllEmails());
+		entryForm.setResources(clientService.getResourcesNames());
 		createEntryDialog.add(entryForm);
 		topBar.getGoToPicker().setValue(date);
 	}
