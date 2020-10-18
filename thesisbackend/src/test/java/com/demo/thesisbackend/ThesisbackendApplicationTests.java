@@ -9,6 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.demo.thesisbackend.dao.ReservationDAO;
 import com.demo.thesisbackend.dao.UserDAO;
 
+import shared.thesiscommon.utils.PasswordEncoder;
+import shared.thesiscommon.utils.TextUtils;
+
 @SpringBootTest
 class ThesisbackendApplicationTests {
 
@@ -17,10 +20,6 @@ class ThesisbackendApplicationTests {
 	
 	@Autowired
 	UserDAO userDAO;
-	
-	@Test
-	void contextLoads() {
-	}
 
 	/*@Test
 	void createBook() {
@@ -45,13 +44,4 @@ class ThesisbackendApplicationTests {
 		bookDAO.save(b);
 		
 	}*/
-	
-	@Test
-	public void prova(){
-		String ADMIN = "nuccia@gmail.com";
-		String email = "nuccia@gmail.com";
-		if(email.equals(ADMIN))
-			System.out.println("uguali");
-	}
-
 }

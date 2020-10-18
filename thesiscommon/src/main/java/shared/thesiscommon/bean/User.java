@@ -16,11 +16,14 @@ import javax.persistence.Table;
 public class User extends AbstractIdentifiedBean {
 
 	
-	public static final String ADMIN_USERNAME = "admin"; //$NON-NLS-1$	
-	public static final String MANAGER_USERNAME = "manager"; //$NON-NLS-1$
-	public static final String VIEWER_USERNAME = "viewer"; //$NON-NLS-1$
+	public static final String ADMIN_USERNAME = "ADMIN"; //$NON-NLS-1$	
+	
+	public static final String ADMIN_PROFILE = "ADMIN"; //$NON-NLS-1$	
+	public static final String USER_PROFILE = "USER"; //$NON-NLS-1$
+	public static final String VIEWER_PROFILE = "VIEWER"; //$NON-NLS-1$
+	
+	public static final String TABLE_NAME = "users";
 
-	public static final String TABLE_NAME = "systemUser"; //$NON-NLS-1$
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,9 +33,8 @@ public class User extends AbstractIdentifiedBean {
 	private String username;
 	private String firstName;
 	private String lastName;
-	private String role;
 
-	@Column(nullable = false, name = "systemAdmin")
+	@Column(nullable = false)
 	private Boolean admin;
 	
 	@Basic(fetch = FetchType.LAZY, optional = false)
@@ -46,68 +48,60 @@ public class User extends AbstractIdentifiedBean {
 		return getProfile().getFunctionalities();
 	}
 
-	public final String getEmail() {
+	public String getEmail() {
 		return email;
 	}
 
-	public final void setEmail(String email) {
+	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public final String getUsername() {
+	public String getUsername() {
 		return username;
 	}
 
-	public final void setUsername(String username) {
+	public void setUsername(String username) {
 		this.username = username;
 	}
 
-	public final String getFirstName() {
+	public String getFirstName() {
 		return firstName;
 	}
 
-	public final void setFirstName(String firstName) {
+	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
 
-	public final String getLastName() {
+	public String getLastName() {
 		return lastName;
 	}
 
-	public final void setLastName(String lastName) {
+	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
-	public final Boolean getAdmin() {
+	public Boolean getAdmin() {
 		return admin;
 	}
 
-	public final void setAdmin(Boolean admin) {
+	public void setAdmin(Boolean admin) {
 		this.admin = admin;
 	}
 
-	public final byte[] getPassword() {
+	public byte[] getPassword() {
 		return password;
 	}
 
-	public final void setPassword(byte[] password) {
+	public void setPassword(byte[] password) {
 		this.password = password;
 	}
 
-	public final Profile getProfile() {
+	public Profile getProfile() {
 		return profile;
 	}
 
-	public final void setProfile(Profile profile) {
+	public void setProfile(Profile profile) {
 		this.profile = profile;
-	}
-	
-	public final String getRole() {
-		return role;
-	}
-
-	public final void setRole(String role) {
-		this.role = role;
 	}
 
 	public boolean checkFunctionalities(final String... sfs) {
@@ -156,7 +150,6 @@ public class User extends AbstractIdentifiedBean {
 				return false;
 		} else if (!admin.equals(other.admin))
 			return false;
-
 		if (!Arrays.equals(password, other.password))
 			return false;
 		if (profile == null) {

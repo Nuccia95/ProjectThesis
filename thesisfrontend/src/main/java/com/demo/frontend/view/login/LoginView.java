@@ -2,7 +2,6 @@ package com.demo.frontend.view.login;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import com.demo.frontend.clientservices.ClientService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.H1;
@@ -15,6 +14,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import shared.thesiscommon.bean.User;
 import shared.thesiscommon.utils.PasswordEncoder;
+import shared.thesiscommon.webservicesinterface.WebServicesInterface;
 
 /**
  * UI content when the user is not logged in yet.
@@ -30,7 +30,7 @@ public class LoginView extends FlexLayout {
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
-	private ClientService clientService;
+	private WebServicesInterface clientService;
 
 	private LoginForm loginForm;
 	private FlexLayout centeringLayout;
@@ -84,8 +84,7 @@ public class LoginView extends FlexLayout {
 		if (userResult == null)
 			Notification.show("Error in login, try again");	
 		else {
-			CurrentUser.set(userResult, true);
-			System.out.println(CurrentUser.get().getEmail());
+			CurrentUser.set(userResult);
 			getUI().get().navigate("fullCalendarView");
 		}
 	}

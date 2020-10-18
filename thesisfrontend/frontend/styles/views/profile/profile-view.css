@@ -1,0 +1,21 @@
+#profile-view{
+	padding: 30px;
+}
+
+#infocontainer {
+	background-color: #e6f7ff;
+	border-radius: 20px;
+}
+
+#formcontainer {
+	background-color: #e6f7ff;
+	border-radius: 20px;
+}
+
+img#avatar {
+  border-radius: 50%;
+  height: var(--lumo-size-s);
+  overflow: hidden;
+  margin-left: 5px;
+  margin-top: 26px;
+}

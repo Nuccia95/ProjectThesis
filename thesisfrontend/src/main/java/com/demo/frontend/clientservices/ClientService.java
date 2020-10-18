@@ -112,4 +112,14 @@ public class ClientService implements WebServicesInterface {
 		return emails;
 	}
 
+	@Override
+	public Set<Reservation> getAllReservations() {
+		Reservation[] res = restTemplate.getForObject(URL + "getAllReservations", Reservation[].class);
+		Set<Reservation> all = new HashSet<>();
+		for (Reservation r : res)
+			all.add(r);
+		
+		return all;
+	}
+
 }

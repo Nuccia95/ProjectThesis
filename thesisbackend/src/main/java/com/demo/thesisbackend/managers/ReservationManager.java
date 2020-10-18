@@ -17,6 +17,8 @@ public interface ReservationManager {
 	public void deleteRecurringReservation(Reservation reservation);
 	
 	public Set<Reservation> getReservationsByOwner(final long id);
+
+	public Set<Reservation> getAllReservations();
 	
 
 }

@@ -36,7 +36,7 @@ public class ResourceForm extends VerticalLayout {
 		resourceName = new TextField("Resource Name");
 		description = new TextField("Description");
 		seatsAvailable = new TextField("Seats Available");
-		
+
 		saveButton = appButton.set("", VaadinIcon.CHECK.create());
 		cancelButton = appButton.set("", VaadinIcon.CLOSE.create());
 		

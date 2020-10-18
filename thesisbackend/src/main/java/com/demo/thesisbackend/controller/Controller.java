@@ -106,5 +106,11 @@ public class Controller implements WebServicesInterface {
 	public List<String> getAllEmails() {
 		return loginManager.getAllEmails();
 	}
+
+	@Override
+	@GetMapping(value="/getAllReservations")
+	public Set<Reservation> getAllReservations() {
+		return reservationManager.getAllReservations();
+	}
 	
 }

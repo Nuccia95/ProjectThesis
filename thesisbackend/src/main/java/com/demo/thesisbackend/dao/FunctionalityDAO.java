@@ -10,5 +10,4 @@ public interface FunctionalityDAO extends CrudRepository<Functionality, Long>{
 	
 	Functionality findByName(String name);
 	
-
 }

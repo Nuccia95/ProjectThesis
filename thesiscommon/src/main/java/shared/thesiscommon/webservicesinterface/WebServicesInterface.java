@@ -36,5 +36,7 @@ public interface WebServicesInterface {
 	List<String> getResourcesNames();
 
 	List<String> getAllEmails();
+	
+	Set<Reservation> getAllReservations();
 
 }

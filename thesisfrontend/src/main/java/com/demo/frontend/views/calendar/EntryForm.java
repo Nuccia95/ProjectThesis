@@ -1,6 +1,7 @@
 package com.demo.frontend.views.calendar;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -15,7 +16,6 @@ import com.demo.frontend.utils.SpanDescription;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.checkbox.CheckboxGroupVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
@@ -27,13 +27,8 @@ import com.vaadin.flow.component.timepicker.TimePicker;
 
 public class EntryForm extends VerticalLayout {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Entry newEntry;
-	private H3 title;
 	private SpanDescription spanDescription;
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
@@ -49,14 +44,21 @@ public class EntryForm extends VerticalLayout {
 	private VerticalLayout l3;
 	private HorizontalLayout l4;
 	private HorizontalLayout l5;
-	private LocalDate localDate;
-	private Button inviteButton;
+	private LocalDate ld;
+	private LocalTime lt;
 	private Button deleteEntryButton;
 	private MultiselectComboBox<String> multiselectComboBoxFriends;
 	private AppButton appButton;
 
+	public EntryForm(LocalDateTime date) {
+		ld = date.toLocalDate();
+		lt = date.toLocalTime();
+		initComponents();
+		buildForm();
+	}
+
 	public EntryForm(LocalDate date) {
-		this.localDate = date;
+		ld = date;
 		initComponents();
 		buildForm();
 	}
@@ -68,8 +70,6 @@ public class EntryForm extends VerticalLayout {
 		container = new HorizontalLayout();
 		container.setSpacing(false);
 		container.setAlignItems(Alignment.START);
-		container.setMaxWidth("900px");
-		container.setMaxHeight("710px");
 		checkBoxRecurring = new Checkbox();
 		checkBoxRecurring.getElement().getStyle().set("font-size", "14px");
 		l1 = new VerticalLayout();
@@ -93,7 +93,7 @@ public class EntryForm extends VerticalLayout {
 		add(spanDescription.build("CREATE"));
 		
 		/* Form Title */
-		title = new H3("Start date: " + localDate);
+		H3 title = new H3("Start date: " + ld);
 		title.getElement().getStyle().set("fontWeight", "bold");
 		add(title);
 		
@@ -125,30 +125,36 @@ public class EntryForm extends VerticalLayout {
 		/* Start time / End time */
 		l2.setSpacing(false);
 		l2.setAlignItems(Alignment.BASELINE);
+		
 		startTimePicker = new TimePicker();
 		startTimePicker.setRequired(true);
 		startTimePicker.setLabel("Start Time");
-		startTimePicker.setMinTime(LocalTime.of(7, 0));
-		startTimePicker.setMaxTime(LocalTime.of(23, 0));
+		startTimePicker.setMinTime(LocalTime.of(8, 0));
+		startTimePicker.setMaxTime(LocalTime.of(19, 0));
+		if(lt != null)
+			startTimePicker.setValue(lt);
+		
 		endTimePicker.setRequired(true);
 		endTimePicker.setLabel("End Time");
-		endTimePicker.setMinTime(LocalTime.of(7, 0));
-		endTimePicker.setMaxTime(LocalTime.of(23, 0));
+		endTimePicker.setMinTime(LocalTime.of(8, 0));
+		endTimePicker.setMaxTime(LocalTime.of(19, 0));
+
+		startTimePicker.setStep(Duration.ofMinutes(15));
+		endTimePicker.setStep(Duration.ofMinutes(15));
+
 		l2.add(startTimePicker, endTimePicker);
 		container.add(l2);
 
 		/* Friends box */	
 		multiselectComboBoxFriends.setPlaceholder("@choose friends..");
 		
-		inviteButton = appButton.set("", VaadinIcon.USERS.create());		
+		Button inviteButton = appButton.set("", VaadinIcon.USERS.create());		
 		Label friendsLabel = new Label("Do you want to invite some friends? ");
 		friendsLabel.getElement().getStyle().set("font-size", "14px");
 		l5.setAlignItems(Alignment.BASELINE);
 		l5.add(inviteButton, friendsLabel);
 		add(l5);
-		inviteButton.addClickListener(e -> {
-			l5.add(multiselectComboBoxFriends);
-		});
+		inviteButton.addClickListener(e -> l5.add(multiselectComboBoxFriends));
 		
 		saveButton = appButton.set("Save", VaadinIcon.CHECK.create());
 		l4.add(saveButton);
@@ -166,23 +172,28 @@ public class EntryForm extends VerticalLayout {
 		checkBoxDays.setLabel("Days");
 		checkBoxDays.setItems(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, 
 				DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
-		checkBoxDays.addThemeVariants(CheckboxGroupVariant.LUMO_VERTICAL);
 		l3.add(endDatePicker, checkBoxDays);
 		container.add(l3);
 	}
 
 	public Entry createCurrentEntry() {
-		LocalDateTime lstart = LocalDateTime.of(localDate, startTimePicker.getValue());
-		LocalDateTime lend = LocalDateTime.of(localDate, endTimePicker.getValue());
+		
+		LocalDateTime lstart;
+		if(lt != null)
+			lstart = LocalDateTime.of(ld, lt);
+		else
+			lstart = LocalDateTime.of(ld, startTimePicker.getValue());
+		
+		LocalDateTime lend = LocalDateTime.of(ld, endTimePicker.getValue());
 
-		newEntry = new Entry();
+		Entry newEntry = new Entry();
 		newEntry.setColor(comboBoxColors.getValue());
 		newEntry.setTitle(comboBoxResources.getValue());
 		newEntry.setEditable(true);
 
-		if (checkBoxRecurring.getValue()) {
+		if (Boolean.TRUE.equals(checkBoxRecurring.getValue())) {
 			newEntry.setRecurring(true);
-			newEntry.setRecurringStartDate(localDate, Timezone.UTC);
+			newEntry.setRecurringStartDate(ld, Timezone.UTC);
 			newEntry.setRecurringStartTime(startTimePicker.getValue());
 			newEntry.setRecurringEndDate(endDatePicker.getValue(), Timezone.UTC);
 			newEntry.setRecurringEndTime(endTimePicker.getValue());
@@ -205,10 +216,6 @@ public class EntryForm extends VerticalLayout {
 		endTimePicker.setValue(entry.getEnd().toLocalTime());
 		deleteEntryButton = appButton.set("Delete", VaadinIcon.TRASH.create());
 		l4.add(deleteEntryButton);
-	}
-	
-	public void setDate(LocalDate ld) {
-		this.localDate = ld;
 	}
 	
 	public void setResources(List<String> resources) {

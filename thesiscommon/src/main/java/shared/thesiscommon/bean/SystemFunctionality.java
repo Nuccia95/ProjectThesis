@@ -2,6 +2,7 @@ package shared.thesiscommon.bean;
 
 public enum SystemFunctionality {
 	
+	USERS_MANAGEMENT("Users Managements"),
 	EVENTS_MANAGEMENT("Events Management"),
 	VIEWER("Events Visualization");
 	

@@ -55,22 +55,20 @@ public final class PasswordEncoder
 	 * System.out.println(bytesToHex(MessageDigest.getInstance(ALGORITHM).digest
 	 * (s.getBytes("UTF-8")))); // System.out.println(bytesToHex(encode(s))); }
 	 */
-
-	// PROVA
-	//
-	// public static void main(final String[] args) {
-	//
-	// String pass = "admin";
-	//
-	// byte[] b = PasswordEncoder.encode(pass);
-	// System.out.println(b);
-	//
-	// String s = TextUtils.decode(b);
-	// System.out.println(s);
-	//
-	// byte[] b2 = TextUtils.encode(s);
-	// System.out.println(b2);
-	// }
+	
+	 public static void main(final String[] args) {
+	
+	 String pass = "admin";
+	
+	 byte[] b = PasswordEncoder.encode(pass);
+	 System.out.println(b);
+	
+	 String s = TextUtils.decode(b);
+	 System.out.println(s);
+	
+	 byte[] b2 = TextUtils.encode(s);
+	 System.out.println(b2);
+	 }
 
 	private PasswordEncoder()
 	{

@@ -10,8 +10,15 @@
 
 #logout{
 	margin-left: auto;
-	margin-right: 100x;
 	margin-top: 50px;
+}
+
+#header img#avatar {
+  border-radius: 50%;
+  height: var(--lumo-size-s);
+  margin-right: var(--lumo-space-l);
+  overflow: hidden;
+  margin-left: auto;
 }
 
 #header img#logo {

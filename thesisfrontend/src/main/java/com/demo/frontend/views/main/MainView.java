@@ -23,7 +23,7 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.demo.frontend.views.calendar.FullCalendarView;
-import com.demo.frontend.views.main.MainView;
+import com.demo.frontend.views.profile.ProfileView;
 import com.demo.frontend.views.resources.ResourcesView;
 
 /**
@@ -87,9 +87,11 @@ public class MainView extends AppLayout {
     }
 
     private static Tab[] getAvailableTabs() {
+    	
         return new Tab[] {
         	createTab("RESOURCES", ResourcesView.class),
-            createTab("CALENDAR", FullCalendarView.class)
+            createTab("CALENDAR", FullCalendarView.class),
+            createTab("PROFILE", ProfileView.class)
         };
     }
 

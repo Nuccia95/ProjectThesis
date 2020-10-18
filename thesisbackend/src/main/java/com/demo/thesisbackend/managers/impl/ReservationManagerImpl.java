@@ -1,5 +1,6 @@
 package com.demo.thesisbackend.managers.impl;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -74,11 +75,17 @@ public class ReservationManagerImpl implements ReservationManager {
 
 	@Override
 	public Set<Reservation> getReservationsByOwner(long id) {
-		Set<Reservation> res = reservationDAO.findByOwnerId(id);
-		for (Reservation reservation : res)
-			System.out.println("current owner reservations: " + reservation.getResource().getId() + " " + 
-						reservation.getResource().getName());
-		return res;
+		return reservationDAO.findByOwnerId(id);
 	}
+
+	@Override
+	public Set<Reservation> getAllReservations() {
+		Set<Reservation> allres = new HashSet<>();
+		Iterable<Reservation> all = reservationDAO.findAll();
+		for (Reservation reservation : all)
+			allres.add(reservation);
+		
+		return allres;
+ 	}
 
 }

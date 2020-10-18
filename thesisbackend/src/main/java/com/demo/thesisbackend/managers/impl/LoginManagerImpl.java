@@ -35,21 +35,23 @@ public class LoginManagerImpl implements LoginManager {
 	public User registration(User user) {
 		
 		User u = userDAO.findByEmail(user.getEmail());
-		if(u == null) {
-			switch (user.getRole()) {
-			case "VIEWER":
-				Profile viewerProfile = profileDAO.findByName(User.VIEWER_USERNAME);
-				user.setUsername(User.ADMIN_USERNAME);
-				user.setProfile(viewerProfile);
+		Profile profile = null;
+		
+		if(u == null) {	
+			switch (user.getProfile().getName()) {
+			case User.USER_PROFILE:
+				profile = profileDAO.findByName(User.USER_PROFILE);
 				break;
-			case "MANAGER":
-				Profile managerProfile = profileDAO.findByName(User.VIEWER_USERNAME);
-				user.setUsername(User.VIEWER_USERNAME);
-				user.setProfile(managerProfile);
+			case User.VIEWER_PROFILE:
+				profile = profileDAO.findByName(User.VIEWER_PROFILE);
 				break;
 			default:
 				break;
 			}
+			
+			if(profile!=null)
+				user.setProfile(profile);
+			user.setAdmin(Boolean.FALSE);
 		}
 		
 		return userDAO.save(user);

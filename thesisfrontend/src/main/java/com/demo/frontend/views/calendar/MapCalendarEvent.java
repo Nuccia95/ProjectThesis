@@ -9,7 +9,7 @@ import shared.thesiscommon.bean.Resource;
 
 public class MapCalendarEvent {
 	
-	
+
 	public Reservation mapEntryToReservation(Entry entry) {	
 		Reservation reservation = new Reservation();
 		Resource resource = new Resource();
