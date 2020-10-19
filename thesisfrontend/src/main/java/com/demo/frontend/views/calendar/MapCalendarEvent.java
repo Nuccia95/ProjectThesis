@@ -27,8 +27,8 @@ public class MapCalendarEvent {
 				reservation.setGroupId(Long.parseLong(entry.getDescription()));
 		}else {
 			reservation.setStartDate(entry.getStart().toLocalDate());
-			reservation.setEndDate(entry.getStart().toLocalDate());
 			reservation.setStartTime(entry.getStart().toLocalTime());
+			reservation.setEndDate(entry.getStart().toLocalDate());
 			reservation.setEndTime(entry.getEnd().toLocalTime());
 		}
 		return reservation;
@@ -36,6 +36,7 @@ public class MapCalendarEvent {
 
 	public Entry mapReservationToEntry(Reservation reservation) {
 		Entry entry = new Entry(reservation.getId().toString());
+		
 		entry.setTitle(reservation.getResource().getName());
 		
 		Long groupId = reservation.getGroupId();
@@ -50,6 +51,11 @@ public class MapCalendarEvent {
 			
 		LocalDateTime ldtstart = LocalDateTime.of(reservation.getStartDate(), reservation.getStartTime());
 		LocalDateTime ldtend = LocalDateTime.of(reservation.getStartDate(), reservation.getEndTime());
+		
+		System.out.println("START - END");
+		System.out.println(ldtstart);
+		System.out.println(ldtend);
+		
 		entry.setStart(ldtstart);
 		entry.setEnd(ldtend);
 		return entry;

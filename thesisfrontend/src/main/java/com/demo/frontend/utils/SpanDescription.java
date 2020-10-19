@@ -16,6 +16,16 @@ public class SpanDescription{
 			description.getElement().getStyle().set("color","var(--lumo-success-color)");
 			description.getElement().getStyle().set("background", "var(--lumo-success-color-10pct)");
 			break;
+		case "RECURRING":
+			description.setText("Recurring");
+			description.getElement().getStyle().set("color","#3399ff");
+			description.getElement().getStyle().set("background", "#e6f2ff");
+			break;
+		case "FRIENDS":
+			description.setText("Friends");
+			description.getElement().getStyle().set("color","#3399ff");
+			description.getElement().getStyle().set("background", "#e6f2ff");
+			break;
 		case "EDIT":
 			description.setText("Edit");
 			description.getElement().getStyle().set("color","#cccc00");

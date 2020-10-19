@@ -79,6 +79,10 @@ public class LoginView extends FlexLayout {
 		byte[] password = PasswordEncoder.encode(event.getPassword());
 		u.setPassword(password);
 		
+//		u.setEmail("nucciaoliverio95@gmail.com");
+//		byte[] password = PasswordEncoder.encode("admin");
+//		u.setPassword(password);
+//		
 		HttpEntity<User> user = new HttpEntity<>(u);
 		User userResult = clientService.login(user);
 		if (userResult == null)

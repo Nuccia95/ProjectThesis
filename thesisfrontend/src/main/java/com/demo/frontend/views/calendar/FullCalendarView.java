@@ -50,7 +50,6 @@ public class FullCalendarView extends VerticalLayout {
 
 	private Dialog createEntryDialog;
 	private QuestionDialog moveEntryDialog;
-	private Entry currentEntry;
 
 	public FullCalendarView() {
 		setSpacing(false);
@@ -70,7 +69,7 @@ public class FullCalendarView extends VerticalLayout {
 	}
 
 	public void createCalendar() {
-		calendar = FullCalendarBuilder.create().withAutoBrowserTimezone().withEntryLimit(3).build();
+		calendar = FullCalendarBuilder.create().withEntryLimit(3).build();
 		calendar.setId("calendar");
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
@@ -95,11 +94,11 @@ public class FullCalendarView extends VerticalLayout {
 
 	public void createReservation() {
 		calendar.addTimeslotsSelectedListener( event -> {
-			LocalDate ld = event.getStartDateTime().toLocalDate();
-			setForm(ld);
+			LocalDateTime ldt = event.getStartDateTime();
+			setForm(ldt);
 			createEntryDialog.open();
 			entryForm.getSaveButton().addClickListener(e -> {
-				currentEntry = entryForm.createCurrentEntry();
+				Entry currentEntry = entryForm.createCurrentEntry();
 
 				if (currentEntry.isRecurring())
 					createRecurringReservations(currentEntry);
@@ -113,12 +112,12 @@ public class FullCalendarView extends VerticalLayout {
 	public void updateExistingReservation() {
 		calendar.addEntryClickedListener(e -> {
 			Entry entry = e.getEntry();
-			
-			if (entry.isEditable() && entry.isRecurring() && entry.getDescription().equals("0"))
+			if (entry.isRecurring() && entry.getDescription().equals("0")) {
 				deleteRecurringEntry(entry);
-			
-			if (entry.isEditable())
+			}
+			else if (entry.isEditable()) {
 				editSingleReservation(entry);
+			}
 		});
 	}
 
@@ -130,14 +129,21 @@ public class FullCalendarView extends VerticalLayout {
 
 			Reservation reservation = mapCalEvent.mapEntryToReservation(e);
 			reservation.setOwner(CurrentUser.get());
+			reservation.setId(Long.parseLong(e.getId()));
+			
 			HttpEntity<Reservation> res = new HttpEntity<>(reservation);
 			clientService.deleteRecurringReservations(res);
+			
 			for (Entry recurrEntry : calendar.getEntries()) {
 				if (recurrEntry.getDescription() != null &&
 					recurrEntry.getDescription().equals(reservation.getId().toString()))
 						calendar.removeEntry(recurrEntry);
 			}
 			calendar.removeEntry(e);
+			removeEntryDialog.close();
+		});
+		
+		removeEntryDialog.getCancelButton().addClickListener(ev -> {
 			removeEntryDialog.close();
 		});
 	}
@@ -149,7 +155,7 @@ public class FullCalendarView extends VerticalLayout {
 		entryForm.fillExistingEntry(entry);
 		createEntryDialog.open();
 		entryForm.getSaveButton().addClickListener(ev -> {
-			currentEntry = entryForm.createCurrentEntry();
+			Entry currentEntry = entryForm.createCurrentEntry();
 			Reservation reservation = mapCalEvent.mapEntryToReservation(currentEntry);
 			reservation.setId(Long.parseLong(entryId));
 			reservation.setOwner(CurrentUser.get());
@@ -165,7 +171,7 @@ public class FullCalendarView extends VerticalLayout {
 		entryForm.getDeleteEntryButton().addClickListener(ev -> {
 			Reservation reservation = mapCalEvent.mapEntryToReservation(entry);
 			reservation.setOwner(CurrentUser.get());
-
+			reservation.setId(Long.parseLong(entry.getId()));
 			HttpEntity<Reservation> res = new HttpEntity<>(reservation);
 			clientService.deleteReservation(res);
 
@@ -279,7 +285,7 @@ public class FullCalendarView extends VerticalLayout {
 	}
 
 	public void createRecurringReservations(Entry newEntry) {
-		Reservation reservation = mapCalEvent.mapEntryToReservation(currentEntry);
+		Reservation reservation = mapCalEvent.mapEntryToReservation(newEntry);
 		LocalDate start = newEntry.getRecurringStartDate(Timezone.UTC);
 		LocalDate end = newEntry.getRecurringEndDate(Timezone.UTC);
 		Long groupId = null;
