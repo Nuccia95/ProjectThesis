@@ -11,5 +11,4 @@ public interface LoginManager {
 	public User registration(User u);
 	
 	public List<String> getAllEmails();
-
 }

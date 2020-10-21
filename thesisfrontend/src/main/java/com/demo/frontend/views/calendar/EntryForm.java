@@ -1,186 +1,114 @@
 package com.demo.frontend.views.calendar;
 
-import java.time.Duration;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.vaadin.gatanaso.MultiselectComboBox;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
 import com.demo.frontend.utils.AppButton;
-import com.demo.frontend.utils.FriendsDialog;
-import com.demo.frontend.utils.RecurringEventDialog;
-import com.demo.frontend.utils.SpanDescription;
+import com.demo.frontend.views.reservationforms.InviteFriendsForm;
+import com.demo.frontend.views.reservationforms.RecurringEntryForm;
+import com.demo.frontend.views.reservationforms.SingleEntryForm;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.checkbox.Checkbox;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.timepicker.TimePicker;
+import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.Tabs;
 
 public class EntryForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
-	
-	private SpanDescription spanDescription;
-	private TimePicker startTimePicker;
-	private TimePicker endTimePicker;
-	private Button saveButton;
-	private ComboBox<String> comboBoxColors;
-	private ComboBox<String> comboBoxResources;
-	private Checkbox checkBoxRecurring;
-	private HorizontalLayout container;
-	private VerticalLayout l1;
-	private VerticalLayout l2;
-	private HorizontalLayout l4;
-	private HorizontalLayout l5;
+
 	private LocalDate ld;
 	private LocalTime lt;
-	private Button deleteEntryButton;
-	private MultiselectComboBox<String> multiselectComboBoxFriends;
-	private AppButton appButton;
-	private RecurringEventDialog dialogRecurring;
-	private FriendsDialog friendsDialog;
 
-	public EntryForm(LocalDateTime date) {
-		ld = date.toLocalDate();
+	private Tab tab1;
+	private SingleEntryForm page1;
+	private Tab tab2;
+	private RecurringEntryForm page2;
+	private Tab tab3;
+	private InviteFriendsForm page3;
+	private Map<Tab, Component> tabsToPages;
+	
+	private Button deleteEntryButton;
+
+	public EntryForm(LocalDateTime date, String type) {
 		
+		setSizeFull();
+		setAlignItems(Alignment.CENTER);
+		
+		ld = date.toLocalDate();
 		LocalTime lt0 = LocalTime.parse("00:00");
-		if(date.toLocalTime().equals(lt0))
+		if (date.toLocalTime().equals(lt0) || date.toLocalTime() == null)
 			lt = null;
 		else
 			lt = date.toLocalTime();
-		initComponents();
 
-		dialogRecurring = new RecurringEventDialog(ld);
-		friendsDialog = new FriendsDialog();
+		tab1 = new Tab("New Reservation");
+		page1 = new SingleEntryForm(ld, lt, type);
 		
-		buildForm();
+		tab2 = new Tab("Recurring Reservation?");
+		page2 = new RecurringEntryForm(ld);
+		page2.setVisible(false);
+		
+		tab3 = new Tab("Invite Friends?");
+		page3 = new InviteFriendsForm();
+		page3.setVisible(false);
+		
+		tabsToPages = new HashMap<>();
+
+		tab1.getElement().getStyle().set("color"," #1f3d7a");
+		tab2.getElement().getStyle().set("color"," #1f3d7a");
+		tab3.getElement().getStyle().set("color"," #1f3d7a");
+
+		tabsToPages.put(tab1, page1);
+		tabsToPages.put(tab2, page2);
+		tabsToPages.put(tab3, page3);
+		Tabs tabs = new Tabs(tab1, tab2, tab3);
+		
+		tabs.setFlexGrowForEnclosedTabs(1);
+		Div pages = new Div(page1, page2, page3);
+		
+		tabs.addSelectedChangeListener(event -> {
+			tabsToPages.values().forEach(page -> page.setVisible(false));
+			Component selectedPage = tabsToPages.get(tabs.getSelectedTab());
+			selectedPage.setVisible(true);
+		});
+		
+		add(tabs, pages);
 	}
 
 	public EntryForm(LocalDate date) {
 		setSizeFull();
 		ld = date;
-		initComponents();
-		buildForm();
-	}
-	
-	public void initComponents() {
-		setSpacing(false);
-		appButton = new AppButton();
-		spanDescription = new SpanDescription();
-		container = new HorizontalLayout();
-		container.setSpacing(false);
-		container.setAlignItems(Alignment.START);
-		checkBoxRecurring = new Checkbox();
-		checkBoxRecurring.getElement().getStyle().set("font-size", "14px");
-		l1 = new VerticalLayout();
-		l2 = new VerticalLayout();
-		l4 = new HorizontalLayout();
-		l5 = new HorizontalLayout();
-		l5.setSpacing(false);
-		comboBoxResources = new ComboBox<>();
-		comboBoxColors = new ComboBox<>();
-		endTimePicker = new TimePicker();
-		multiselectComboBoxFriends = new MultiselectComboBox<>();
-		multiselectComboBoxFriends.getElement().getStyle().set("padding", "5px");
-	}
-
-	public void buildForm() {
-
-		add(spanDescription.build("CREATE"));
-		
-		/* Form Title */
-		H3 title = new H3("Start date: " + ld);
-		title.getElement().getStyle().set("fontWeight", "bold");
-		add(title);
-		
-		/* Recurring event */
-		checkBoxRecurring.setLabel("Recurring event?");
-		checkBoxRecurring.setValue(false);
-		checkBoxRecurring.addValueChangeListener(e -> {
-			if (Boolean.TRUE.equals(e.getValue()))
-				dialogRecurring.open();
-		});
-
-		add(checkBoxRecurring);
-		add(container);
-
-		/* Resources */
-		l1.setSpacing(false);
-		comboBoxResources.setRequired(true);
-		comboBoxResources.setLabel("Resources");
-
-		/* Event Colors */
-		comboBoxColors.setItems("dodgerblue", "green", "orange", "red", "violet");
-		comboBoxColors.setLabel("Color");
-		l1.add(comboBoxResources, comboBoxColors);
-		container.add(l1);
-
-		/* Start time / End time */
-		l2.setSpacing(false);
-		l2.setAlignItems(Alignment.BASELINE);
-		
-		startTimePicker = new TimePicker();
-		startTimePicker.setRequired(true);
-		startTimePicker.setLabel("Start Time");
-		startTimePicker.setMinTime(LocalTime.of(8, 0));
-		startTimePicker.setMaxTime(LocalTime.of(19, 0));
-		startTimePicker.setStep(Duration.ofMinutes(15));
-		if(lt != null)
-			startTimePicker.setValue(lt);
-		
-		endTimePicker.setRequired(true);
-		endTimePicker.setMinTime(LocalTime.of(8, 0));
-		endTimePicker.setMaxTime(LocalTime.of(19, 0));
-		endTimePicker.setLabel("End Time");
-		endTimePicker.setStep(Duration.ofMinutes(15));
-
-
-		l2.add(startTimePicker, endTimePicker);
-		container.add(l2);
-
-		/* Friends box */	
-		multiselectComboBoxFriends.setPlaceholder("@choose friends..");
-		
-		Button inviteButton = appButton.set("", VaadinIcon.USERS.create());		
-		Label friendsLabel = new Label("Do you want to invite some friends? ");
-		friendsLabel.getElement().getStyle().set("font-size", "14px");
-		l5.setAlignItems(Alignment.BASELINE);
-		l5.add(inviteButton, friendsLabel);
-		add(l5);
-		inviteButton.addClickListener(e -> friendsDialog.open() );
-		
-		saveButton = appButton.set("Save", VaadinIcon.CHECK.create());
-		l4.add(saveButton);
-		setAlignSelf(Alignment.END, l4);
-		add(l4);
 	}
 
 	public Entry createCurrentEntry() {
-		
-		LocalDateTime lstart = LocalDateTime.of(ld, startTimePicker.getValue());
-		LocalDateTime lend = LocalDateTime.of(ld, endTimePicker.getValue());
-		
+
+		LocalDateTime lstart = LocalDateTime.of(ld, page1.getStartTimePicker().getValue());
+		LocalDateTime lend = LocalDateTime.of(ld, page1.getEndTimePicker().getValue());
+
 		Entry newEntry = new Entry();
-		newEntry.setColor(comboBoxColors.getValue());
-		newEntry.setTitle(comboBoxResources.getValue());
+		newEntry.setColor(page1.getComboBoxColors().getValue());
+		newEntry.setTitle(page1.getComboBoxResources().getValue());
 		newEntry.setEditable(true);
 
-		if (Boolean.TRUE.equals(checkBoxRecurring.getValue())
-				&& Boolean.TRUE.equals(dialogRecurring.hasData())) {
+		if (Boolean.TRUE.equals(page2.hasData())) {
 			newEntry.setRecurring(true);
 			newEntry.setRecurringStartDate(ld, Timezone.UTC);
-			newEntry.setRecurringStartTime(startTimePicker.getValue());
-			newEntry.setRecurringEndDate(dialogRecurring.getEndDatePicker().getValue(), Timezone.UTC);
-			newEntry.setRecurringEndTime(endTimePicker.getValue());
-			newEntry.setRecurringDaysOfWeeks(dialogRecurring.getCheckBoxDays().getValue());
+			newEntry.setRecurringStartTime(page1.getStartTimePicker().getValue());
+			newEntry.setRecurringEndDate(page2.getEndDatePicker().getValue(), Timezone.UTC);
+			newEntry.setRecurringEndTime(page1.getEndTimePicker().getValue());
+			newEntry.setRecurringDaysOfWeeks(page2.getDays().getValue());
 		} else {
 			newEntry.setStart(lstart);
 			newEntry.setEnd(lend);
@@ -192,30 +120,43 @@ public class EntryForm extends VerticalLayout {
 	/* Fill form with value of existing entry */
 	public void fillExistingEntry(Entry entry) {
 		
-		spanDescription.setSpanEdit();
-		checkBoxRecurring.setVisible(false);
-		comboBoxResources.setValue(entry.getTitle());
-		comboBoxColors.setValue(entry.getColor());
-		
-		startTimePicker.setValue(entry.getStart().toLocalTime());
-		endTimePicker.setValue(entry.getEnd().toLocalTime());
-		
+		page1.getComboBoxResources().setValue(entry.getTitle());
+		page1.getComboBoxColors().setValue(entry.getColor());
+
+		page1.getStartTimePicker().setValue(entry.getStart().toLocalTime());
+		page1.getEndTimePicker().setValue(entry.getEnd().toLocalTime());
+
+		AppButton appButton = new AppButton();
 		deleteEntryButton = appButton.set("Delete", VaadinIcon.TRASH.create());
-		l4.add(deleteEntryButton);
+		
+		page1.getButtContainer().add(deleteEntryButton);
 	}
 	
-	public void setResources(List<String> resources) {
-		comboBoxResources.setItems(resources);
+	public List<String> getFriendsEmails(){
+		return page3.getAddedFriends();
 	}
 	
-	public void setFriends(List<String> emails) {
-		friendsDialog.getBoxFriends().setItems(emails);
+	public List<String> getDays(){
+
+		List<String> list = new ArrayList<>();
+		for (DayOfWeek d : page2.getDays().getValue())
+			list.add(d.toString());
+		
+		return list;
 	}
 	
 	public Button getSaveButton() {
-		return saveButton;
+		return page1.getSaveEntryButton();
 	}
-	
+
+	public void setResources(List<String> resources) {
+		page1.getComboBoxResources().setItems(resources);
+	}
+
+	public void setFriends(List<String> emails) {
+		page3.getBoxFriends().setItems(emails);
+	}
+
 	public Button getDeleteEntryButton() {
 		return deleteEntryButton;
 	}

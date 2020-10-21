@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import com.demo.thesisbackend.dao.ReservationDAO;
 import com.demo.thesisbackend.dao.ResourceDAO;
+import com.demo.thesisbackend.emails.EmailManager;
 import com.demo.thesisbackend.managers.ReservationManager;
 
 import shared.thesiscommon.bean.Reservation;
@@ -26,6 +27,12 @@ public class ReservationManagerImpl implements ReservationManager {
 	public Reservation createReservation(Reservation reservation) {
 		Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 		reservation.setResource(resource);
+		
+		if(reservation.getGroupId() == 0){
+			EmailManager emailManager = new EmailManager();
+			emailManager.sendEmail(reservation);
+		}
+
 		return reservationDAO.save(reservation);
 	}
 

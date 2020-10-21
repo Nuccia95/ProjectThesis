@@ -2,10 +2,12 @@ package shared.thesiscommon.bean;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = Reservation.TABLE_NAME)
@@ -31,7 +33,11 @@ public class Reservation extends AbstractIdentifiedBean {
 	private boolean recurring;
 	private LocalDate endDate;
 	private boolean editable;
-	
+
+	@Transient
+	private List<String> receivers;
+	@Transient
+	private List<String> days;
 	
 	public Reservation() {
 		
@@ -123,6 +129,22 @@ public class Reservation extends AbstractIdentifiedBean {
 
 	public void setResource(Resource resource) {
 		this.resource = resource;
+	}
+	
+	public List<String> getReceivers() {
+		return receivers;
+	}
+
+	public void setReceivers(List<String> receivers) {
+		this.receivers = receivers;
+	}
+	
+	public List<String> getDays() {
+		return days;
+	}
+
+	public void setDays(List<String> days) {
+		this.days = days;
 	}
 
 	@Override

@@ -38,5 +38,5 @@ public interface WebServicesInterface {
 	List<String> getAllEmails();
 	
 	Set<Reservation> getAllReservations();
-
+	
 }

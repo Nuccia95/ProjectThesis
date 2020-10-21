@@ -121,5 +121,4 @@ public class ClientService implements WebServicesInterface {
 		
 		return all;
 	}
-
 }
