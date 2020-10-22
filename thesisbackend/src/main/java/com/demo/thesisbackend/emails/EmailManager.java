@@ -17,11 +17,10 @@ public class EmailManager {
 	public void sendEmail(Reservation reservation) {
 
 		String from = reservation.getOwner().getEmail();
-		//String to = "nucciaoliverio95@gmail.com";
 
+		/* Setup mail server */
 		String host = "smtp.gmail.com";
 		Properties properties = System.getProperties();
-		/* Setup mail server */
 		properties.put("mail.smtp.host", host);
 		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.ssl.enable", "true");
@@ -29,12 +28,9 @@ public class EmailManager {
 
 		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication("***", "****");
+				return new PasswordAuthentication("infoshareinfoshare2@gmail.com", "infoshare2.");
 			}
 		});
-
-		// Used to debug SMTP issues
-		session.setDebug(true);
 
 		try {
 			MimeMessage message = new MimeMessage(session);

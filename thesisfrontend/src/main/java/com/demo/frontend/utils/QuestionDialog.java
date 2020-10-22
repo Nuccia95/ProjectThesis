@@ -2,8 +2,9 @@ package com.demo.frontend.utils;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.H4;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -16,33 +17,43 @@ public class QuestionDialog extends Dialog {
 	private static final long serialVersionUID = 1L;
 	
 	private VerticalLayout container;
-	private H4 question;
+	private Span question;
 	private HorizontalLayout buttonsContainer;
 	private SpanDescription spanDescription;
 
 	private AppButton appButton;
 	private Button confirmButton;
-	private Button cancelButton;
+	private Button closeButton;
 	
 	/* Question Dialog */
-	public QuestionDialog(String quest, Icon confirm,  Icon cancel, String type) {
+	public QuestionDialog(String quest, String type) {
 
 		container = new VerticalLayout();
-		appButton = new AppButton();
-		buttonsContainer = new HorizontalLayout();
-		question = new H4(quest);
+		question = new Span(quest);
 
 		spanDescription = new SpanDescription();
 		spanDescription.build(type);
+		add(spanDescription.build(type));
+
+		appButton = new AppButton();
 		
+		Icon confirm = VaadinIcon.CHECK.create();
+		Icon close = VaadinIcon.CLOSE.create();
+		
+		closeButton = appButton.set("", close);
 		confirmButton = appButton.set("", confirm);
-		cancelButton = appButton.set("", cancel);
-		buttonsContainer.add(confirmButton, cancelButton);
+		
+		buttonsContainer = new HorizontalLayout();
+		
+		if(type.equals("MOVE"))
+			buttonsContainer.add(confirmButton, closeButton);			
+		else
+			buttonsContainer.add(confirmButton);			
 		
 		container.setAlignSelf(Alignment.END, buttonsContainer);
 		container.add(question, buttonsContainer);
-		
-		add(spanDescription.build(type), container);
+	
+		add(container);
 		open();
 	}
 	
@@ -50,8 +61,7 @@ public class QuestionDialog extends Dialog {
 		return confirmButton;
 	}
 	
-	public Button getCancelButton() {
-		return cancelButton;
+	public Button getCloseButton() {
+		return closeButton;
 	}
-	
 }

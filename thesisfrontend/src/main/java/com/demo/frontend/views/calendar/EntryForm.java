@@ -133,15 +133,13 @@ public class EntryForm extends VerticalLayout {
 	}
 	
 	public List<String> getFriendsEmails(){
-		return page3.getAddedFriends();
+		return page3.selectedFriends();
 	}
 	
 	public List<String> getDays(){
-
 		List<String> list = new ArrayList<>();
 		for (DayOfWeek d : page2.getDays().getValue())
 			list.add(d.toString());
-		
 		return list;
 	}
 	

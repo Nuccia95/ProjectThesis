@@ -20,5 +20,6 @@ public interface ReservationManager {
 
 	public Set<Reservation> getAllReservations();
 	
-
+	public int getReservationsByResource(final long id);
+	
 }

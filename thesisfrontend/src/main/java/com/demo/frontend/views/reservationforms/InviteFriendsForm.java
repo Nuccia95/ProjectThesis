@@ -7,12 +7,12 @@ import org.vaadin.gatanaso.MultiselectComboBox;
 
 import com.demo.frontend.utils.AppButton;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.textfield.EmailField;
 
 public class InviteFriendsForm extends VerticalLayout {
 	
@@ -26,8 +26,6 @@ public class InviteFriendsForm extends VerticalLayout {
 	public InviteFriendsForm() {
 		setWidth("500");
 		setHeight("600");
-		/*SpanDescription span = new SpanDescription();
-		add(span.build("FRIENDS"));*/
 		
 		Label friendsLabel = new Label("Do you want to invite some friends?");
 		add(friendsLabel);
@@ -46,22 +44,23 @@ public class InviteFriendsForm extends VerticalLayout {
 		
 		HorizontalLayout addFriendCont = new HorizontalLayout();
 		
-		TextField newFriendField = new TextField();
+		EmailField newFriendField = new EmailField();
 		newFriendField.setSizeFull();
-		newFriendField.setLabel("Email");
-		newFriendField.setPlaceholder("name@..");
+		newFriendField.setLabel("@Email");
 		
 		AppButton appButton = new AppButton();
 		Button addButton = appButton.set("", VaadinIcon.PLUS_CIRCLE.create());
 		
 		/* increment when add new friends */
 		cont = 0;
-		H3 number = new H3();
+		H4 number = new H4();
 		
 		addButton.addClickListener(ev -> {
-			addedManually.add(newFriendField.getValue());
-			cont++;
-			number.setText(String.valueOf(cont));
+			if(newFriendField.getValue() != null) {
+				addedManually.add(newFriendField.getValue());
+				cont++;
+				number.setText(String.valueOf(cont));
+			}
 		});
 			
 		addFriendCont.setAlignItems(Alignment.BASELINE);

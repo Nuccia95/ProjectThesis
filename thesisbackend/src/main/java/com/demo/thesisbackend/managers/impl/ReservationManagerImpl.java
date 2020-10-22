@@ -1,5 +1,6 @@
 package com.demo.thesisbackend.managers.impl;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -94,5 +95,15 @@ public class ReservationManagerImpl implements ReservationManager {
 		
 		return allres;
  	}
+
+	@Override
+	public int getReservationsByResource(long id) {
+		Iterable<Reservation> res  = reservationDAO.findByResourceId(id);
+		int count = 0;
+		for (Reservation reservation : res)
+			if(reservation.getStartDate().isAfter(LocalDate.now()))
+				count ++;
+		return count;
+	}
 
 }

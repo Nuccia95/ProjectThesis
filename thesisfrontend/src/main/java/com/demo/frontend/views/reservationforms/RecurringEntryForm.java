@@ -35,10 +35,7 @@ public class RecurringEntryForm extends VerticalLayout {
 	
 	public void set() {
 		
-		/*SpanDescription span = new SpanDescription();
-		add(span.build("RECURRING"));*/
-		
-		Span description = new Span("Create a new recurring event, selecting the end and some days");
+		Span description = new Span("New recurring event, select the days");
 		add(description);
 		
 		HorizontalLayout containerDates = new HorizontalLayout();

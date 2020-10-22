@@ -52,10 +52,6 @@ public class MapCalendarEvent {
 		LocalDateTime ldtstart = LocalDateTime.of(reservation.getStartDate(), reservation.getStartTime());
 		LocalDateTime ldtend = LocalDateTime.of(reservation.getStartDate(), reservation.getEndTime());
 		
-		System.out.println("START - END");
-		System.out.println(ldtstart);
-		System.out.println(ldtend);
-		
 		entry.setStart(ldtstart);
 		entry.setEnd(ldtend);
 		return entry;

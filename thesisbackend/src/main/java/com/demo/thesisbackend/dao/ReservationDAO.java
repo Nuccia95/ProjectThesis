@@ -11,6 +11,8 @@ import shared.thesiscommon.bean.Reservation;
 public interface ReservationDAO extends CrudRepository<Reservation, Long> {
 	
 	Set<Reservation> findByOwnerId(Long id);
+	
+	Set<Reservation> findByResourceId(Long resourceId);
 
 	void deleteByGroupId(Long groupId);
 	

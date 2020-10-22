@@ -9,12 +9,15 @@ public class AppButton {
 	public Button set(String text, Icon icon) {
 		
 		Button button;
-		
+		icon.setColor("#1f3d7a");
+
 		if (!text.equals(""))
 			button = new Button(text, icon);
 		else
 			button = new Button(icon);
-		button.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		
+		button.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		button.getElement().getStyle().set("color", "#1f3d7a");
 		return button;
 	}
 

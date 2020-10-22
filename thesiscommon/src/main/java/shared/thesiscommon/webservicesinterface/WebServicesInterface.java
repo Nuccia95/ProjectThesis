@@ -39,4 +39,5 @@ public interface WebServicesInterface {
 	
 	Set<Reservation> getAllReservations();
 	
+	int getReservationsByResource(long id);
 }

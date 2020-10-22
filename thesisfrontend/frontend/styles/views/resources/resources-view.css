@@ -1,8 +1,23 @@
-#container-icons{
+#resource-view{
+	background-color: #e6eeff;
+}
+
+#container-icons {
 	margin-left: auto;
 }
 
-#container-icons iron-icon{
-	margin-right:10px;
-	width: 30px;
+#grid{
+	align-items: center;
+}
+
+#numberRes {
+	color: white;
+	border-radius: 50%;
+	background-color: #1f3d7a;
+	height: 20px;
+	width: 20px;
+	font-size: 13px;
+	display: inline-block;
+	text-align: center;
+	padding: 3px 3px 3px 3px;
 }

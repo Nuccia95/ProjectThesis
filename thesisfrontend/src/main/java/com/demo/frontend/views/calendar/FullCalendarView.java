@@ -4,7 +4,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
@@ -123,8 +123,7 @@ public class FullCalendarView extends VerticalLayout {
 	}
 
 	public void deleteRecurringEntry(Entry e) {
-		QuestionDialog removeEntryDialog = new QuestionDialog("Do you want to delete this reservation?", VaadinIcon.TRASH.create(),
-				VaadinIcon.CLOSE.create(), "REMOVE");
+		QuestionDialog removeEntryDialog = new QuestionDialog("Do you want to delete this reservation?","REMOVE");
 
 		removeEntryDialog.getConfirmButton().addClickListener(ev -> {
 
@@ -141,9 +140,9 @@ public class FullCalendarView extends VerticalLayout {
 						calendar.removeEntry(recurrEntry);
 			}
 			calendar.removeEntry(e);
+			Notification.show("Reservation deleted");
 			removeEntryDialog.close();
 		});
-		removeEntryDialog.getCancelButton().addClickListener(ev -> removeEntryDialog.close());
 	}
 
 	public void editSingleReservation(Entry entry) {
@@ -167,6 +166,7 @@ public class FullCalendarView extends VerticalLayout {
 			Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 			calendar.removeEntry(entry);
 			calendar.addEntry(singleEntry);
+			Notification.show("Reservation updated");
 			entryDialog.close();
 		});
 		
@@ -178,6 +178,7 @@ public class FullCalendarView extends VerticalLayout {
 			clientService.deleteReservation(res);
 
 			calendar.removeEntry(entry);
+			Notification.show("Reservation deleted");
 			entryDialog.close();
 		});
 	}
@@ -190,8 +191,7 @@ public class FullCalendarView extends VerticalLayout {
 				e.applyChangesOnEntry();
 				LocalDate newDate = e.getEntry().getStart().toLocalDate();
 
-				moveEntryDialog = new QuestionDialog("Update the event date to " + newDate + "?",
-						VaadinIcon.CHECK.create(), VaadinIcon.CLOSE.create(), "MOVE");
+				moveEntryDialog = new QuestionDialog("Update the event date to " + newDate + "?", "MOVE");
 
 				moveEntryDialog.getConfirmButton().addClickListener(evnt -> {
 					Reservation reservation = mapCalEvent.mapEntryToReservation(e.getEntry());
@@ -203,7 +203,7 @@ public class FullCalendarView extends VerticalLayout {
 
 					moveEntryDialog.close();
 				});
-				moveEntryDialog.getCancelButton().addClickListener(evnt -> {
+				moveEntryDialog.getCloseButton().addClickListener(evnt -> {
 					calendar.removeEntry(e.getEntry());
 					Entry oldEntry = e.getEntry();
 					LocalDateTime ldtstart = LocalDateTime.of(oldDate, oldEntry.getStart().toLocalTime());
@@ -288,6 +288,7 @@ public class FullCalendarView extends VerticalLayout {
 
 		Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 		calendar.addEntry(singleEntry);
+		Notification.show("Reservation added");
 	}
 
 	public void createRecurringReservations(Entry newEntry) {
@@ -325,6 +326,7 @@ public class FullCalendarView extends VerticalLayout {
 			}
 			start = start.plusDays(1);
 		}
+		Notification.show("Reservation added");
 	}
 
 	public void setForm(LocalDateTime ldt, String type) {

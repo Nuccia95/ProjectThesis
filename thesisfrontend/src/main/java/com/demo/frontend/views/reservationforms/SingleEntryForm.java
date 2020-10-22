@@ -32,20 +32,7 @@ public class SingleEntryForm extends VerticalLayout {
 	public SingleEntryForm(LocalDate date, LocalTime time, String type) {
 		setSizeFull();
 		setSpacing(false);
-		/* Form Title */
-		/*switch (type) {
-		case "CREATE":
-			spanDescription = new SpanDescription();
-			add(spanDescription.build("CREATE"));
-			break;
-		case "EDIT":
-			spanDescription = new SpanDescription();
-			add(spanDescription.build("EDIT"));
-			break;
-		default:
-			break;
-		}*/
-
+	
 		H3 title = new H3("Start date: " + date);
 		title.getElement().getStyle().set("fontWeight", "bold");
 		add(title);

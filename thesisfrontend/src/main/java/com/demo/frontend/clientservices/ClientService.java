@@ -121,4 +121,12 @@ public class ClientService implements WebServicesInterface {
 		
 		return all;
 	}
+
+	@Override
+	public int getReservationsByResource(long id) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationsByResource")
+				.queryParam("id", String.valueOf(id));
+
+		return restTemplate.getForObject(builder.toUriString(), Integer.class);
+	}
 }
