@@ -1,6 +1,8 @@
 package com.demo.frontend.views.resources;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -13,6 +15,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
@@ -20,6 +23,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -51,6 +55,8 @@ public class ResourcesView extends VerticalLayout {
 	private AppButton appButton;
 	private QuestionDialog deleteResourceDialog;
 	private List<Resource> resources;
+	private ListDataProvider<Resource> resourceProvider;
+	private String filterText = "";
 
 	public ResourcesView() {
 		setId("resource-view");
@@ -70,7 +76,7 @@ public class ResourcesView extends VerticalLayout {
 		grid.setId("grid");
 		grid.setSizeFull();
 		resources = clientService.getAllResources();
-		ListDataProvider<Resource> resourceProvider = DataProvider.ofCollection(resources);
+		resourceProvider = DataProvider.ofCollection(resources);
 
 		grid.setDataProvider(resourceProvider);
 
@@ -78,23 +84,23 @@ public class ResourcesView extends VerticalLayout {
 		grid.addColumn(Resource::getDescription).setHeader("Description");
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available");
 		grid.addComponentColumn(this::relatedReservation).setHeader("Related Reservation");
-		
-		if (CurrentUser.isAdmin())		
+
+		if (CurrentUser.isAdmin())
 			grid.addComponentColumn(this::trashIcon);
 
 		add(grid);
 	}
-	
-	public Span relatedReservation(Resource res){
+
+	public Span relatedReservation(Resource res) {
 		int number = clientService.getReservationsByResource(res.getId());
-		
+
 		Span span = new Span();
 		span.setId("numberRes");
-		span.add(String.valueOf(number));			
-	
-		if(number > 0)
+		span.add(String.valueOf(number));
+
+		if (number > 0)
 			span.getElement().getStyle().set("background-color", "#00cc66");
-		
+
 		return span;
 	}
 
@@ -102,7 +108,8 @@ public class ResourcesView extends VerticalLayout {
 		Div buttonsContainer = new Div();
 		buttonsContainer.setId("container-icons");
 
-		Button trashButt = appButton.set("Delete", VaadinIcon.TRASH.create());
+		Button trashButt = appButton.set("", VaadinIcon.TRASH.create());
+		trashButt.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
 		trashButt.addClickListener(click -> {
 
@@ -121,10 +128,11 @@ public class ResourcesView extends VerticalLayout {
 					clientService.deleteResource(resource);
 					grid.getDataProvider().refreshAll();
 					deleteResourceDialog.close();
+					Notification.show("Resource deleted", 2000, Position.BOTTOM_START);
 				});
 			}
 		});
-		
+
 		buttonsContainer.add(trashButt);
 		return buttonsContainer;
 	}
@@ -137,8 +145,9 @@ public class ResourcesView extends VerticalLayout {
 		TextField filter = new TextField();
 		filter.setPlaceholder("Filter resources by name, seats available ..");
 		filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
-
 		filter.setValueChangeMode(ValueChangeMode.EAGER);
+		filter.setClearButtonVisible(true);
+		filter.addValueChangeListener(event -> setFilter(event.getValue()));
 
 		topLayout.setVerticalComponentAlignment(Alignment.START, filter);
 		topLayout.expand(filter);
@@ -147,6 +156,7 @@ public class ResourcesView extends VerticalLayout {
 
 		if (CurrentUser.isAdmin()) {
 			Button newResourceButton = appButton.set("Add", VaadinIcon.PLUS_CIRCLE.create());
+			newResourceButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 			newResourceButton.addClickListener(ev -> {
 				setForm();
 				formDialog.open();
@@ -158,13 +168,10 @@ public class ResourcesView extends VerticalLayout {
 					Resource r = clientService.createResource(resource);
 					resources.add(r);
 					grid.getDataProvider().refreshAll();
-					Notification.show("Resource added");
+					Notification.show("Resource added", 2000, Position.BOTTOM_START);
 					formDialog.close();
 				});
-
-				resourcesForm.getCancelButton().addClickListener(e -> {
-					formDialog.close();
-				});
+				resourcesForm.getCancelButton().addClickListener(e -> formDialog.close());
 			});
 			topLayout.add(newResourceButton);
 		}
@@ -175,6 +182,22 @@ public class ResourcesView extends VerticalLayout {
 		formDialog = new Dialog();
 		resourcesForm = new ResourceForm();
 		formDialog.add(resourcesForm);
+	}
+
+	public void setFilter(String filterText) {
+		Objects.requireNonNull(filterText, "Filter text cannot be null.");
+		if (Objects.equals(this.filterText, filterText.trim())) {
+			return;
+		}
+		this.filterText = filterText.trim().toLowerCase(Locale.ENGLISH);
+
+		resourceProvider.setFilter(resource -> passesFilter(resource.getName(), this.filterText)
+				|| passesFilter(resource.getSeatsAvailable(), this.filterText)
+				|| passesFilter(resource.getDescription(), this.filterText));
+	}
+
+	private boolean passesFilter(Object object, String filterText) {
+		return object != null && object.toString().toLowerCase(Locale.ENGLISH).contains(filterText);
 	}
 
 }

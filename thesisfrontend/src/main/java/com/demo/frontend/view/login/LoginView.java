@@ -44,7 +44,6 @@ public class LoginView extends FlexLayout {
 		buildUI();
 	}
 	
-	
 	private void buildUI() {
 		setSizeFull();
 		setClassName("login-screen");
@@ -85,8 +84,10 @@ public class LoginView extends FlexLayout {
 //		
 		HttpEntity<User> user = new HttpEntity<>(u);
 		User userResult = clientService.login(user);
-		if (userResult == null)
+		if (userResult == null) {
 			Notification.show("Error in login, try again");	
+			loginForm.setEnabled(true);
+		}
 		else {
 			CurrentUser.set(userResult);
 			getUI().get().navigate("fullCalendarView");

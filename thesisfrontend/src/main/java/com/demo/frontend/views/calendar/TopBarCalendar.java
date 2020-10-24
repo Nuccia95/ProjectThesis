@@ -15,60 +15,72 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 
 public class TopBarCalendar {
-	
-	private HorizontalLayout topBarContainer;
+
 	private DatePicker goToPicker;
 	private AppButton appButton;
 	private H3 title;
 	private ComboBox<CalendarView> viewBox;
-	
+
 	public TopBarCalendar() {
-		appButton = new AppButton(); 
+		appButton = new AppButton();
 		goToPicker = new DatePicker();
 		goToPicker.setValue(LocalDate.now());
-		goToPicker.setVisible(false);
 		viewBox = new ComboBox<>();
 	}
 
 	public HorizontalLayout buildTopBar() {
-		topBarContainer = new HorizontalLayout();		
+		HorizontalLayout topBarContainer = new HorizontalLayout();
 		topBarContainer.setSizeFull();
-		
-		HorizontalLayout buttonsContainer = new HorizontalLayout();
-		goToPicker = new DatePicker();
-		goToPicker.setValue(LocalDate.now());
-		goToPicker.setVisible(false);
 
-		title = new H3(goToPicker.getValue().getMonth() + " " + goToPicker.getValue().getDayOfMonth() + ", " +
-				goToPicker.getValue().getYear());
+		title = new H3(goToPicker.getValue().getMonth() + " " + goToPicker.getValue().getDayOfMonth() + ", "
+				+ goToPicker.getValue().getYear());
 		title.getElement().getStyle().set("fontWeight", "bold");
 		
-		Button goToButton = appButton.set("Go to", VaadinIcon.CALENDAR_USER.create());
-		goToButton.addClickListener(e -> {
-			goToPicker.setVisible(true);
-			goToPicker.open();
-		});
+		/* calendar views */
+		setViewBox();		
+		Button viewsButton = appButton.set("Views", VaadinIcon.GRID_BIG.create());
+		viewsButton.getElement().appendChild(viewBox.getElement());
+		viewsButton.addClickListener(ev -> viewBox.setOpened(true));
 
-		buttonsContainer.add(goToButton, goToPicker);
+		/* go to date */
+		setDatePicker();
+		Button goToButton = appButton.set("Go to", VaadinIcon.CALENDAR_USER.create());
+		goToButton.getElement().appendChild(goToPicker.getElement());
+		goToButton.addClickListener(e -> goToPicker.open());
+
+		HorizontalLayout buttonsContainer = new HorizontalLayout();
+		buttonsContainer.add(viewsButton, viewBox, goToButton, goToPicker);
 		buttonsContainer.getElement().getStyle().set("margin-left", "auto");
+		buttonsContainer.getElement().getStyle().set("padding", "10");
 		
-	    viewBox.setItems(CalendarViewImpl.DAY_GRID_MONTH, CalendarViewImpl.DAY_GRID_WEEK, CalendarViewImpl.LIST_MONTH, CalendarViewImpl.TIME_GRID_WEEK);
-	    viewBox.setValue(CalendarViewImpl.DAY_GRID_MONTH);
-	    
-	    topBarContainer.setAlignItems(Alignment.BASELINE);
-		topBarContainer.add(title, viewBox, buttonsContainer);
-		topBarContainer.setAlignSelf(Alignment.END, buttonsContainer);
+		topBarContainer.add(title, buttonsContainer);
+		topBarContainer.setAlignItems(Alignment.BASELINE);
 		return topBarContainer;
 	}
+
+	public void setDatePicker() {
+		goToPicker.getElement().getStyle().set("visibility", "hidden");
+		goToPicker.getElement().getStyle().set("position", "fixed");
+		goToPicker.setWidth("0px");
+		goToPicker.setHeight("0px");
+	}
 	
+	public void setViewBox() {
+		viewBox.getElement().getStyle().set("visibility", "hidden");
+		viewBox.getElement().getStyle().set("position", "fixed");
+		viewBox.setItems(CalendarViewImpl.DAY_GRID_MONTH, CalendarViewImpl.DAY_GRID_WEEK, CalendarViewImpl.LIST_MONTH,
+				CalendarViewImpl.TIME_GRID_WEEK);
+		viewBox.setValue(CalendarViewImpl.DAY_GRID_MONTH);
+	}
+
 	public DatePicker getGoToPicker() {
 		return goToPicker;
 	}
-	
+
 	public H3 getTitle() {
 		return title;
 	}
-	
+
 	public ComboBox<CalendarView> getViewBox() {
 		return viewBox;
 	}

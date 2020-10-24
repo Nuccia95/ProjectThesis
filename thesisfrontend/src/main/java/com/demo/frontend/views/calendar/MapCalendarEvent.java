@@ -3,6 +3,7 @@ package com.demo.frontend.views.calendar;
 import java.time.LocalDateTime;
 
 import org.vaadin.stefan.fullcalendar.Entry;
+import org.vaadin.stefan.fullcalendar.Timezone;
 
 import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.Resource;
@@ -21,7 +22,9 @@ public class MapCalendarEvent {
 		
 		if (entry.isRecurring()) {
 			reservation.setRecurring(true);
+			reservation.setStartDate(entry.getRecurringStartDate(Timezone.UTC));
 			reservation.setStartTime(entry.getRecurringStartTime());
+			reservation.setEndDate(entry.getRecurringEndDate(Timezone.UTC));
 			reservation.setEndTime(entry.getRecurringEndTime());
 			if(entry.getDescription() != null)
 				reservation.setGroupId(Long.parseLong(entry.getDescription()));

@@ -118,5 +118,11 @@ public class Controller implements WebServicesInterface {
 	public int getReservationsByResource(long id) {
 		return reservationManager.getReservationsByResource(id);
 	}
+
+	@Override
+	@GetMapping(value="/getUserName")
+	public String getUserName(long id) {
+		return loginManager.getUserName(id);
+	}
 	
 }

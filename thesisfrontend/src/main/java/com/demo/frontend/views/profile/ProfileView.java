@@ -29,9 +29,7 @@ public class ProfileView extends HorizontalLayout {
 	@Autowired
 	private WebServicesInterface clientService;
 	
-	private Image avatar;
-	
-	public ProfileView() {
+ 	public ProfileView() {
 		setId("profile-view");
 		setSpacing(true);
 		setJustifyContentMode(JustifyContentMode.BETWEEN);
@@ -96,18 +94,18 @@ public class ProfileView extends HorizontalLayout {
 	}
 	
 	public Image getAvatar() {
+
+		Image avatar = new Image();
+		avatar.setId("avatar");
 		switch (CurrentUser.get().getProfile().getName()) {
 		case User.ADMIN_PROFILE:
-			avatar = new Image("images/admin.png", "Avatar");
-			avatar.setId("avatar");
+			avatar.setSrc("images/admin.png");
 			break;
 		case User.USER_PROFILE:
-			avatar = new Image("images/simpleUser.png", "Avatar");
-			avatar.setId("avatar");
+			avatar.setSrc("images/simpleUser.png");
 			break;
 		case User.VIEWER_PROFILE:
-			avatar = new Image("images/viewer.png", "Avatar");
-			avatar.setId("avatar");
+			avatar.setSrc("images/viewer.png");
 			break;
 		default:
 			break;

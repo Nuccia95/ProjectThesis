@@ -29,7 +29,7 @@ public class SingleEntryForm extends VerticalLayout {
 	private Button saveEntryButton;
 	private HorizontalLayout buttContainer;
 	
-	public SingleEntryForm(LocalDate date, LocalTime time, String type) {
+	public SingleEntryForm(LocalDate date, LocalTime time) {
 		setSizeFull();
 		setSpacing(false);
 	

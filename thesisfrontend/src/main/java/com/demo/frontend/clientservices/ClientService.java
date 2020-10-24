@@ -129,4 +129,14 @@ public class ClientService implements WebServicesInterface {
 
 		return restTemplate.getForObject(builder.toUriString(), Integer.class);
 	}
+
+	@Override
+	public String getUserName(long id) {
+		User u = CurrentUser.get();
+
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getUserName")
+				.queryParam("id", u.getId().toString());
+		
+		return restTemplate.getForObject(builder.toUriString(), String.class);
+	}
 }

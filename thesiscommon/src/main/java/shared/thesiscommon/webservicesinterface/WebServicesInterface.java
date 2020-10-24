@@ -40,4 +40,6 @@ public interface WebServicesInterface {
 	Set<Reservation> getAllReservations();
 	
 	int getReservationsByResource(long id);
+	
+	String getUserName(long id);
 }

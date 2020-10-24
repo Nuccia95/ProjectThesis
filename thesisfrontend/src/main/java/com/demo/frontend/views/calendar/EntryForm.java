@@ -41,7 +41,7 @@ public class EntryForm extends VerticalLayout {
 	
 	private Button deleteEntryButton;
 
-	public EntryForm(LocalDateTime date, String type) {
+	public EntryForm(LocalDateTime date) {
 		
 		setSizeFull();
 		setAlignItems(Alignment.CENTER);
@@ -54,7 +54,7 @@ public class EntryForm extends VerticalLayout {
 			lt = date.toLocalTime();
 
 		tab1 = new Tab("New Reservation");
-		page1 = new SingleEntryForm(ld, lt, type);
+		page1 = new SingleEntryForm(ld, lt);
 		
 		tab2 = new Tab("Recurring Reservation?");
 		page2 = new RecurringEntryForm(ld);
@@ -128,6 +128,9 @@ public class EntryForm extends VerticalLayout {
 
 		AppButton appButton = new AppButton();
 		deleteEntryButton = appButton.set("Delete", VaadinIcon.TRASH.create());
+		
+		page2.setEnabled(false);
+		page3.setEnabled(false);
 		
 		page1.getButtContainer().add(deleteEntryButton);
 	}

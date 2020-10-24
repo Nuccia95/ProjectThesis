@@ -19,25 +19,25 @@ public class LoginManagerImpl implements LoginManager {
 
 	@Autowired
 	private UserDAO userDAO;
-	@Autowired 
+	@Autowired
 	private ProfileDAO profileDAO;
 
 	@Override
 	public User login(User user) {
 		User u = userDAO.findByEmail(user.getEmail());
 		if (u != null)
-			if(Arrays.equals(user.getPassword(), u.getPassword()))
+			if (Arrays.equals(user.getPassword(), u.getPassword()))
 				return u;
 		return null;
 	}
 
 	@Override
 	public User registration(User user) {
-		
+
 		User u = userDAO.findByEmail(user.getEmail());
 		Profile profile = null;
-		
-		if(u == null) {	
+
+		if (u == null) {
 			switch (user.getProfile().getName()) {
 			case User.USER_PROFILE:
 				profile = profileDAO.findByName(User.USER_PROFILE);
@@ -48,12 +48,12 @@ public class LoginManagerImpl implements LoginManager {
 			default:
 				break;
 			}
-			
-			if(profile!=null)
+
+			if (profile != null)
 				user.setProfile(profile);
 			user.setAdmin(Boolean.FALSE);
 		}
-		
+
 		return userDAO.save(user);
 	}
 
@@ -66,4 +66,12 @@ public class LoginManagerImpl implements LoginManager {
 		return emails;
 	}
 
+	@Override
+	public String getUserName(long id) {
+		if (userDAO.existsById(id)) {
+			User u = userDAO.findById(id).get();
+			return u.getFirstName() + " " + u.getLastName();
+		}
+		return null;
+	}
 }

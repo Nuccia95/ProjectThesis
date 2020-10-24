@@ -5,6 +5,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.dom.Style;
 import com.vaadin.flow.router.PageTitle;
@@ -16,6 +17,7 @@ import shared.thesiscommon.webservicesinterface.WebServicesInterface;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +56,7 @@ public class FullCalendarView extends VerticalLayout {
 
 	public FullCalendarView() {
 		setSpacing(false);
+		
 		setClassName("fullcalendar-view");
 
 		topBar = new TopBarCalendar();
@@ -75,7 +78,6 @@ public class FullCalendarView extends VerticalLayout {
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
 		calendar.setSizeFull();
-
 		add(calendar);
 		setFlexGrow(1, calendar);
 
@@ -84,6 +86,24 @@ public class FullCalendarView extends VerticalLayout {
 			calendar.changeView(value == null ? CalendarViewImpl.DAY_GRID_MONTH : value);
 		});
 		calendar.changeView(CalendarViewImpl.DAY_GRID_MONTH);
+	}
+	
+	@Override
+	protected void onAttach(AttachEvent attachEvent) {
+		super.onAttach(attachEvent);
+
+		Set<Reservation> allRes = clientService.getAllReservations();
+		if (allRes != null)
+			for (Reservation reservation : allRes) {
+				Entry e = mapCalEvent.mapReservationToEntry(reservation);
+				/* If CurrentUser is NOT the owner, disable Entry */
+				if (!CurrentUser.get().getId().equals(reservation.getOwner().getId())) {
+					e.setEditable(false);
+					e.setDescription("notmy");
+					e.setColor("#1f3d7a");
+				}
+				calendar.addEntry(e);
+			}
 	}
 
 	public void manageReservations() {
@@ -96,7 +116,7 @@ public class FullCalendarView extends VerticalLayout {
 	public void createReservation() {
 		calendar.addTimeslotsSelectedListener( event -> {
 			LocalDateTime ldt = event.getStartDateTime();
-			setForm(ldt, "CREATE");
+			setForm(ldt);
 			entryDialog.open();
 			entryForm.getSaveButton().addClickListener(e -> {
 				Entry currentEntry = entryForm.createCurrentEntry();
@@ -109,22 +129,29 @@ public class FullCalendarView extends VerticalLayout {
 			});
 		});
 	}
-
+	
 	public void updateExistingReservation() {
 		calendar.addEntryClickedListener(e -> {
 			Entry entry = e.getEntry();
-			if (entry.isRecurring() && entry.getDescription().equals("0")) {
-				deleteRecurringEntry(entry);
-			}
-			else if (entry.isEditable()) {
-				editSingleReservation(entry);
+			if(!entry.getDescription().equals("notmy")) {
+				if (entry.isRecurring() && entry.getDescription().equals("0") && !entry.isEditable())
+					deleteRecurringEntry(entry);
+				if(entry.isEditable())
+					editSingleReservation(entry);				
+			}else {
+				
+				String text = "Start: " + entry.getStart().toLocalDate() + "-" + entry.getStart().toLocalTime() + 
+						" End: " + entry.getEnd().toLocalDate() + "-" + entry.getEnd().toLocalTime() + " " +
+						"OWNED by another user";
+				Notification.show(text, 2000, Position.TOP_START);
 			}
 		});
 	}
 
 	public void deleteRecurringEntry(Entry e) {
+		
 		QuestionDialog removeEntryDialog = new QuestionDialog("Do you want to delete this reservation?","REMOVE");
-
+		
 		removeEntryDialog.getConfirmButton().addClickListener(ev -> {
 
 			Reservation reservation = mapCalEvent.mapEntryToReservation(e);
@@ -140,7 +167,7 @@ public class FullCalendarView extends VerticalLayout {
 						calendar.removeEntry(recurrEntry);
 			}
 			calendar.removeEntry(e);
-			Notification.show("Reservation deleted");
+			Notification.show("Reservations deleted", 2000, Position.BOTTOM_START);
 			removeEntryDialog.close();
 		});
 	}
@@ -148,7 +175,7 @@ public class FullCalendarView extends VerticalLayout {
 	public void editSingleReservation(Entry entry) {
 		String entryId = entry.getId();
 		LocalDateTime ldt = entry.getStart();
-		setForm(ldt, "EDIT");
+		setForm(ldt);
 		entryForm.fillExistingEntry(entry);
 		entryDialog.open();
 		entryForm.getSaveButton().addClickListener(ev -> {
@@ -162,11 +189,11 @@ public class FullCalendarView extends VerticalLayout {
 			
 			HttpEntity<Reservation> res = new HttpEntity<>(reservation);
 			Reservation r = clientService.updateSingleReservation(res);
-
+			
 			Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 			calendar.removeEntry(entry);
 			calendar.addEntry(singleEntry);
-			Notification.show("Reservation updated");
+			Notification.show("Reservation updated", 2000, Position.BOTTOM_START);
 			entryDialog.close();
 		});
 		
@@ -178,7 +205,7 @@ public class FullCalendarView extends VerticalLayout {
 			clientService.deleteReservation(res);
 
 			calendar.removeEntry(entry);
-			Notification.show("Reservation deleted");
+			Notification.show("Reservation deleted", 2000, Position.BOTTOM_START);
 			entryDialog.close();
 		});
 	}
@@ -228,12 +255,14 @@ public class FullCalendarView extends VerticalLayout {
 				dialogLayout.setDefaultHorizontalComponentAlignment(Alignment.STRETCH);
 				for (Entry e : entries) {
 					Button b = createClickableEntry(e);
-					b.addClickListener(click -> {
-						LocalDateTime ldt = LocalDateTime.of(event.getClickedDate(), null);
-						setForm(ldt, "EDIT");
-						entryForm.fillExistingEntry(e);
-						entryDialog.open();
-					});
+					if(e.isEditable()) {
+						b.addClickListener(click -> {
+							LocalDateTime ldt = LocalDateTime.of(event.getClickedDate(), LocalTime.of(0, 0));
+							setForm(ldt);
+							entryForm.fillExistingEntry(e);
+							entryDialog.open();
+						});
+					}
 					dialogLayout.add(b);
 				}
 				dialog.add(dialogLayout);
@@ -257,25 +286,6 @@ public class FullCalendarView extends VerticalLayout {
 		return button;
 	}
 
-	@Override
-	protected void onAttach(AttachEvent attachEvent) {
-		super.onAttach(attachEvent);
-
-		Set<Reservation> allRes = clientService.getAllReservations();
-		if (allRes != null)
-			for (Reservation reservation : allRes) {
-				Entry e = mapCalEvent.mapReservationToEntry(reservation);
-
-				/* If CurrentUser is NOT the owner, disable Entry */
-				if (!CurrentUser.get().getId().equals(reservation.getOwner().getId())) {
-					e.setEditable(false);
-					e.setColor("dodgerblue");
-				}
-
-				calendar.addEntry(e);
-			}
-	}
-
 	public void createSingleReservation(Entry newEntry) {
 		Reservation reservation = mapCalEvent.mapEntryToReservation(newEntry);
 		reservation.setOwner(CurrentUser.get());
@@ -288,7 +298,7 @@ public class FullCalendarView extends VerticalLayout {
 
 		Entry singleEntry = mapCalEvent.mapReservationToEntry(r);
 		calendar.addEntry(singleEntry);
-		Notification.show("Reservation added");
+		Notification.show("Reservation added", 2000, Position.BOTTOM_START);
 	}
 
 	public void createRecurringReservations(Entry newEntry) {
@@ -326,14 +336,14 @@ public class FullCalendarView extends VerticalLayout {
 			}
 			start = start.plusDays(1);
 		}
-		Notification.show("Reservation added");
+		Notification.show("Reservation added", 2000, Position.BOTTOM_START);
 	}
 
-	public void setForm(LocalDateTime ldt, String type) {
+	public void setForm(LocalDateTime ldt) {
 		entryDialog = new Dialog();
 		entryDialog.setHeight("450px");
 		entryDialog.setWidth("550px");
-		entryForm = new EntryForm(ldt, type);
+		entryForm = new EntryForm(ldt);
 		entryForm.setFriends(clientService.getAllEmails());
 		entryForm.setResources(clientService.getResourcesNames());
 		entryDialog.add(entryForm);
@@ -347,9 +357,6 @@ public class FullCalendarView extends VerticalLayout {
 					.setText(topBar.getGoToPicker().getValue().getMonth() + " "
 							+ topBar.getGoToPicker().getValue().getDayOfMonth() + ", "
 							+ topBar.getGoToPicker().getValue().getYear());
-
-			topBar.getGoToPicker().setVisible(false);
 		});
 	}
-
 }
