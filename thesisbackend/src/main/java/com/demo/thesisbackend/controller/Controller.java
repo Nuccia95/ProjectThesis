@@ -48,12 +48,6 @@ public class Controller implements WebServicesInterface {
 	}
 	
 	@Override
-	@PostMapping("/updateDate")
-	public Reservation updateDate(final HttpEntity<Reservation> reservation) {
-		return reservationManager.updateDate(reservation.getBody());
-	}
-	
-	@Override
 	@PostMapping("/updateSingleReservation")
 	public Reservation updateSingleReservation(final HttpEntity<Reservation> reservation) {
 		return reservationManager.updateReservation(reservation.getBody());

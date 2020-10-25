@@ -14,9 +14,10 @@ import shared.thesiscommon.bean.Reservation;
 
 public class EmailManager {
 
+	private String from;
 	public void sendEmail(Reservation reservation) {
 
-		String from = reservation.getOwner().getEmail();
+		from = reservation.getOwner().getFirstName() + " " + reservation.getOwner().getLastName();
 
 		/* Setup mail server */
 		String host = "smtp.gmail.com";
@@ -34,9 +35,9 @@ public class EmailManager {
 
 		try {
 			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress(from));
+			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
 			message.setSubject("InfoShare New Meeting");
-			message.setText(setMessage(reservation));
+			message.setText(setMessage(reservation, from));
 
 			for (String email : reservation.getReceivers()) {
 
@@ -53,10 +54,11 @@ public class EmailManager {
 		}
 	}
 
-	public String setMessage(Reservation reservation) {
+	public String setMessage(Reservation reservation, String from) {
 		String text = "You are invited to join the meeting " + "\n" + "START DATE: " + reservation.getStartDate() + "\n"
 				+ "END DATE: " + reservation.getEndDate() + "\n" + "START TIME: " + reservation.getStartTime() + "\n"
-				+ "END TIME: " + reservation.getEndTime() + "\n";
+				+ "END TIME: " + reservation.getEndTime() + "\n"
+				+ "ORGANIZED by " + from;
 
 		if (reservation.isRecurring()) {
 			String days = "";

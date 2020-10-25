@@ -1,15 +1,16 @@
 #profile-view{
 	padding: 30px;
+	background-color: #e6eeff;
 }
 
 #infocontainer {
-	background-color: #e6f7ff;
 	border-radius: 20px;
+	background-color: #ffff;
 }
 
 #formcontainer {
-	background-color: #e6f7ff;
 	border-radius: 20px;
+	background-color: #ffff;
 }
 
 img#avatar {

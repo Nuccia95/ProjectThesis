@@ -41,11 +41,6 @@ public class ClientService implements WebServicesInterface {
 	}
 
 	@Override
-	public Reservation updateDate(HttpEntity<Reservation> reservation) {
-		return restTemplate.postForObject(URL + "updateDate", reservation, Reservation.class);
-	}
-
-	@Override
 	public Reservation updateSingleReservation(HttpEntity<Reservation> reservation) {
 		return restTemplate.postForObject(URL + "updateSingleReservation", reservation, Reservation.class);
 	}

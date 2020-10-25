@@ -10,8 +10,6 @@ public interface ReservationManager {
 	
 	public Reservation updateReservation(Reservation reservation);
 	
-	public Reservation updateDate(Reservation reservation);
-	
 	public void deleteReservation(Reservation reservation);
 	
 	public void deleteRecurringReservation(Reservation reservation);

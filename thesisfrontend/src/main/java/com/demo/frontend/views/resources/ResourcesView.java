@@ -23,6 +23,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -116,7 +117,7 @@ public class ResourcesView extends VerticalLayout {
 			int number = clientService.getReservationsByResource(res.getId());
 			String text;
 			if (number > 0) {
-				text = "This resource cannot be deleted, there are " + number + " of reservations " + "releted to it";
+				text = "This resource cannot be deleted, there are " + number + " future reservations " + "releted to it";
 				deleteResourceDialog = new QuestionDialog(text, "REMOVE");
 				deleteResourceDialog.getConfirmButton().addClickListener(ev -> deleteResourceDialog.close());
 			} else {
@@ -168,7 +169,7 @@ public class ResourcesView extends VerticalLayout {
 					Resource r = clientService.createResource(resource);
 					resources.add(r);
 					grid.getDataProvider().refreshAll();
-					Notification.show("Resource added", 2000, Position.BOTTOM_START);
+					Notification.show("Resource added", 2000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 					formDialog.close();
 				});
 				resourcesForm.getCancelButton().addClickListener(e -> formDialog.close());

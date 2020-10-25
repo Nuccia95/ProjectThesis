@@ -20,6 +20,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -96,6 +99,11 @@ public class EntryForm extends VerticalLayout {
 
 		LocalDateTime lstart = LocalDateTime.of(ld, page1.getStartTimePicker().getValue());
 		LocalDateTime lend = LocalDateTime.of(ld, page1.getEndTimePicker().getValue());
+		
+		if(lstart.isAfter(lend) ) {
+			Notification.show("Check time, START and END of reservation", 2000, Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
+			return null;
+		}
 
 		Entry newEntry = new Entry();
 		newEntry.setColor(page1.getComboBoxColors().getValue());
@@ -109,6 +117,11 @@ public class EntryForm extends VerticalLayout {
 			newEntry.setRecurringEndDate(page2.getEndDatePicker().getValue(), Timezone.UTC);
 			newEntry.setRecurringEndTime(page1.getEndTimePicker().getValue());
 			newEntry.setRecurringDaysOfWeeks(page2.getDays().getValue());
+			if(lstart.toLocalDate().isAfter(page2.getEndDatePicker().getValue())) {
+				Notification.show("Check date, START and END of reservation", 2000, Position.TOP_START).addThemeVariants(NotificationVariant.LUMO_ERROR);
+				return null;
+			}
+			
 		} else {
 			newEntry.setStart(lstart);
 			newEntry.setEnd(lend);

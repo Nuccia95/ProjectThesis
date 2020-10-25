@@ -17,8 +17,6 @@ public interface WebServicesInterface {
 
 	Reservation createReservation(HttpEntity<Reservation> reservation);
 
-	Reservation updateDate(HttpEntity<Reservation> reservation);
-
 	Reservation updateSingleReservation(HttpEntity<Reservation> reservation);
 
 	void deleteReservation(HttpEntity<Reservation> reservation);

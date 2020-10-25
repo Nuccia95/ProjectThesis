@@ -55,18 +55,6 @@ public class ReservationManagerImpl implements ReservationManager {
 	}
 
 	@Override
-	public Reservation updateDate(Reservation reservation) {
-		Optional<Reservation> r = reservationDAO.findById(reservation.getId());
-		if(r.isPresent()) {
-			Reservation res = r.get();
-			res.setStartDate(reservation.getStartDate());
-			res.setEndDate(reservation.getStartDate());			
-			return reservationDAO.save(res);
-		}
-		return null;
-	}
-
-	@Override
 	public void deleteReservation(Reservation reservation) {
 		reservationDAO.deleteById(reservation.getId());
 

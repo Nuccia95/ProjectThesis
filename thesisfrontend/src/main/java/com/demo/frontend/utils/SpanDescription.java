@@ -32,6 +32,11 @@ public class SpanDescription{
 			description.getElement().getStyle().set("color", "#24478f");
 			description.getElement().getStyle().set("background", "#99bbff");
 			break;
+		case "OTHER":
+			description.setText("Owned by another user");
+			description.getElement().getStyle().set("color", "#ffaa00");
+			description.getElement().getStyle().set("background", "#ffeecc");
+			break;
 		default:
 			break;
 		}
