@@ -40,6 +40,10 @@ public final class CurrentUser {
 		return CurrentUser.get().getProfile().getName().equals(User.VIEWER_PROFILE);
 	}
 
+	public static boolean isSimpleUser() {
+		return CurrentUser.get().getProfile().getName().equals(User.USER_PROFILE);
+	}
+	
 	public static String getCookieValue(final String name) {
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
 		for (Cookie c : cookies)
@@ -48,7 +52,7 @@ public final class CurrentUser {
 		return "";
 	}
 
-	public static boolean LoginCookiesArePresent() {
+	public static boolean loginCookiesArePresent() {
 		Cookie[] cookies = VaadinService.getCurrentRequest().getCookies();
 		if (cookies != null)
 			for (Cookie c : cookies)

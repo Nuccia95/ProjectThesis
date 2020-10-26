@@ -134,4 +134,14 @@ public class ClientService implements WebServicesInterface {
 		
 		return restTemplate.getForObject(builder.toUriString(), String.class);
 	}
+
+	@Override
+	public boolean checkOldPassword(HttpEntity<User> user) {
+		return restTemplate.postForObject(URL + "checkOldPassword", user, Boolean.class);
+	}
+
+	@Override
+	public boolean updatePassword(HttpEntity<User> user) {
+		return restTemplate.postForObject(URL + "updatePassword", user, Boolean.class);
+	}
 }

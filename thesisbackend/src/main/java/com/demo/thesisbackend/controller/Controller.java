@@ -118,5 +118,17 @@ public class Controller implements WebServicesInterface {
 	public String getUserName(long id) {
 		return loginManager.getUserName(id);
 	}
+
+	@Override
+	@PostMapping("/checkOldPassword")
+	public boolean checkOldPassword(HttpEntity<User> user) {
+		return loginManager.checkOldPassword(user.getBody());
+	}
+
+	@Override
+	@PostMapping("/updatePassword")
+	public boolean updatePassword(HttpEntity<User> user) {
+		return loginManager.updatePassword(user.getBody());
+	}
 	
 }

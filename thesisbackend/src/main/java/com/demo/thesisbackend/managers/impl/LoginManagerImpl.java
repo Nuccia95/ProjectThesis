@@ -3,6 +3,7 @@ package com.demo.thesisbackend.managers.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,9 +26,8 @@ public class LoginManagerImpl implements LoginManager {
 	@Override
 	public User login(User user) {
 		User u = userDAO.findByEmail(user.getEmail());
-		if (u != null)
-			if (Arrays.equals(user.getPassword(), u.getPassword()))
-				return u;
+		if (u != null && Arrays.equals(user.getPassword(), u.getPassword()))
+			return u;
 		return null;
 	}
 
@@ -74,4 +74,28 @@ public class LoginManagerImpl implements LoginManager {
 		}
 		return null;
 	}
+
+	@Override
+	public boolean updatePassword(User u) {
+		Optional<User> user = userDAO.findById(u.getId());
+		if (user.isPresent()) {
+			User updatedUser = user.get();
+			updatedUser.setPassword(u.getPassword());
+			userDAO.save(updatedUser);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkOldPassword(User u) {
+		Optional<User> user = userDAO.findById(u.getId());
+		if (user.isPresent()) {
+			User userSaved = user.get();
+			if (Arrays.equals(userSaved.getPassword(), u.getPassword()))
+				return true;
+		}
+		return false;
+	}
+
 }

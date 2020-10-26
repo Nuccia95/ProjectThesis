@@ -2,11 +2,15 @@
 	background-color: #e6eeff;
 }
 
-#infocontainer, #formcontainer {
+#profile, #newUserForm, #passwordForm {
 	border-radius: 10px;
 	background-color: #ffff;
 	box-shadow: black;
 	box-shadow: 2px 1px 5px 0px grey;
+}
+
+vaadin-tab#tab{
+	color:#1f3d7a;
 }
 
 img#avatar {
@@ -16,7 +20,7 @@ img#avatar {
   margin-top: 20px;
 }
 
-iron-icon#users{
+iron-icon#users, #settings{
   width: 20px;
   height: 20px;
   margin-left: 10px;
@@ -24,8 +28,4 @@ iron-icon#users{
 
 input{
 	color: black;
-}
-
-h4{
-	font-style: italic;
 }

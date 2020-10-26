@@ -40,4 +40,10 @@ public interface WebServicesInterface {
 	int getReservationsByResource(long id);
 	
 	String getUserName(long id);
+	
+	boolean checkOldPassword(HttpEntity<User> user);
+
+	boolean updatePassword(HttpEntity<User> user);
+	
+	
 }

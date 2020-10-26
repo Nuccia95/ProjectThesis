@@ -42,9 +42,6 @@ import shared.thesiscommon.webservicesinterface.WebServicesInterface;
 @PageTitle("Resources")
 public class ResourcesView extends VerticalLayout {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Autowired
@@ -83,12 +80,12 @@ public class ResourcesView extends VerticalLayout {
 
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
 		grid.addColumn(Resource::getDescription).setHeader("Description");
-		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available");
-		grid.addComponentColumn(this::relatedReservation).setHeader("Related Reservation");
-
+		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true).setKey("Seats Available");
+		grid.addComponentColumn(this::relatedReservation).setHeader("Related Reservations");
+		
 		if (CurrentUser.isAdmin())
 			grid.addComponentColumn(this::trashIcon);
-
+	
 		add(grid);
 	}
 
@@ -97,10 +94,9 @@ public class ResourcesView extends VerticalLayout {
 
 		Span span = new Span();
 		span.setId("numberRes");
-		span.add(String.valueOf(number));
 
 		if (number > 0)
-			span.getElement().getStyle().set("background-color", "#00cc66");
+			span.getElement().getStyle().set("background-color", "#66ff33");
 
 		return span;
 	}
