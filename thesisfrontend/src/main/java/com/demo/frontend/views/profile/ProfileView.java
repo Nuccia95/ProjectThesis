@@ -14,8 +14,9 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -50,6 +51,7 @@ public class ProfileView extends VerticalLayout {
 	private AppButton appButton;
 
 	public ProfileView() {
+		setSizeFull();
 		setId("profile-view");
 		setSpacing(true);
 		setAlignItems(Alignment.CENTER);
@@ -95,10 +97,10 @@ public class ProfileView extends VerticalLayout {
 		VerticalLayout infoContainer = new VerticalLayout();
 		infoContainer.setId("infocontainer");
 		infoContainer.setSpacing(false);
-		infoContainer.setHeight("400px");
 		infoContainer.setWidth("450px");
+		infoContainer.setHeight("400px");
 
-		H3 title = new H3("Profile");
+		H4 title = new H4("Profile");
 		HorizontalLayout titleContainer = new HorizontalLayout();
 
 		titleContainer.add(title, getAvatar());
@@ -115,12 +117,12 @@ public class ProfileView extends VerticalLayout {
 		VerticalLayout formContainer = new VerticalLayout();
 		formContainer.setId("formcontainer");
 		formContainer.setSpacing(false);
-		formContainer.setHeight("400px");
-		formContainer.setWidth("450px");
 
-		H3 title = new H3("Add New User");
+		H4 title = new H4("Add New User");
 		HorizontalLayout titleContainer = new HorizontalLayout();
-		titleContainer.add(title, VaadinIcon.USER.create());
+		Icon users = VaadinIcon.USERS.create();
+		users.setId("users");
+		titleContainer.add(title, users);
 		titleContainer.setAlignItems(Alignment.BASELINE);
 
 		RegistrationForm registrationForm = new RegistrationForm();

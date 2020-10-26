@@ -18,6 +18,7 @@ import com.demo.frontend.views.reservationforms.RecurringEntryForm;
 import com.demo.frontend.views.reservationforms.SingleEntryForm;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -27,6 +28,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 
+@CssImport("./styles/views/forms/forms.css")
 public class EntryForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -57,21 +59,20 @@ public class EntryForm extends VerticalLayout {
 			lt = date.toLocalTime();
 
 		tab1 = new Tab("New Reservation");
+		tab1.setId("tab");
 		page1 = new SingleEntryForm(ld, lt);
 		
 		tab2 = new Tab("Recurring Reservation?");
+		tab2.setId("tab");
 		page2 = new RecurringEntryForm(ld);
 		page2.setVisible(false);
 		
 		tab3 = new Tab("Invite Friends?");
+		tab3.setId("tab");
 		page3 = new InviteFriendsForm();
 		page3.setVisible(false);
 		
 		tabsToPages = new HashMap<>();
-
-		tab1.getElement().getStyle().set("color"," #1f3d7a");
-		tab2.getElement().getStyle().set("color"," #1f3d7a");
-		tab3.getElement().getStyle().set("color"," #1f3d7a");
 
 		tabsToPages.put(tab1, page1);
 		tabsToPages.put(tab2, page2);

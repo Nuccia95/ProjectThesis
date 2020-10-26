@@ -5,12 +5,16 @@ import java.time.LocalDate;
 
 import org.vaadin.gatanaso.MultiselectComboBox;
 
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.datepicker.DatePicker;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+@CssImport("./styles/views/forms/forms.css")
 public class RecurringEntryForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
@@ -21,7 +25,6 @@ public class RecurringEntryForm extends VerticalLayout {
 	private DatePicker start;
 	
 	public RecurringEntryForm(LocalDate startDate) {
-		
 		setSizeFull();
 		days = new MultiselectComboBox<>();
 		endDatePicker = new DatePicker();
@@ -29,29 +32,32 @@ public class RecurringEntryForm extends VerticalLayout {
 		start.setLabel("Start date");
 		start.setValue(startDate);
 		start.setReadOnly(true);
-		setSizeFull();
 		set();
 	}
 	
 	public void set() {
 		
-		Span description = new Span("New recurring event, select the days");
-		add(description);
+		HorizontalLayout c1 = new HorizontalLayout();
+		Icon recurring = VaadinIcon.RECYCLE.create();
+		recurring.setId("icon");
+		c1.add(recurring, new Text("Create new recurring event, set required fields"));
+		c1.setSpacing(true);
+		c1.setAlignItems(Alignment.BASELINE);
 		
 		HorizontalLayout containerDates = new HorizontalLayout();
-		
 		endDatePicker.setRequired(true);
 		endDatePicker.setLabel("End Date");
-
-		containerDates.setAlignItems(Alignment.BASELINE);
 		containerDates.add(start, endDatePicker);
+		containerDates.setAlignItems(Alignment.BASELINE);
 		
-		days.setRequired(true);
 		days.setLabel("Days");
+		days.setRequired(true);
+		days.setSizeFull();
 		days.setItems(DayOfWeek.MONDAY, DayOfWeek.TUESDAY, 
 				DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY);
 		days.setCompactMode(true);
-		add(containerDates, days);
+		
+		add(c1, containerDates, days);
 	}
 	
 	public boolean hasData() {

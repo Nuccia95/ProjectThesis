@@ -1,22 +1,31 @@
 #profile-view{
-	padding: 30px;
 	background-color: #e6eeff;
 }
 
-#infocontainer {
-	border-radius: 20px;
+#infocontainer, #formcontainer {
+	border-radius: 10px;
 	background-color: #ffff;
-}
-
-#formcontainer {
-	border-radius: 20px;
-	background-color: #ffff;
+	box-shadow: black;
+	box-shadow: 2px 1px 5px 0px grey;
 }
 
 img#avatar {
   border-radius: 50%;
   height: var(--lumo-size-s);
-  overflow: hidden;
   margin-left: 5px;
-  margin-top: 26px;
+  margin-top: 20px;
+}
+
+iron-icon#users{
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
+input{
+	color: black;
+}
+
+h4{
+	font-style: italic;
 }

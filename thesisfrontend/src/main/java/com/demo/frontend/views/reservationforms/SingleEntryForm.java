@@ -24,7 +24,6 @@ public class SingleEntryForm extends VerticalLayout {
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
 	private SpanDescription spanDescription;
-	
 	private AppButton appButton;
 	private Button saveEntryButton;
 	private HorizontalLayout buttContainer;
@@ -34,8 +33,6 @@ public class SingleEntryForm extends VerticalLayout {
 		setSpacing(false);
 	
 		H3 title = new H3("Start date: " + date);
-		title.getElement().getStyle().set("fontWeight", "bold");
-		add(title);
 		
 		comboBoxResources = new ComboBox<>();
 		comboBoxColors = new ComboBox<>();
@@ -88,7 +85,7 @@ public class SingleEntryForm extends VerticalLayout {
 		
 		buttContainer.add(saveEntryButton);
 		
-		add(container, buttContainer);
+		add(title, container, buttContainer);
 		setAlignSelf(Alignment.END, buttContainer);		
 	}
 	

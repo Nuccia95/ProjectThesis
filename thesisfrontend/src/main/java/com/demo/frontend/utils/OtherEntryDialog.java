@@ -32,6 +32,7 @@ public class OtherEntryDialog extends Dialog {
 	
 	public TextField setText(String label, String value) {
 		TextField tf = new TextField();
+		tf.getElement().getStyle().set("font-weight", "bold");
 		tf.setLabel(label);
 		tf.setValue(value);
 		tf.setReadOnly(true);
