@@ -31,18 +31,19 @@ public class InviteFriendsForm extends VerticalLayout {
 	
 	public InviteFriendsForm() {
 		
+		setHeight("290px");
 		HorizontalLayout c1 = new HorizontalLayout();
 		Icon users = VaadinIcon.ENVELOPES.create();
 		users.setId("icon");
-		c1.add(users, new Text("Do you want to invite some friends?"));
+		c1.add(users, new Text("Do you want to invite some friends to this event?"));
 		c1.setSpacing(true);
 		c1.setAlignItems(Alignment.BASELINE);
 		
 		boxFriends = new MultiselectComboBox<>();
-		boxFriends.setSizeFull();
 		boxFriends.setCompactMode(true);
 		boxFriends.setSizeFull();
 		boxFriends.setPlaceholder("@choose friends..");
+		
 		
 		HorizontalLayout c2 = new HorizontalLayout();
 		Icon pencil = VaadinIcon.PENCIL.create();
@@ -51,21 +52,17 @@ public class InviteFriendsForm extends VerticalLayout {
 		c2.setSpacing(true);
 		c2.setAlignItems(Alignment.BASELINE);
 		
-		
-		
 		HorizontalLayout addFriendCont = new HorizontalLayout();
-		addFriendCont.setSizeFull();
 		
 		EmailField newFriendField = new EmailField();
 		newFriendField.setInvalid(true);
 		newFriendField.setLabel("Email");
 		newFriendField.setSizeFull();
-		newFriendField.setPlaceholder("name@..");
+		newFriendField.setPlaceholder("..@..");
 		
 		AppButton appButton = new AppButton();
 		Button addButton = appButton.set("", VaadinIcon.PLUS_CIRCLE.create());
 		addButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		
 		
 		addedManually = new ArrayList<>();
 		
@@ -82,10 +79,15 @@ public class InviteFriendsForm extends VerticalLayout {
 				}
 			}
 		});
-		
-		addFriendCont.setAlignItems(Alignment.BASELINE);
 		addFriendCont.add(newFriendField, addButton);
-		add(c1, boxFriends, c2, addFriendCont);
+		addFriendCont.setAlignItems(Alignment.BASELINE);
+		addFriendCont.setSizeFull();
+		
+		VerticalLayout container = new VerticalLayout();
+		container.setSpacing(false);
+		container.setSizeFull();
+		container.add(c2, addFriendCont);
+		add(c1, boxFriends, container);
 	}
 
 	public List<String> selectedFriends(){

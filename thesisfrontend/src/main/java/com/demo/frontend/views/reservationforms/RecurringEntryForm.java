@@ -25,7 +25,7 @@ public class RecurringEntryForm extends VerticalLayout {
 	private DatePicker start;
 	
 	public RecurringEntryForm(LocalDate startDate) {
-		setSizeFull();
+		setHeight("290px");
 		days = new MultiselectComboBox<>();
 		endDatePicker = new DatePicker();
 		start = new DatePicker();

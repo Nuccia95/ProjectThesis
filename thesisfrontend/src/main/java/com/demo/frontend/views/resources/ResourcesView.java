@@ -1,8 +1,10 @@
 package com.demo.frontend.views.resources;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,8 +21,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -34,6 +35,7 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import shared.thesiscommon.bean.Reservation;
 import shared.thesiscommon.bean.Resource;
 import shared.thesiscommon.webservicesinterface.WebServicesInterface;
 
@@ -51,22 +53,32 @@ public class ResourcesView extends VerticalLayout {
 	private ResourceForm resourcesForm;
 	private Dialog formDialog;
 	private AppButton appButton;
-	private QuestionDialog deleteResourceDialog;
+	private QuestionDialog disableDialog;
 	private List<Resource> resources;
 	private ListDataProvider<Resource> resourceProvider;
 	private String filterText = "";
+	private CardsContainer cardsContainer;
+	private HorizontalLayout container;
 
 	public ResourcesView() {
 		setId("resource-view");
 		setSizeFull();
 		appButton = new AppButton();
+
 		add(createTopBar());
+		
+		container = new HorizontalLayout();
+		add(container);
+		container.setSizeFull();
+
+		cardsContainer = new CardsContainer();
 	}
 
 	@Override
 	protected void onAttach(AttachEvent attachEvent) {
 		super.onAttach(attachEvent);
 		setGrid();
+		container.add(cardsContainer);
 	}
 
 	public void setGrid() {
@@ -79,61 +91,129 @@ public class ResourcesView extends VerticalLayout {
 		grid.setDataProvider(resourceProvider);
 
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
-		grid.addColumn(Resource::getDescription).setHeader("Description");
-		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true).setKey("Seats Available");
-		grid.addComponentColumn(this::relatedReservation).setHeader("Related Reservations");
+		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(5);
+		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true)
+				.setKey("Seats Available");
+		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
+				.setKey("Related Reservatios");
+		grid.addComponentColumn(this::currentStatus).setHeader("Enabled").setSortable(true).setKey("Status")
+		.setComparator(Comparator.comparing(Resource::getEnable));
 		
-		if (CurrentUser.isAdmin())
-			grid.addComponentColumn(this::trashIcon);
+		if (CurrentUser.isAdmin()) {
+			grid.addComponentColumn(this::enableButton);
+		}
 	
-		add(grid);
+		container.add(grid);
 	}
 
-	public Span relatedReservation(Resource res) {
-		int number = clientService.getReservationsByResource(res.getId());
+	public Button enableButton(Resource res) {
 
-		Span span = new Span();
-		span.setId("numberRes");
+		Icon banIcon = VaadinIcon.BAN.create();
+		Button statusButton = appButton.set("", banIcon);
+		statusButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-		if (number > 0)
-			span.getElement().getStyle().set("background-color", "#66ff33");
+		if (CurrentUser.isAdmin()) {
+			statusButton.addClickListener(click -> {
 
-		return span;
+				Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
+
+				if (Boolean.TRUE.equals(res.getEnable())) {
+					
+					if (!reservations.isEmpty()) { 
+						String text = "This resource will be disabled. " + "It has " + reservations.size()
+								+ " future reservations. " + "Do you want to delete also them?";
+						disableDialog = new QuestionDialog(text, "DISABLE");
+
+						/* confirm */
+						disableDialog.getConfirmButton().addClickListener(ev -> {
+							HttpEntity<Resource> resource = new HttpEntity<>(res);
+							clientService.deleteRelatedReservations(resource);
+
+							res.setEnable(false);
+							HttpEntity<Resource> r = new HttpEntity<>(res);
+							clientService.updateResource(r);
+							disableDialog.close();
+						});
+
+						/* close */
+						disableDialog.getCloseButton().addClickListener(ev -> {
+							res.setEnable(false);
+							HttpEntity<Resource> r = new HttpEntity<>(res);
+							clientService.updateResource(r);
+							disableDialog.close();
+						});
+
+					} else
+						setDisableDialog(res); /* with no related reservation */
+				} else
+					setEnableDialog(res);
+			});
+		} else {
+			statusButton.setEnabled(false);
+		}
+		return statusButton;
 	}
 
-	public Div trashIcon(Resource res) {
-		Div buttonsContainer = new Div();
-		buttonsContainer.setId("container-icons");
+	public void setEnableDialog(Resource res) {
+		String text = "Do you want to enable this resource? ";
+		QuestionDialog enableDialog = new QuestionDialog(text, "ENABLE");
 
-		Button trashButt = appButton.set("", VaadinIcon.TRASH.create());
-		trashButt.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
-		trashButt.addClickListener(click -> {
-
-			int number = clientService.getReservationsByResource(res.getId());
-			String text;
-			if (number > 0) {
-				text = "This resource cannot be deleted, there are " + number + " future reservations " + "releted to it";
-				deleteResourceDialog = new QuestionDialog(text, "REMOVE");
-				deleteResourceDialog.getConfirmButton().addClickListener(ev -> deleteResourceDialog.close());
-			} else {
-				text = "Do you want to delete this resource?";
-				deleteResourceDialog = new QuestionDialog(text, "REMOVE");
-				deleteResourceDialog.getConfirmButton().addClickListener(ev -> {
-					resources.remove(res);
-					HttpEntity<Resource> resource = new HttpEntity<>(res);
-					clientService.deleteResource(resource);
-					grid.getDataProvider().refreshAll();
-					deleteResourceDialog.close();
-					Notification.show("Resource deleted", 2000, Position.BOTTOM_START);
-				});
-			}
+		/* confirm */
+		enableDialog.getConfirmButton().addClickListener(ev -> {
+			res.setEnable(true);
+			HttpEntity<Resource> resource = new HttpEntity<>(res);
+			clientService.updateResource(resource);
+			enableDialog.close();
 		});
 
-		buttonsContainer.add(trashButt);
-		return buttonsContainer;
+		/* close */
+		enableDialog.getCloseButton().addClickListener(ev -> enableDialog.close());
 	}
 
+	public void setDisableDialog(Resource res) {
+		/* with no related reservation */
+
+		String text = "Do you want to disable this resource? ";
+		disableDialog = new QuestionDialog(text, "DISABLE");
+
+		/* confirm */
+		disableDialog.getConfirmButton().addClickListener(ev -> {
+			res.setEnable(false);
+			HttpEntity<Resource> resource = new HttpEntity<>(res);
+			clientService.updateResource(resource);
+			disableDialog.close();
+		});
+
+		/* close */
+		disableDialog.getCloseButton().addClickListener(ev -> disableDialog.close());
+	}
+
+
+	public Button relatedReservations(Resource res) {
+
+		Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
+		int number = reservations.size();
+		
+		Button relatedButton = new Button(String.valueOf(number));
+		relatedButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		
+		relatedButton.addClickListener(click -> cardsContainer.setCards(reservations, res.getName()) );
+		
+		return relatedButton;
+	}
+
+	public Icon currentStatus(Resource res) {
+		Icon circle = VaadinIcon.CIRCLE.create();
+		circle.getElement().getStyle().set("width", "17px");
+		circle.getElement().getStyle().set("height", "17px");
+		if(Boolean.TRUE.equals(res.getEnable()))
+			circle.setColor("#99ff66");
+		else
+			circle.setColor("#ff0000");
+		
+		return circle;
+	}
+	
 	public HorizontalLayout createTopBar() {
 
 		final HorizontalLayout topLayout = new HorizontalLayout();
@@ -152,7 +232,7 @@ public class ResourcesView extends VerticalLayout {
 		topLayout.add(filter);
 
 		if (CurrentUser.isAdmin()) {
-			Button newResourceButton = appButton.set("Add", VaadinIcon.PLUS_CIRCLE.create());
+			Button newResourceButton = appButton.set("New Resource", VaadinIcon.PLUS_CIRCLE.create());
 			newResourceButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 			newResourceButton.addClickListener(ev -> {
 				setForm();
@@ -165,7 +245,8 @@ public class ResourcesView extends VerticalLayout {
 					Resource r = clientService.createResource(resource);
 					resources.add(r);
 					grid.getDataProvider().refreshAll();
-					Notification.show("Resource added", 2000, Position.BOTTOM_START).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+					Notification.show("Resource ADDED", 2000, Position.BOTTOM_START)
+							.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 					formDialog.close();
 				});
 				resourcesForm.getCancelButton().addClickListener(e -> formDialog.close());
@@ -196,5 +277,4 @@ public class ResourcesView extends VerticalLayout {
 	private boolean passesFilter(Object object, String filterText) {
 		return object != null && object.toString().toLowerCase(Locale.ENGLISH).contains(filterText);
 	}
-
 }

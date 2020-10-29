@@ -24,6 +24,7 @@ public class Reservation extends AbstractIdentifiedBean {
 	private Resource resource;
 
 	private String dayOfWeek;
+	private String title;
 	private String color;
 	private LocalDate startDate;
 	private LocalTime startTime;
@@ -147,6 +148,35 @@ public class Reservation extends AbstractIdentifiedBean {
 		this.days = days;
 	}
 
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((color == null) ? 0 : color.hashCode());
+		result = prime * result + ((dayOfWeek == null) ? 0 : dayOfWeek.hashCode());
+		result = prime * result + ((days == null) ? 0 : days.hashCode());
+		result = prime * result + (editable ? 1231 : 1237);
+		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
+		result = prime * result + (int) (groupId ^ (groupId >>> 32));
+		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + ((receivers == null) ? 0 : receivers.hashCode());
+		result = prime * result + (recurring ? 1231 : 1237);
+		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
+		result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -165,6 +195,11 @@ public class Reservation extends AbstractIdentifiedBean {
 			if (other.dayOfWeek != null)
 				return false;
 		} else if (!dayOfWeek.equals(other.dayOfWeek))
+			return false;
+		if (days == null) {
+			if (other.days != null)
+				return false;
+		} else if (!days.equals(other.days))
 			return false;
 		if (editable != other.editable)
 			return false;
@@ -185,6 +220,11 @@ public class Reservation extends AbstractIdentifiedBean {
 				return false;
 		} else if (!owner.equals(other.owner))
 			return false;
+		if (receivers == null) {
+			if (other.receivers != null)
+				return false;
+		} else if (!receivers.equals(other.receivers))
+			return false;
 		if (recurring != other.recurring)
 			return false;
 		if (resource == null) {
@@ -202,34 +242,20 @@ public class Reservation extends AbstractIdentifiedBean {
 				return false;
 		} else if (!startTime.equals(other.startTime))
 			return false;
+		if (title == null) {
+			if (other.title != null)
+				return false;
+		} else if (!title.equals(other.title))
+			return false;
 		return true;
 	}
 
 	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((color == null) ? 0 : color.hashCode());
-		result = prime * result + ((dayOfWeek == null) ? 0 : dayOfWeek.hashCode());
-		result = prime * result + (editable ? 1231 : 1237);
-		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
-		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
-		result = prime * result + (int) (groupId ^ (groupId >>> 32));
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-		result = prime * result + (recurring ? 1231 : 1237);
-		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
-		result = prime * result + ((startDate == null) ? 0 : startDate.hashCode());
-		result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
-		return result;
-	}
-
-	@Override
 	public String toString() {
-		return "Reservation [owner=" + owner + ", resource=" + resource + ", dayOfWeek=" + dayOfWeek + ", color="
-				+ color + ", startDate=" + startDate + ", startTime=" + startTime + ", endTime=" + endTime
-				+ ", groupId=" + groupId + ", recurring=" + recurring + ", endDate=" + endDate + ", editable="
-				+ editable + "]";
+		return "Reservation [owner=" + owner + ", resource=" + resource + ", dayOfWeek=" + dayOfWeek + ", title="
+				+ title + ", color=" + color + ", startDate=" + startDate + ", startTime=" + startTime + ", endTime="
+				+ endTime + ", groupId=" + groupId + ", recurring=" + recurring + ", endDate=" + endDate + ", editable="
+				+ editable + ", receivers=" + receivers + ", days=" + days + "]";
 	}
 
-	
 }

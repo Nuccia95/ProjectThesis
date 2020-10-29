@@ -46,13 +46,16 @@ public class ClientService implements WebServicesInterface {
 	}
 
 	@Override
-	public void deleteReservation(HttpEntity<Reservation> reservation) {
-		restTemplate.postForObject(URL + "deleteReservation", reservation, Reservation.class);
+	public void deleteReservation(long id) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationsByOwner")
+				.queryParam("id", String.valueOf(id));
+
+		restTemplate.getForObject(builder.toUriString(), Void.class);
 	}
 
 	@Override
 	public void deleteRecurringReservations(HttpEntity<Reservation> reservation) {
-		restTemplate.postForObject(URL + "deleteRecurringReservation", reservation, Reservation.class);
+		restTemplate.postForObject(URL + "deleteRecurringReservation", reservation, Void.class);
 	}
 
 	@Override
@@ -73,11 +76,6 @@ public class ClientService implements WebServicesInterface {
 	@Override
 	public Resource createResource(HttpEntity<Resource> resource) {
 		return restTemplate.postForObject(URL + "createResource", resource, Resource.class);
-	}
-
-	@Override
-	public void deleteResource(HttpEntity<Resource> resource) {
-		restTemplate.postForObject(URL + "deleteResource", resource, Resource.class);
 	}
 
 	@Override
@@ -110,29 +108,22 @@ public class ClientService implements WebServicesInterface {
 	@Override
 	public Set<Reservation> getAllReservations() {
 		Reservation[] res = restTemplate.getForObject(URL + "getAllReservations", Reservation[].class);
-		Set<Reservation> all = new HashSet<>();
-		for (Reservation r : res)
-			all.add(r);
-		
-		return all;
+		Set<Reservation> list = new HashSet<>();
+		for (Reservation reservation : res)
+			list.add(reservation);
+		return list;
 	}
 
 	@Override
-	public int getReservationsByResource(long id) {
+	public Set<Reservation> getReservationsByResource(long id) {
 		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationsByResource")
 				.queryParam("id", String.valueOf(id));
 
-		return restTemplate.getForObject(builder.toUriString(), Integer.class);
-	}
-
-	@Override
-	public String getUserName(long id) {
-		User u = CurrentUser.get();
-
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getUserName")
-				.queryParam("id", u.getId().toString());
-		
-		return restTemplate.getForObject(builder.toUriString(), String.class);
+		Reservation[] res = restTemplate.getForObject(builder.toUriString(), Reservation[].class);
+		Set<Reservation> list = new HashSet<>();
+		for (Reservation reservation : res)
+			list.add(reservation);
+		return list;
 	}
 
 	@Override
@@ -143,5 +134,28 @@ public class ClientService implements WebServicesInterface {
 	@Override
 	public boolean updatePassword(HttpEntity<User> user) {
 		return restTemplate.postForObject(URL + "updatePassword", user, Boolean.class);
+	}
+
+	@Override
+	public boolean updateResource(HttpEntity<Resource> resource) {
+		return restTemplate.postForObject(URL + "updateResource", resource, Boolean.class);
+	}
+
+	@Override
+	public void deleteRelatedReservations(HttpEntity<Resource> resource) {
+		restTemplate.postForLocation(URL + "deleteRelatedReservations", resource);
+	}
+
+	@Override
+	public Resource getRelatedResource(long id) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getRelatedResource")
+				.queryParam("id", String.valueOf(id));
+
+		return restTemplate.getForObject(builder.toUriString(), Resource.class);
+	}
+
+	@Override
+	public boolean checkAvailableResource(HttpEntity<Reservation> res) {
+		return restTemplate.postForObject(URL + "checkReservation", res, Boolean.class);
 	}
 }

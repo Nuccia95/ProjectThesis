@@ -20,14 +20,14 @@ public class QuestionDialog extends Dialog {
 	private Span question;
 	private HorizontalLayout buttonsContainer;
 	private SpanDescription spanDescription;
-
-	private AppButton appButton;
 	private Button confirmButton;
 	private Button closeButton;
 	
 	/* Question Dialog */
 	public QuestionDialog(String quest, String type) {
 
+		setWidth("450px");
+		setHeight("200px");
 		container = new VerticalLayout();
 		question = new Span(quest);
 
@@ -35,8 +35,7 @@ public class QuestionDialog extends Dialog {
 		spanDescription.build(type);
 		add(spanDescription.build(type));
 
-		appButton = new AppButton();
-		
+		AppButton appButton = new AppButton();
 		Icon confirm = VaadinIcon.CHECK.create();
 		Icon close = VaadinIcon.CLOSE.create();
 		
@@ -44,15 +43,13 @@ public class QuestionDialog extends Dialog {
 		confirmButton = appButton.set("", confirm);
 		
 		buttonsContainer = new HorizontalLayout();
-		
-		if(type.equals("MOVE"))
-			buttonsContainer.add(confirmButton, closeButton);			
-		else
-			buttonsContainer.add(confirmButton);			
+		buttonsContainer.add(confirmButton, closeButton);		
 		
 		container.setAlignSelf(Alignment.END, buttonsContainer);
 		container.add(question, buttonsContainer);
 	
+		closeButton.addClickListener(click -> close());
+		
 		add(container);
 		open();
 	}

@@ -5,5 +5,5 @@
 
 #calendar{
     /* light blue to be used instead of default light yellow*/
-    --fc-unthemed_tdfc-today-background:  #80ff80 !important;
+    --fc-unthemed_tdfc-today-background:  #e6f7ff !important;
 }

@@ -49,6 +49,7 @@ public class MainView extends AppLayout {
 
     private VerticalLayout createTopBar(HorizontalLayout header, Tabs menu) {
         VerticalLayout layout = new VerticalLayout();
+        layout.setId("layout");
         layout.getThemeList().add("dark");
         layout.setWidthFull();
         layout.setSpacing(false);
@@ -73,7 +74,7 @@ public class MainView extends AppLayout {
         Button logoutButton = new Button("", VaadinIcon.SIGN_OUT.create());
         logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         logoutButton.setId("logout");
-        logoutButton.addClickListener(e -> {signOut();});
+        logoutButton.addClickListener(e -> signOut());
         header.add(logoutButton);
         
         return header;

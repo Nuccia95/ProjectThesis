@@ -31,57 +31,52 @@ public class Controller implements WebServicesInterface {
 	
 	@Override
 	@PostMapping("/login")
-	public User login(final HttpEntity<User> user) {
+	public User login(HttpEntity<User> user) {
 		return loginManager.login(user.getBody());
 	}
 	
 	@Override
 	@PostMapping("/registration")
-	public User registration(final HttpEntity<User> user) {
+	public User registration(HttpEntity<User> user) {
 		return loginManager.registration(user.getBody());
 	}
 	
 	@Override
 	@PostMapping("/createReservation")
-	public Reservation createReservation(final HttpEntity<Reservation> reservation) {
+	public Reservation createReservation(HttpEntity<Reservation> reservation) {
 		return reservationManager.createReservation(reservation.getBody());
 	}
 	
 	@Override
 	@PostMapping("/updateSingleReservation")
-	public Reservation updateSingleReservation(final HttpEntity<Reservation> reservation) {
+	public Reservation updateSingleReservation(HttpEntity<Reservation> reservation) {
 		return reservationManager.updateReservation(reservation.getBody());
 	}
 	
 	@Override
 	@PostMapping("/deleteReservation")
-	public void deleteReservation(final HttpEntity<Reservation> reservation) {
-		 reservationManager.deleteReservation(reservation.getBody());
+	public void deleteReservation(long id) {
+		 reservationManager.deleteReservation(id);
 	}
 	
 	@Override
 	@PostMapping("/deleteRecurringReservation")
-	public void deleteRecurringReservations(final HttpEntity<Reservation> reservation) {
+	public void deleteRecurringReservations(HttpEntity<Reservation> reservation) {
 		 reservationManager.deleteRecurringReservation(reservation.getBody());
 	}
 	
 	@Override
 	@GetMapping(value="/getReservationsByOwner")
-	public Set<Reservation> getByOwner(final long id) {
+	public Set<Reservation> getByOwner(long id) {
 		return reservationManager.getReservationsByOwner(id);
 	}
 	
 	@Override
 	@PostMapping("/createResource")
-	public Resource createResource(final HttpEntity<Resource> resource) {
+	public Resource createResource(HttpEntity<Resource> resource) {
 		return resourceManager.createResource(resource.getBody());
 	}
 	
-	@Override
-	@PostMapping("/deleteResource")
-	public void deleteResource(final HttpEntity<Resource> resource) {
-		resourceManager.deleteResource(resource.getBody());
-	}
 	
 	@Override
 	@GetMapping(value="/getAllResources")
@@ -109,14 +104,8 @@ public class Controller implements WebServicesInterface {
 
 	@Override
 	@GetMapping(value="/getReservationsByResource")
-	public int getReservationsByResource(long id) {
+	public Set<Reservation> getReservationsByResource(long id) {
 		return reservationManager.getReservationsByResource(id);
-	}
-
-	@Override
-	@GetMapping(value="/getUserName")
-	public String getUserName(long id) {
-		return loginManager.getUserName(id);
 	}
 
 	@Override
@@ -130,5 +119,28 @@ public class Controller implements WebServicesInterface {
 	public boolean updatePassword(HttpEntity<User> user) {
 		return loginManager.updatePassword(user.getBody());
 	}
-	
+
+	@Override
+	@PostMapping("/updateResource")
+	public boolean updateResource(HttpEntity<Resource> resource) {
+		 return resourceManager.updateResource(resource.getBody());
+	}
+
+	@Override
+	@PostMapping("/deleteRelatedReservations")
+	public void deleteRelatedReservations(HttpEntity<Resource> resource) {
+		resourceManager.deleteRelatedReservations(resource.getBody());
+	}
+
+	@Override
+	@GetMapping(value="/getRelatedResource")
+	public Resource getRelatedResource(long id) {
+		return reservationManager.getRelatedResource(id);
+	}
+
+	@Override
+	@PostMapping(value="/checkReservation")
+	public boolean checkAvailableResource(HttpEntity<Reservation> res) {
+		return reservationManager.checkReservation(res.getBody());
+	}
 }

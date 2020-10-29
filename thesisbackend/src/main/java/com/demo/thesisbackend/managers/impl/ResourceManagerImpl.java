@@ -2,6 +2,7 @@ package com.demo.thesisbackend.managers.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,30 +24,21 @@ public class ResourceManagerImpl implements ResourceManager {
 	@Override
 	public Resource createResource(Resource res) {
 		Resource r = resourceDAO.findByName(res.getName());
-		if (r == null)
+		if (r == null) {
+			res.setEnable(true);
 			return resourceDAO.save(res);
-		return null;
-	}
-
-	@Override
-	public void deleteResource(Resource res) {
-		
-		/* delete all reservations related to this resource */
-		Iterable<Reservation> reservations = reservationDAO.findAll();
-		for (Reservation reservation : reservations) {
-			if(reservation.getResource().getId().equals(res.getId()))
-				reservationDAO.deleteById(reservation.getId());
 		}
-		/* delete the resource */
-		resourceDAO.deleteById(res.getId());
+		return null;
 	}
 
 	@Override
 	public List<String> getResourcesNames() {
 		Iterable<Resource> resources = resourceDAO.findAll();
 		List<String> resourcesNames = new ArrayList<>();
-		for (Resource resource : resources)
-			resourcesNames.add(resource.getName());
+		for (Resource resource : resources) {
+			if(Boolean.TRUE.equals(resource.getEnable()))
+					resourcesNames.add(resource.getName());
+		}
 		return resourcesNames;
 	}
 
@@ -56,7 +48,30 @@ public class ResourceManagerImpl implements ResourceManager {
 		List<Resource> resourcesNames = new ArrayList<>();
 		for (Resource resource : resources)
 			resourcesNames.add(resource);
+		
 		return resourcesNames;
+	}
+
+	@Override
+	public boolean updateResource(Resource res) {
+		Optional<Resource> r = resourceDAO.findById(res.getId());
+		if(r.isPresent()) {
+			Resource resource = r.get();
+			resource.setEnable(res.getEnable());
+			resourceDAO.save(resource);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public void deleteRelatedReservations(Resource res) {
+		/* delete all reservations related to this resource */
+		Iterable<Reservation> reservations = reservationDAO.findAll();
+		for (Reservation reservation : reservations) {
+			if(reservation.getResource().getId().equals(res.getId()))
+				reservationDAO.deleteById(reservation.getId());
+		}
 	}
 	
 }

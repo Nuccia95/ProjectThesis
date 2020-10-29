@@ -5,55 +5,54 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.demo.frontend.utils.AppButton;
-import com.demo.frontend.utils.SpanDescription;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.timepicker.TimePicker;
 
 public class SingleEntryForm extends VerticalLayout {
 
 	private static final long serialVersionUID = 1L;
 	
+	private TextField reservationTitle;
 	private ComboBox<String> comboBoxResources;
 	private ComboBox<String> comboBoxColors;
+	private DatePicker startDatePicker;
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
-	private SpanDescription spanDescription;
-	private AppButton appButton;
-	private Button saveEntryButton;
-	private HorizontalLayout buttContainer;
 	
 	public SingleEntryForm(LocalDate date, LocalTime time) {
 		setSizeFull();
-		setSpacing(false);
-	
-		H3 title = new H3("Start date: " + date);
-		
-		comboBoxResources = new ComboBox<>();
-		comboBoxColors = new ComboBox<>();
-		
 		HorizontalLayout container = new HorizontalLayout();
 		container.setSpacing(false);
+
+		startDatePicker = new DatePicker();
+		startDatePicker.setLabel("Start Date");
+		startDatePicker.setReadOnly(true);
+		startDatePicker.setValue(date);
 		
+		reservationTitle = new TextField();
+		reservationTitle.setLabel("Title");
+		reservationTitle.setPlaceholder("Reservation Title");
+		reservationTitle.setMaxLength(20);
+
 		VerticalLayout l1 = new VerticalLayout();
 		l1.setSpacing(false);
 		VerticalLayout l2 = new VerticalLayout();
 		l2.setSpacing(false);
 		
 		/* Resources */
+		comboBoxResources = new ComboBox<>();
 		comboBoxResources.setRequired(true);
 		comboBoxResources.setLabel("Resources");
 
 		/* Event Colors */
+		comboBoxColors = new ComboBox<>();
 		comboBoxColors.setItems("dodgerblue", "green", "orange", "red", "violet");
 		comboBoxColors.setLabel("Color");
-		l1.add(comboBoxResources, comboBoxColors);
-		container.add(l1);
+		l1.add(reservationTitle, comboBoxResources, comboBoxColors);
 
 		/* Start time / End time */
 		l2.setAlignItems(Alignment.BASELINE);
@@ -64,8 +63,6 @@ public class SingleEntryForm extends VerticalLayout {
 		startTimePicker.setMinTime(LocalTime.of(8, 0));
 		startTimePicker.setMaxTime(LocalTime.of(19, 0));
 		startTimePicker.setStep(Duration.ofMinutes(15));
-		if(time != null)
-			startTimePicker.setValue(time);
 		
 		endTimePicker = new TimePicker();
 		endTimePicker.setRequired(true);
@@ -73,28 +70,28 @@ public class SingleEntryForm extends VerticalLayout {
 		endTimePicker.setMaxTime(LocalTime.of(19, 0));
 		endTimePicker.setLabel("End Time");
 		endTimePicker.setStep(Duration.ofMinutes(15));
-
-
-		l2.add(startTimePicker, endTimePicker);
-		container.add(l2);
-		setSizeFull();
+		endTimePicker.setEnabled(false);
 		
-		buttContainer = new HorizontalLayout();
-		appButton = new AppButton();
-		saveEntryButton = appButton.set("Save", VaadinIcon.CHECK.create());
+		if(time != null) {
+			startTimePicker.setValue(time);
+			endTimePicker.setValue(startTimePicker.getValue().plusHours(1));
+			endTimePicker.setEnabled(true);
+		}
 		
-		buttContainer.add(saveEntryButton);
+		startTimePicker.addValueChangeListener(event -> {
+			endTimePicker.setValue(event.getValue().plusHours(1));
+			endTimePicker.setEnabled(true);
+		});
 		
-		add(title, container, buttContainer);
-		setAlignSelf(Alignment.END, buttContainer);		
+		l2.add(startDatePicker, startTimePicker, endTimePicker);
+		
+		container.add(l1, l2);
+		
+		add(container);
 	}
 	
-	public SpanDescription getSpanDescription() {
-		return spanDescription;
-	}
-
-	public void setSpanDescription(SpanDescription spanDescription) {
-		this.spanDescription = spanDescription;
+	public TextField getReservationTitle() {
+		return reservationTitle;
 	}
 
 	public void setResources(List<String> resources) {
@@ -131,13 +128,5 @@ public class SingleEntryForm extends VerticalLayout {
 
 	public void setEndTimePicker(TimePicker endTimePicker) {
 		this.endTimePicker = endTimePicker;
-	}
-
-	public Button getSaveEntryButton() {
-		return saveEntryButton;
-	}
-	
-	public HorizontalLayout getButtContainer() {
-		return buttContainer;
 	}
 }

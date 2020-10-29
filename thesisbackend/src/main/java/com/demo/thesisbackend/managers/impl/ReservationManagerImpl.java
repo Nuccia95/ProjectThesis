@@ -1,6 +1,7 @@
 package com.demo.thesisbackend.managers.impl;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -28,8 +29,8 @@ public class ReservationManagerImpl implements ReservationManager {
 	public Reservation createReservation(Reservation reservation) {
 		Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 		reservation.setResource(resource);
-		
-		if(reservation.getGroupId() == 0){
+
+		if (reservation.getGroupId() == 0) {
 			EmailManager emailManager = new EmailManager();
 			emailManager.sendEmail(reservation);
 		}
@@ -55,9 +56,8 @@ public class ReservationManagerImpl implements ReservationManager {
 	}
 
 	@Override
-	public void deleteReservation(Reservation reservation) {
-		reservationDAO.deleteById(reservation.getId());
-
+	public void deleteReservation(long id) {
+		reservationDAO.deleteById(id);
 	}
 
 	@Override
@@ -80,18 +80,61 @@ public class ReservationManagerImpl implements ReservationManager {
 		Iterable<Reservation> all = reservationDAO.findAll();
 		for (Reservation reservation : all)
 			allres.add(reservation);
-		
+
 		return allres;
- 	}
+	}
 
 	@Override
-	public int getReservationsByResource(long id) {
-		Iterable<Reservation> res  = reservationDAO.findByResourceId(id);
-		int count = 0;
+	public Set<Reservation> getReservationsByResource(long id) {
+		Iterable<Reservation> res = reservationDAO.findByResourceId(id);
+		Set<Reservation> reservationsList = new HashSet<Reservation>();
 		for (Reservation reservation : res)
-			if(reservation.getStartDate().isAfter(LocalDate.now()))
-				count ++;
-		return count;
+			if (reservation.getStartDate().isAfter(LocalDate.now()))
+				reservationsList.add(reservation);
+		return reservationsList;
+	}
+
+	@Override
+	public Resource getRelatedResource(long id) {
+
+		Optional<Reservation> reservation = reservationDAO.findById(id);
+		if (reservation.isPresent()) {
+			Reservation r = reservation.get();
+			Optional<Resource> resource = resourceDAO.findById(r.getResource().getId());
+			if (resource.isPresent())
+				return resource.get();
+		}
+
+		return null;
+	}
+
+	@Override
+	public Boolean checkReservation(Reservation res) {
+		
+		LocalDateTime startNew = LocalDateTime.of(res.getStartDate(), res.getStartTime());
+		LocalDateTime endNew = LocalDateTime.of(res.getEndDate(), res.getEndTime());
+
+		Resource relatedResource = resourceDAO.findByName(res.getResource().getName());
+		Set<Reservation> others = getReservationsByResource(relatedResource.getId());
+
+		for (Reservation r : others) {
+
+			if (r.getStartDate().equals(res.getStartDate()) && r.getEndDate().equals(res.getEndDate())) {
+
+				LocalDateTime startOther = LocalDateTime.of(res.getStartDate(), r.getStartTime());
+				LocalDateTime endOther = LocalDateTime.of(r.getEndDate(), r.getEndTime());
+
+				if ((startNew.isEqual(startOther) && endNew.isEqual(endOther))
+						|| (startNew.isAfter(startOther) && endNew.isBefore(endOther))
+						|| (startNew.isBefore(startOther) && endNew.isAfter(endOther))
+						|| (endNew.isBefore(endOther) && endNew.isAfter(startOther))
+						|| (startNew.isAfter(startOther) && startNew.isBefore(endOther)))
+					return false;
+			}
+
+		}
+
+		return true;
 	}
 
 }

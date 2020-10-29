@@ -1,0 +1,29 @@
+#container{
+	box-shadow: black;
+	box-shadow: 2px 1px 5px 0px grey;
+	max-width: 380px;
+	overflow: auto;
+	background-color: #ecf2f9;
+}
+
+#card{
+	background: #ffff;
+	box-shadow: black;
+	box-shadow: 4px 1px 5px 0px grey;
+}
+
+span#label{
+	font-weight: bold;
+}
+
+span#value{
+	font-size: 12px;
+}
+
+span #title{
+	font-weight: bold;
+}
+
+#close{
+	margin-left: auto;
+}

@@ -8,9 +8,11 @@ public interface ResourceManager {
 
 	public Resource createResource(Resource res);
 	
-	public void deleteResource(Resource res);
+	public void deleteRelatedReservations(Resource res);
 	
 	public List<String> getResourcesNames();
 
 	public List<Resource> getAllResources();
+	
+	public boolean updateResource(Resource res);
 }

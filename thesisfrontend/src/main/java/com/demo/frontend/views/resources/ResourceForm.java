@@ -14,9 +14,6 @@ import shared.thesiscommon.bean.Resource;
 
 public class ResourceForm extends VerticalLayout {
 
-    /**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private TextField resourceName;
@@ -36,11 +33,13 @@ public class ResourceForm extends VerticalLayout {
 		HorizontalLayout container = new HorizontalLayout();
 		
 		resourceName = new TextField("Resource Name");
+		resourceName.setRequired(true);
 		resourceName.setPlaceholder("Name");
 		
 		seatsAvailable = new IntegerField();
 		seatsAvailable.setHasControls(true);
-		seatsAvailable.setMin(100);
+		seatsAvailable.setMin(0);
+		seatsAvailable.setMax(90);
 		seatsAvailable.setPlaceholder("Num");
 		seatsAvailable.setLabel("Seats Available");
 		
@@ -62,16 +61,19 @@ public class ResourceForm extends VerticalLayout {
 		add(container, description, buttonsContainer);
 	}
 	
-	public void showExistingResource(Resource resource) {
-		spanDescription.setSpanEdit();
-		resourceName.setValue(resource.getName());
-		description.setValue(resource.getDescription());
-		seatsAvailable.setValue(resource.getSeatsAvailable());
-	}
-	
 	public Resource getData() {
-		return new Resource(resourceName.getValue(), description.getValue(), 
-				seatsAvailable.getValue());
+		
+		Resource resource = new Resource();
+
+		resource.setName(resourceName.getValue());
+		
+		if(description.getValue() != null)
+			resource.setDescription(description.getValue());
+		
+		if(seatsAvailable.getValue() != null)
+			resource.setSeatsAvailable(seatsAvailable.getValue());
+
+		return resource;
 	}
 	
 	public Button getSaveButton() {

@@ -11,7 +11,7 @@ public class SpanDescription{
 	public Span build(String type) {
 		description = new Span();
 		description.getElement().getStyle().set("padding", "2px 10px");
-		description.getElement().getStyle().set("font-size", "14px");
+		description.getElement().getStyle().set("font-size", "13px");
 		description.getElement().getStyle().set("border-radius", "7px");
 		switch (type) {
 		case "CREATE":
@@ -39,16 +39,25 @@ public class SpanDescription{
 			description.getElement().getStyle().set(COLOR, "#4775d1");
 			description.getElement().getStyle().set(BACKGROUND, "#d6e0f5");
 			break;
+		case "DISABLE":
+			description.setText("Disable Resource");
+			description.getElement().getStyle().set(COLOR, "#b30000");
+			description.getElement().getStyle().set(BACKGROUND, "#ffebe6");
+			break;
+		case "ENABLE":
+			description.setText("Enable Resource");
+			description.getElement().getStyle().set(COLOR,"var(--lumo-success-color)");
+			description.getElement().getStyle().set(BACKGROUND, "var(--lumo-success-color-10pct)");
+			break;
+		case "CARD":
+			description.setText("Reservation Card");
+			description.getElement().getStyle().set(COLOR,"var(--lumo-success-color)");
+			description.getElement().getStyle().set(BACKGROUND, "var(--lumo-success-color-10pct)");
+			break;
 		default:
 			break;
 		}
 		return description;
-	}
-	
-	public void setSpanEdit() {
-		description.setText("Edit");
-		description.getElement().getStyle().set("color","#cccc00");
-		description.getElement().getStyle().set("background", "#ffffe6");
 	}
 	
 	public Span getDescription() {

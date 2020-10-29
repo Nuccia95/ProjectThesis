@@ -49,12 +49,13 @@ public class LoginManagerImpl implements LoginManager {
 				break;
 			}
 
-			if (profile != null)
+			if (profile != null) {
 				user.setProfile(profile);
-			user.setAdmin(Boolean.FALSE);
+				user.setAdmin(Boolean.FALSE);				
+				return userDAO.save(user);
+			}
 		}
-
-		return userDAO.save(user);
+		return null;
 	}
 
 	@Override
@@ -64,15 +65,6 @@ public class LoginManagerImpl implements LoginManager {
 		for (User user : users)
 			emails.add(user.getEmail());
 		return emails;
-	}
-
-	@Override
-	public String getUserName(long id) {
-		if (userDAO.existsById(id)) {
-			User u = userDAO.findById(id).get();
-			return u.getFirstName() + " " + u.getLastName();
-		}
-		return null;
 	}
 
 	@Override

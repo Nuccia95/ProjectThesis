@@ -56,6 +56,7 @@ public class ProfileView extends VerticalLayout {
 	private PasswordField oldPassword;
 	private PasswordField newPassword;
 	private PasswordField newPassword2;
+	
 	private AppButton appButton;
 
 	public ProfileView() {
@@ -171,9 +172,10 @@ public class ProfileView extends VerticalLayout {
 		container.setId("passwordForm");
 		container.setWidth("440px");
 		container.setHeight("400px");
+		
 		H4 title = new H4("Settings");
 		HorizontalLayout titleContainer = new HorizontalLayout();
-		Icon settings = VaadinIcon.AUTOMATION.create();
+		Icon settings = VaadinIcon.KEY.create();
 		settings.setId("settings");
 		titleContainer.add(title, settings);
 		titleContainer.setAlignItems(Alignment.BASELINE);

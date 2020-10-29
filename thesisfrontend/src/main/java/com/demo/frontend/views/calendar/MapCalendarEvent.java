@@ -10,14 +10,15 @@ import shared.thesiscommon.bean.Resource;
 
 public class MapCalendarEvent {
 	
-
-	public Reservation mapEntryToReservation(Entry entry) {	
+	public Reservation mapEntryToReservation(Entry entry, String relatedResource) {	
 		Reservation reservation = new Reservation();
+
 		Resource resource = new Resource();
 		reservation.setResource(resource);
+		reservation.getResource().setName(relatedResource);
 
+		reservation.setTitle(entry.getTitle());
 		reservation.setColor(entry.getColor());
-		reservation.getResource().setName(entry.getTitle());
 		reservation.setEditable(true);
 		
 		if (entry.isRecurring()) {
@@ -31,7 +32,7 @@ public class MapCalendarEvent {
 		}else {
 			reservation.setStartDate(entry.getStart().toLocalDate());
 			reservation.setStartTime(entry.getStart().toLocalTime());
-			reservation.setEndDate(entry.getStart().toLocalDate());
+			reservation.setEndDate(entry.getEnd().toLocalDate());
 			reservation.setEndTime(entry.getEnd().toLocalTime());
 		}
 		return reservation;
@@ -40,7 +41,7 @@ public class MapCalendarEvent {
 	public Entry mapReservationToEntry(Reservation reservation) {
 		Entry entry = new Entry(reservation.getId().toString());
 		
-		entry.setTitle(reservation.getResource().getName());
+		entry.setTitle(reservation.getTitle());
 		
 		Long groupId = reservation.getGroupId();
 		if(groupId != null)
@@ -49,7 +50,6 @@ public class MapCalendarEvent {
 		entry.setRecurring(reservation.isRecurring());
 		entry.setColor(reservation.getColor());
 		
-		entry.setTitle(reservation.getResource().getName());
 		entry.setEditable(reservation.isEditable());
 			
 		LocalDateTime ldtstart = LocalDateTime.of(reservation.getStartDate(), reservation.getStartTime());

@@ -19,7 +19,7 @@ public interface WebServicesInterface {
 
 	Reservation updateSingleReservation(HttpEntity<Reservation> reservation);
 
-	void deleteReservation(HttpEntity<Reservation> reservation);
+	void deleteReservation(long id);
 
 	void deleteRecurringReservations(HttpEntity<Reservation> reservation);
 
@@ -27,7 +27,7 @@ public interface WebServicesInterface {
 
 	Resource createResource(HttpEntity<Resource> resource);
 
-	void deleteResource(HttpEntity<Resource> resource);
+	void deleteRelatedReservations(HttpEntity<Resource> resource);
 
 	List<Resource> getAllResources();
 
@@ -37,13 +37,16 @@ public interface WebServicesInterface {
 	
 	Set<Reservation> getAllReservations();
 	
-	int getReservationsByResource(long id);
-	
-	String getUserName(long id);
+	Set<Reservation> getReservationsByResource(long id);
 	
 	boolean checkOldPassword(HttpEntity<User> user);
 
 	boolean updatePassword(HttpEntity<User> user);
 	
+	boolean updateResource(HttpEntity<Resource> resource);
+	
+	public Resource getRelatedResource(long id);
+	
+	public boolean checkAvailableResource(HttpEntity<Reservation> res);
 	
 }

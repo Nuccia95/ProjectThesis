@@ -12,8 +12,6 @@ public interface LoginManager {
 	
 	public List<String> getAllEmails();
 	
-	public String getUserName(long id);
-	
 	public boolean updatePassword(User u);
 	
 	public boolean checkOldPassword(User u);

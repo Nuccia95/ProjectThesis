@@ -16,13 +16,12 @@ public class Resource extends AbstractIdentifiedBean {
 	private String name;
 	private String description;
 	private Integer seatsAvailable;
+	private Boolean enable;
 	
 	public Resource() {}
 	
-	public Resource(String name, String description, Integer seatsAvailable) {
+	public Resource(String name) {
 		this.name = name;
-		this.description = description;
-		this.seatsAvailable = seatsAvailable;
 	}
 	
 	public String getName() {
@@ -48,12 +47,21 @@ public class Resource extends AbstractIdentifiedBean {
 	public void setSeatsAvailable(Integer seatsAvailable) {
 		this.seatsAvailable = seatsAvailable;
 	}
+	
+	public Boolean getEnable() {
+		return enable;
+	}
+
+	public void setEnable(Boolean enable) {
+		this.enable = enable;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((enable == null) ? 0 : enable.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((seatsAvailable == null) ? 0 : seatsAvailable.hashCode());
 		return result;
@@ -73,6 +81,11 @@ public class Resource extends AbstractIdentifiedBean {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (enable == null) {
+			if (other.enable != null)
+				return false;
+		} else if (!enable.equals(other.enable))
+			return false;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -88,9 +101,8 @@ public class Resource extends AbstractIdentifiedBean {
 
 	@Override
 	public String toString() {
-		return "Resource [name=" + name + ", description=" + description + ", seatsAvailable=" + seatsAvailable + "]";
+		return "Resource [name=" + name + ", description=" + description + ", seatsAvailable=" + seatsAvailable
+				+ ", enable=" + enable + "]";
 	}
-
-	
 
 }

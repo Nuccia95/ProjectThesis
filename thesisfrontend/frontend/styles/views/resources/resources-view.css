@@ -1,21 +1,8 @@
-#resource-view{
-	background-color: #e6eeff;
-}
-
 #container-icons {
 	margin-left: auto;
 }
 
 #grid{
-	align-items: center;
 	font-size: 14px;
-}
-
-#numberRes {
-	border-radius: 50%;
-	background-color: #cccccc;
-	height: 10px;
-	width: 10px;
-	padding: 2px;
 	display: inline-block;
 }
