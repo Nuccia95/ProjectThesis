@@ -53,20 +53,24 @@ public class ResourcesView extends VerticalLayout {
 	private ResourceForm resourcesForm;
 	private Dialog formDialog;
 	private AppButton appButton;
-	private QuestionDialog disableDialog;
 	private List<Resource> resources;
 	private ListDataProvider<Resource> resourceProvider;
 	private String filterText = "";
 	private CardsContainer cardsContainer;
 	private HorizontalLayout container;
 
+	private static final String ENABLE = "Enabled";
+	private static final String DISABLE = "Disabled";
+	private static final String ENABLE_COLOR = "#66ff66";
+	private static final String DISABLE_COLOR = "#b30000";
+	
 	public ResourcesView() {
 		setId("resource-view");
 		setSizeFull();
 		appButton = new AppButton();
 
 		add(createTopBar());
-		
+
 		container = new HorizontalLayout();
 		add(container);
 		container.setSizeFull();
@@ -90,130 +94,132 @@ public class ResourcesView extends VerticalLayout {
 
 		grid.setDataProvider(resourceProvider);
 
-		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name");
+		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name").setFlexGrow(2);
 		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(5);
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true)
-				.setKey("Seats Available");
+				.setKey("Seats Available").setFlexGrow(1);;
 		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
-				.setKey("Related Reservatios");
-		grid.addComponentColumn(this::currentStatus).setHeader("Enabled").setSortable(true).setKey("Status")
-		.setComparator(Comparator.comparing(Resource::getEnable));
-		
+				.setKey("Related Reservatios").setFlexGrow(1);
+
 		if (CurrentUser.isAdmin()) {
-			grid.addComponentColumn(this::enableButton);
+			grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(1).setSortable(true).setKey("Status")
+					.setComparator(Comparator.comparing(Resource::getEnable));
 		}
-	
+
 		container.add(grid);
 	}
 
-	public Button enableButton(Resource res) {
+	public Button enableResource(Resource res) {
 
 		Icon banIcon = VaadinIcon.BAN.create();
-		Button statusButton = appButton.set("", banIcon);
+		Button statusButton = appButton.set(ENABLE, banIcon);
+
+		if (Boolean.TRUE.equals(res.getEnable()))
+			setStatusButton(statusButton, ENABLE);
+		else
+			setStatusButton(statusButton, DISABLE);
+		
 		statusButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-		if (CurrentUser.isAdmin()) {
-			statusButton.addClickListener(click -> {
+		statusButton.addClickListener(click -> {
 
-				Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
+			Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
 
-				if (Boolean.TRUE.equals(res.getEnable())) {
-					
-					if (!reservations.isEmpty()) { 
-						String text = "This resource will be disabled. " + "It has " + reservations.size()
-								+ " future reservations. " + "Do you want to delete also them?";
-						disableDialog = new QuestionDialog(text, "DISABLE");
+			if (Boolean.TRUE.equals(res.getEnable())) {
+				String text = "";
+				if (!reservations.isEmpty()) {
+					text = "This resource has " + reservations.size()
+							+ " future reservations related. DISABLE it?";
+				}else {
+					text = "Do you want to disable this resource? ";
+				}
+				setDisableDialog(res, statusButton, text);
+			} else {
+				setEnableDialog(res, statusButton);
+			}
+		});
 
-						/* confirm */
-						disableDialog.getConfirmButton().addClickListener(ev -> {
-							HttpEntity<Resource> resource = new HttpEntity<>(res);
-							clientService.deleteRelatedReservations(resource);
-
-							res.setEnable(false);
-							HttpEntity<Resource> r = new HttpEntity<>(res);
-							clientService.updateResource(r);
-							disableDialog.close();
-						});
-
-						/* close */
-						disableDialog.getCloseButton().addClickListener(ev -> {
-							res.setEnable(false);
-							HttpEntity<Resource> r = new HttpEntity<>(res);
-							clientService.updateResource(r);
-							disableDialog.close();
-						});
-
-					} else
-						setDisableDialog(res); /* with no related reservation */
-				} else
-					setEnableDialog(res);
-			});
-		} else {
-			statusButton.setEnabled(false);
-		}
 		return statusButton;
+
 	}
 
-	public void setEnableDialog(Resource res) {
-		String text = "Do you want to enable this resource? ";
-		QuestionDialog enableDialog = new QuestionDialog(text, "ENABLE");
-
+	public boolean setEnableDialog(Resource res, Button statusButton) {
+		
+		QuestionDialog enableDialog = new QuestionDialog("ENABLE this resource?", "ENABLE");
+		
 		/* confirm */
 		enableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(true);
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
 			clientService.updateResource(resource);
+			setStatusButton(statusButton, ENABLE);
 			enableDialog.close();
 		});
 
 		/* close */
 		enableDialog.getCloseButton().addClickListener(ev -> enableDialog.close());
+		return false;
 	}
 
-	public void setDisableDialog(Resource res) {
-		/* with no related reservation */
+	public void setDisableDialog(Resource res, Button statusButton, String text) {
 
-		String text = "Do you want to disable this resource? ";
-		disableDialog = new QuestionDialog(text, "DISABLE");
+		QuestionDialog disableDialog = new QuestionDialog(text, "DISABLE");
 
 		/* confirm */
 		disableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(false);
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
 			clientService.updateResource(resource);
+			setStatusButton(statusButton, DISABLE);
 			disableDialog.close();
 		});
 
 		/* close */
 		disableDialog.getCloseButton().addClickListener(ev -> disableDialog.close());
 	}
-
+	
+	public void setStatusButton(Button statusButton, String type) {
+		switch (type) {
+		case ENABLE:
+			statusButton.setText(ENABLE);
+			statusButton.getIcon().getElement().getStyle().set("color", ENABLE_COLOR);
+			break;
+		case DISABLE:
+			statusButton.setText(DISABLE);
+			statusButton.getIcon().getElement().getStyle().set("color", DISABLE_COLOR);
+			break;
+		default:
+			break;
+		}
+	}
 
 	public Button relatedReservations(Resource res) {
 
 		Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
 		int number = reservations.size();
-		
+
 		Button relatedButton = new Button(String.valueOf(number));
 		relatedButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		
-		relatedButton.addClickListener(click -> cardsContainer.setCards(reservations, res.getName()) );
-		
+
+		relatedButton.addClickListener(click -> {
+			cardsContainer.setCards(reservations, res.getName());
+			
+			cardsContainer.getRemoveAllButton().addClickListener(ev -> {			
+				
+				HttpEntity<Resource> resource = new HttpEntity<>(res);
+				clientService.deleteRelatedReservations(resource);
+				cardsContainer.cleanPanel(res.getName());
+				grid.getDataProvider().refreshAll();
+				
+			});
+			
+		});
+
 		return relatedButton;
 	}
-
-	public Icon currentStatus(Resource res) {
-		Icon circle = VaadinIcon.CIRCLE.create();
-		circle.getElement().getStyle().set("width", "17px");
-		circle.getElement().getStyle().set("height", "17px");
-		if(Boolean.TRUE.equals(res.getEnable()))
-			circle.setColor("#99ff66");
-		else
-			circle.setColor("#ff0000");
-		
-		return circle;
-	}
 	
+	/* UTILS */
+
 	public HorizontalLayout createTopBar() {
 
 		final HorizontalLayout topLayout = new HorizontalLayout();

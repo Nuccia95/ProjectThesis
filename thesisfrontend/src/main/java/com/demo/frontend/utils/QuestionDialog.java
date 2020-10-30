@@ -1,6 +1,7 @@
 package com.demo.frontend.utils;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -9,11 +10,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+@CssImport("./styles/views/utils/questiondialog.css")
 public class QuestionDialog extends Dialog {
 	
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private VerticalLayout container;
@@ -25,11 +24,13 @@ public class QuestionDialog extends Dialog {
 	
 	/* Question Dialog */
 	public QuestionDialog(String quest, String type) {
-
-		setWidth("450px");
-		setHeight("200px");
-		container = new VerticalLayout();
+		setId("dialog");
+		
+		setWidth("420px");
+		
 		question = new Span(quest);
+		
+		container = new VerticalLayout();
 
 		spanDescription = new SpanDescription();
 		spanDescription.build(type);
@@ -39,18 +40,23 @@ public class QuestionDialog extends Dialog {
 		Icon confirm = VaadinIcon.CHECK.create();
 		Icon close = VaadinIcon.CLOSE.create();
 		
-		closeButton = appButton.set("", close);
-		confirmButton = appButton.set("", confirm);
+		closeButton = appButton.set("Discard", close);
+		closeButton.setId("appbtn");
+		confirmButton = appButton.set("Save", confirm);
+		confirmButton.setId("appbtn");
 		
 		buttonsContainer = new HorizontalLayout();
-		buttonsContainer.add(confirmButton, closeButton);		
+		buttonsContainer.setId("buttCont");
+		buttonsContainer.add(confirmButton, closeButton);	
+		buttonsContainer.setAlignSelf(Alignment.END, closeButton);
+		buttonsContainer.setAlignSelf(Alignment.END, confirmButton);
 		
-		container.setAlignSelf(Alignment.END, buttonsContainer);
-		container.add(question, buttonsContainer);
-	
+		container.add(question);
+		
+		add(container, buttonsContainer);
+		
 		closeButton.addClickListener(click -> close());
 		
-		add(container);
 		open();
 	}
 	

@@ -1,5 +1,6 @@
 package com.demo.frontend.views.resources;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.demo.frontend.utils.AppButton;
@@ -21,6 +22,7 @@ public class CardsContainer extends VerticalLayout {
 
 	AppButton appButton;
 	H4 title;
+	Button removeAllButton;
 
 	public CardsContainer() {
 		setId("container");
@@ -35,27 +37,49 @@ public class CardsContainer extends VerticalLayout {
 
 		HorizontalLayout titleCont = new HorizontalLayout();
 		titleCont.setId("titleCont");
+		titleCont.setSizeFull();
 		titleCont.setSpacing(false);
 
-		title = new H4("Resource: " + resName);
+		title = new H4(resName);
 
 		Button close = appButton.set("", VaadinIcon.ANGLE_RIGHT.create());
 		close.setId("close");
 		close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		close.addClickListener(click -> setVisible(false));
 
-		titleCont.add(title, close);
+		removeAllButton = appButton.set("Clean all", VaadinIcon.TRASH.create());
+		removeAllButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		removeAllButton.setId("btnremove");
+		add(removeAllButton);
+
+		titleCont.add(title, close, removeAllButton);
 		titleCont.setAlignItems(Alignment.BASELINE);
 		add(titleCont);
 
 		/* ADD NEW */
 		if (reservations.isEmpty()) {
 			add(new Span("None reservations to display."));
-		} else
-			for (Reservation reservation : reservations)
+			removeAllButton.setVisible(false);
+		} else {
+			removeAllButton.setVisible(true);
+			for (Reservation reservation : reservations) {
 				add(new ReservationCard(reservation));
+			}			
+		}
 
 		setVisible(true);
+	}
+	
+	public Button getRemoveAllButton() {
+		return removeAllButton;
+	}
+
+	public void setRemoveAllButton(Button removeAllButton) {
+		this.removeAllButton = removeAllButton;
+	}
+
+	public void cleanPanel(String resName) {
+		setCards(new HashSet<Reservation>(), resName);
 	}
 
 }
