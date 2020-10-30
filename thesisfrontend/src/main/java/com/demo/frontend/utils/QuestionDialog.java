@@ -6,7 +6,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
@@ -48,8 +47,6 @@ public class QuestionDialog extends Dialog {
 		buttonsContainer = new HorizontalLayout();
 		buttonsContainer.setId("buttCont");
 		buttonsContainer.add(confirmButton, closeButton);	
-		buttonsContainer.setAlignSelf(Alignment.END, closeButton);
-		buttonsContainer.setAlignSelf(Alignment.END, confirmButton);
 		
 		container.add(question);
 		

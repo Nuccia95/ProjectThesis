@@ -26,7 +26,7 @@ public class ReservationCard extends VerticalLayout {
 		else
 			title = new Span(res.getTitle());	
 		
-		title.setId("title");
+		title.setId("titleCard");
 
 		titleCont.setAlignItems(Alignment.BASELINE);
 		titleCont.add(spanDescription.build("CARD"), title);

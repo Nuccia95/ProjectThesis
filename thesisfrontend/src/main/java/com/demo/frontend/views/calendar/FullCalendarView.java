@@ -80,7 +80,8 @@ public class FullCalendarView extends VerticalLayout {
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
 		calendar.setSizeFull();
-
+		calendar.setMinTime(LocalTime.of(7, 0));
+		calendar.changeView(CalendarViewImpl.TIME_GRID_WEEK);
 		calendar.setBusinessHours(new BusinessHours(LocalTime.of(8, 0), LocalTime.of(19, 0)));
 		calendar.setNowIndicatorShown(true);
 		add(calendar);
@@ -88,7 +89,7 @@ public class FullCalendarView extends VerticalLayout {
 		
 		topBar.getViewBox().addValueChangeListener(e -> {
 			CalendarView value = e.getValue();
-	        calendar.changeView(value == null ? CalendarViewImpl.DAY_GRID_MONTH : value);
+	        calendar.changeView(value == null ? CalendarViewImpl.TIME_GRID_WEEK : value);
 		});
 	}
 
@@ -243,7 +244,7 @@ public class FullCalendarView extends VerticalLayout {
 					
 					String text = "";
 					if (!oldStart.toLocalTime().equals(e.getEntry().getStart().toLocalTime()))
-						text = "Update to new DATE " + newStart.toLocalDate() + " and new TIME" + newStart.toLocalTime() + "?";
+						text = "Update to new DATE " + newStart.toLocalDate() + " and new TIME " + newStart.toLocalTime() + "?";
 					else
 						text = "Update to new DATE " + newStart.toLocalDate() + "?";
 
@@ -437,7 +438,7 @@ public class FullCalendarView extends VerticalLayout {
 			calendar.previous();
 			if(view.equals(CalendarViewImpl.DAY_GRID_MONTH) || view.equals(CalendarViewImpl.LIST_MONTH))
 				topBar.previousDate("MONTH");
-			else if(view.equals(CalendarViewImpl.DAY_GRID_WEEK))
+			else if(view.equals(CalendarViewImpl.TIME_GRID_WEEK))
 				topBar.previousDate("WEEK");
 			else if(view.equals(CalendarViewImpl.TIME_GRID_DAY))
 				topBar.previousDate("DAY");

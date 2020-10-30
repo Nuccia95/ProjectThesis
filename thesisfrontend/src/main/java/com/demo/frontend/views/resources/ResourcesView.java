@@ -86,6 +86,7 @@ public class ResourcesView extends VerticalLayout {
 	}
 
 	public void setGrid() {
+		
 		grid = new Grid<>();
 		grid.setId("grid");
 		grid.setSizeFull();
@@ -97,7 +98,7 @@ public class ResourcesView extends VerticalLayout {
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name").setFlexGrow(2);
 		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(5);
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true)
-				.setKey("Seats Available").setFlexGrow(1);;
+				.setKey("Seats Available").setFlexGrow(1);
 		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
 				.setKey("Related Reservatios").setFlexGrow(1);
 
@@ -129,14 +130,13 @@ public class ResourcesView extends VerticalLayout {
 				String text = "";
 				if (!reservations.isEmpty()) {
 					text = "This resource has " + reservations.size()
-							+ " future reservations related. DISABLE it?";
+							+ " future reservations related DISABLE it?";
 				}else {
-					text = "Do you want to disable this resource? ";
+					text = "DISABLE this resource? ";
 				}
 				setDisableDialog(res, statusButton, text);
-			} else {
+			} else
 				setEnableDialog(res, statusButton);
-			}
 		});
 
 		return statusButton;
@@ -147,7 +147,6 @@ public class ResourcesView extends VerticalLayout {
 		
 		QuestionDialog enableDialog = new QuestionDialog("ENABLE this resource?", "ENABLE");
 		
-		/* confirm */
 		enableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(true);
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
@@ -156,7 +155,6 @@ public class ResourcesView extends VerticalLayout {
 			enableDialog.close();
 		});
 
-		/* close */
 		enableDialog.getCloseButton().addClickListener(ev -> enableDialog.close());
 		return false;
 	}
@@ -165,7 +163,6 @@ public class ResourcesView extends VerticalLayout {
 
 		QuestionDialog disableDialog = new QuestionDialog(text, "DISABLE");
 
-		/* confirm */
 		disableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(false);
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
@@ -174,7 +171,6 @@ public class ResourcesView extends VerticalLayout {
 			disableDialog.close();
 		});
 
-		/* close */
 		disableDialog.getCloseButton().addClickListener(ev -> disableDialog.close());
 	}
 	
@@ -206,15 +202,20 @@ public class ResourcesView extends VerticalLayout {
 			
 			cardsContainer.getRemoveAllButton().addClickListener(ev -> {			
 				
-				HttpEntity<Resource> resource = new HttpEntity<>(res);
-				clientService.deleteRelatedReservations(resource);
-				cardsContainer.cleanPanel(res.getName());
-				grid.getDataProvider().refreshAll();
+				QuestionDialog removeAllDialog = new QuestionDialog("REMOVE ALL related reservations to " 
+				+ "resource " + res.getName() + "?", "REMOVE");
 				
-			});
-			
-		});
+				removeAllDialog.getConfirmButton().addClickListener(e -> {
 
+					HttpEntity<Resource> resource = new HttpEntity<>(res);
+					clientService.deleteRelatedReservations(resource);
+					cardsContainer.cleanPanel(res.getName());
+					grid.getDataProvider().refreshAll();
+					removeAllDialog.close();
+				});
+				removeAllDialog.getCloseButton().addClickListener(e -> removeAllDialog.close());
+			});
+		});
 		return relatedButton;
 	}
 	

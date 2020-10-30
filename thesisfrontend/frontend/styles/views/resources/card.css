@@ -20,16 +20,10 @@ span#value{
 	font-size: 12px;
 }
 
-span #title{
+span#title{
 	font-weight: bold;
 }
 
-#close{
-	width: 20px;
-	height: 20px;
-}
-
-#btnremove{
-	margin-left: auto;
-	font-size: 13px;
+span #none{
+	align-self: flex-start;
 }

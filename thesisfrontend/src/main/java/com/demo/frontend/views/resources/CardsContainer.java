@@ -7,7 +7,6 @@ import com.demo.frontend.utils.AppButton;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -21,7 +20,7 @@ public class CardsContainer extends VerticalLayout {
 	private static final long serialVersionUID = 1L;
 
 	AppButton appButton;
-	H4 title;
+	Span title;
 	Button removeAllButton;
 
 	public CardsContainer() {
@@ -40,7 +39,8 @@ public class CardsContainer extends VerticalLayout {
 		titleCont.setSizeFull();
 		titleCont.setSpacing(false);
 
-		title = new H4(resName);
+		Span title = new Span(resName);
+		title.setId("title");
 
 		Button close = appButton.set("", VaadinIcon.ANGLE_RIGHT.create());
 		close.setId("close");
@@ -58,7 +58,7 @@ public class CardsContainer extends VerticalLayout {
 
 		/* ADD NEW */
 		if (reservations.isEmpty()) {
-			add(new Span("None reservations to display."));
+			add(new Span("None reservations to display"));
 			removeAllButton.setVisible(false);
 		} else {
 			removeAllButton.setVisible(true);
@@ -66,7 +66,6 @@ public class CardsContainer extends VerticalLayout {
 				add(new ReservationCard(reservation));
 			}			
 		}
-
 		setVisible(true);
 	}
 	
