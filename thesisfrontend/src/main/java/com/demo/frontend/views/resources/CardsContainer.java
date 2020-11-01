@@ -22,6 +22,7 @@ public class CardsContainer extends VerticalLayout {
 	AppButton appButton;
 	Span title;
 	Button removeAllButton;
+	Button close;
 
 	public CardsContainer() {
 		setId("container");
@@ -31,18 +32,16 @@ public class CardsContainer extends VerticalLayout {
 
 	public void setCards(Set<Reservation> reservations, String resName) {
 		/* REMOVE PREVIOUS CARDS */
-		if (getComponentCount() > 0)
-			removeAll();
+		removeAll();
 
 		HorizontalLayout titleCont = new HorizontalLayout();
 		titleCont.setId("titleCont");
-		titleCont.setSizeFull();
 		titleCont.setSpacing(false);
 
-		Span title = new Span(resName);
+		title = new Span(resName);
 		title.setId("title");
 
-		Button close = appButton.set("", VaadinIcon.ANGLE_RIGHT.create());
+		close = appButton.set("", VaadinIcon.ANGLE_RIGHT.create());
 		close.setId("close");
 		close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		close.addClickListener(click -> setVisible(false));
@@ -50,7 +49,6 @@ public class CardsContainer extends VerticalLayout {
 		removeAllButton = appButton.set("Clean all", VaadinIcon.TRASH.create());
 		removeAllButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		removeAllButton.setId("btnremove");
-		add(removeAllButton);
 
 		titleCont.add(title, close, removeAllButton);
 		titleCont.setAlignItems(Alignment.BASELINE);
@@ -58,13 +56,12 @@ public class CardsContainer extends VerticalLayout {
 
 		/* ADD NEW */
 		if (reservations.isEmpty()) {
-			add(new Span("None reservations to display"));
 			removeAllButton.setVisible(false);
+			add(new Span("None reservations to display"));
 		} else {
 			removeAllButton.setVisible(true);
-			for (Reservation reservation : reservations) {
+			for (Reservation reservation : reservations)
 				add(new ReservationCard(reservation));
-			}			
 		}
 		setVisible(true);
 	}

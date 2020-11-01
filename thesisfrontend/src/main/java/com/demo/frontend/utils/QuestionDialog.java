@@ -40,9 +40,7 @@ public class QuestionDialog extends Dialog {
 		Icon close = VaadinIcon.CLOSE.create();
 		
 		closeButton = appButton.set("Discard", close);
-		closeButton.setId("appbtn");
 		confirmButton = appButton.set("Save", confirm);
-		confirmButton.setId("appbtn");
 		
 		buttonsContainer = new HorizontalLayout();
 		buttonsContainer.setId("buttCont");

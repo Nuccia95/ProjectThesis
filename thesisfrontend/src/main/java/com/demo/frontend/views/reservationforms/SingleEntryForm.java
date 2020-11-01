@@ -24,10 +24,10 @@ public class SingleEntryForm extends VerticalLayout {
 	private TimePicker endTimePicker;
 	
 	public SingleEntryForm(LocalDate date, LocalTime time) {
-		setSizeFull();
+		
 		HorizontalLayout container = new HorizontalLayout();
 		container.setSpacing(false);
-
+		setId("singleform");
 		startDatePicker = new DatePicker();
 		startDatePicker.setLabel("Start Date");
 		startDatePicker.setReadOnly(true);
@@ -50,7 +50,7 @@ public class SingleEntryForm extends VerticalLayout {
 
 		/* Event Colors */
 		comboBoxColors = new ComboBox<>();
-		comboBoxColors.setItems("dodgerblue", "green", "orange", "red", "violet");
+		comboBoxColors.setItems("Tomato", "DodgerBlue", "DarkCyan", "DeepPink", "DarkOrange");
 		comboBoxColors.setLabel("Color");
 		l1.add(reservationTitle, comboBoxResources, comboBoxColors);
 

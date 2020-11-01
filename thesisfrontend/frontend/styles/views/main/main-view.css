@@ -47,3 +47,26 @@ vaadin-tab[selected] {
   background-color: var(--lumo-primary-color-10pct);
   color: #1ad1ff;
 }
+
+#app-button{
+  color: #1f3d7a;
+  background-color: #e6f2ff;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 12px;
+
+}
+
+#icon-button{
+	color: #1f3d7a;
+}
+
+#app-button:hover {
+  background-color: #ebf0fa;
+  box-shadow: 0 6px 14px 0 rgba(0,0,0,0.2), 0 4px 18px 0 rgba(0,0,0,0.19);
+}
+
+H3{
+	color: #1f3d7a;
+}
+

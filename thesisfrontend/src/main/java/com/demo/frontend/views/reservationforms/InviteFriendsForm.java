@@ -31,37 +31,33 @@ public class InviteFriendsForm extends VerticalLayout {
 	
 	public InviteFriendsForm() {
 		
-		setHeight("290px");
+		setId("inviteform");
 		HorizontalLayout c1 = new HorizontalLayout();
 		Icon users = VaadinIcon.ENVELOPES.create();
 		users.setId("icon");
 		c1.add(users, new Text("Do you want to invite some friends to this event?"));
+		c1.setId("cont");
 		c1.setSpacing(true);
 		c1.setAlignItems(Alignment.BASELINE);
 		
 		boxFriends = new MultiselectComboBox<>();
 		boxFriends.setCompactMode(true);
-		boxFriends.setSizeFull();
 		boxFriends.setPlaceholder("@choose friends..");
 		
-		
+		AppButton appButton = new AppButton();
 		HorizontalLayout c2 = new HorizontalLayout();
-		Icon pencil = VaadinIcon.PENCIL.create();
-		pencil.setId("icon");
-		c2.add(pencil, new Text("Your friend is not present?"));
-		c2.setSpacing(true);
+		Button plus = appButton.set("", VaadinIcon.PLUS_CIRCLE_O.create());
+		plus.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+		c2.add(plus, new Text("Friend not present? Add"));
 		c2.setAlignItems(Alignment.BASELINE);
 		
-		HorizontalLayout addFriendCont = new HorizontalLayout();
+		add(c1, boxFriends, c2);
 		
 		EmailField newFriendField = new EmailField();
 		newFriendField.setInvalid(true);
-		newFriendField.setLabel("Email");
-		newFriendField.setSizeFull();
-		newFriendField.setPlaceholder("..@..");
+		newFriendField.setPlaceholder("email");
 		
-		AppButton appButton = new AppButton();
-		Button addButton = appButton.set("", VaadinIcon.PLUS_CIRCLE.create());
+		Button addButton = appButton.set("", VaadinIcon.PLUS.create());
 		addButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		
 		addedManually = new ArrayList<>();
@@ -79,15 +75,22 @@ public class InviteFriendsForm extends VerticalLayout {
 				}
 			}
 		});
-		addFriendCont.add(newFriendField, addButton);
-		addFriendCont.setAlignItems(Alignment.BASELINE);
-		addFriendCont.setSizeFull();
 		
-		VerticalLayout container = new VerticalLayout();
-		container.setSpacing(false);
-		container.setSizeFull();
-		container.add(c2, addFriendCont);
-		add(c1, boxFriends, container);
+		HorizontalLayout addFriendCont = new HorizontalLayout();
+		addFriendCont.add(newFriendField, addButton);
+		addFriendCont.setSpacing(false);
+		addFriendCont.setAlignItems(Alignment.BASELINE);
+		addFriendCont.setVisible(false);
+		add(addFriendCont);
+
+		plus.addClickListener(ev -> {
+			if(addFriendCont.isVisible())
+				addFriendCont.setVisible(false);
+			else
+				addFriendCont.setVisible(true);
+		});
+		
+		
 	}
 
 	public List<String> selectedFriends(){

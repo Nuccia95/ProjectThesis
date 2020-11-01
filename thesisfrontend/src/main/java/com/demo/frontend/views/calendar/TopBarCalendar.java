@@ -73,6 +73,7 @@ public class TopBarCalendar {
 		viewBox.getElement().getStyle().set("position", "fixed");
 		viewBox.setItems(CalendarViewImpl.TIME_GRID_WEEK, CalendarViewImpl.TIME_GRID_DAY,
 				CalendarViewImpl.DAY_GRID_MONTH, CalendarViewImpl.LIST_MONTH);
+		viewBox.setValue(CalendarViewImpl.TIME_GRID_WEEK);
 	}
 
 	public void previousDate(String type) {

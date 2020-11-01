@@ -9,7 +9,7 @@ public class AppButton {
 	public Button set(String text, Icon icon) {
 		
 		Button button;
-		icon.setColor("#1f3d7a");
+		icon.setId("icon-button");
 
 		if (!text.equals(""))
 			button = new Button(text, icon);
@@ -18,10 +18,6 @@ public class AppButton {
 		
 		button.setId("app-button");
 		button.addThemeVariants(ButtonVariant.LUMO_SMALL);
-		button.getElement().getStyle().set("color", "#1f3d7a");
-		button.getElement().getStyle().set("background-color", "#d6e0f5");
-		button.getElement().getStyle().set("text-align", "center");
-		button.getElement().getStyle().set("cursor", "pointer");
 		
 		return button;
 	}

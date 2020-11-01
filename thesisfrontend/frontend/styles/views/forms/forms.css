@@ -1,3 +1,7 @@
+#entryForm{
+	background-color: #e3fffe;
+}
+
 iron-icon#icon{
 	width: 20px;
 	height: 20px;
@@ -7,4 +11,13 @@ iron-icon#icon{
 
 vaadin-tab#tab{
 	color:#1f3d7a;
+}
+
+#recurringform, #inviteform{
+	height: 300px;
+}
+
+#cont{
+	font-size: 15px;
+	padding-top: 40px;
 }

@@ -25,7 +25,8 @@ public class RecurringEntryForm extends VerticalLayout {
 	private DatePicker start;
 	
 	public RecurringEntryForm(LocalDate startDate) {
-		setHeight("290px");
+		
+		setId("recurringform");
 		days = new MultiselectComboBox<>();
 		endDatePicker = new DatePicker();
 		start = new DatePicker();
@@ -40,7 +41,8 @@ public class RecurringEntryForm extends VerticalLayout {
 		HorizontalLayout c1 = new HorizontalLayout();
 		Icon recurring = VaadinIcon.RECYCLE.create();
 		recurring.setId("icon");
-		c1.add(recurring, new Text("Create new recurring event, set required fields"));
+		c1.add(recurring,  new Text("Create new recurring event, set required fields"));
+		c1.setId("cont");
 		c1.setSpacing(true);
 		c1.setAlignItems(Alignment.BASELINE);
 		

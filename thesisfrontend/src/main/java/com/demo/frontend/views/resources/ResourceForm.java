@@ -52,8 +52,8 @@ public class ResourceForm extends VerticalLayout {
 		description.setMaxLength(90);
 		
 		appButton = new AppButton();
-		saveButton = appButton.set("", VaadinIcon.CHECK.create());
-		cancelButton = appButton.set("", VaadinIcon.CLOSE.create());
+		saveButton = appButton.set("Save", VaadinIcon.CHECK.create());
+		cancelButton = appButton.set("Discard", VaadinIcon.CLOSE.create());
 		buttonsContainer = new HorizontalLayout();
 		buttonsContainer.add(saveButton, cancelButton);
 

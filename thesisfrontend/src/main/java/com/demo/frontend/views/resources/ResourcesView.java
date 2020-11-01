@@ -130,9 +130,9 @@ public class ResourcesView extends VerticalLayout {
 				String text = "";
 				if (!reservations.isEmpty()) {
 					text = "This resource has " + reservations.size()
-							+ " future reservations related DISABLE it?";
+							+ " related reservations, DISABLE it?";
 				}else {
-					text = "DISABLE this resource? ";
+					text = "DISABLE " + res.getName() + "?";
 				}
 				setDisableDialog(res, statusButton, text);
 			} else
@@ -145,7 +145,7 @@ public class ResourcesView extends VerticalLayout {
 
 	public boolean setEnableDialog(Resource res, Button statusButton) {
 		
-		QuestionDialog enableDialog = new QuestionDialog("ENABLE this resource?", "ENABLE");
+		QuestionDialog enableDialog = new QuestionDialog("ENABLE " + res.getName() + "?", "ENABLE");
 		
 		enableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(true);
@@ -202,8 +202,8 @@ public class ResourcesView extends VerticalLayout {
 			
 			cardsContainer.getRemoveAllButton().addClickListener(ev -> {			
 				
-				QuestionDialog removeAllDialog = new QuestionDialog("REMOVE ALL related reservations to " 
-				+ "resource " + res.getName() + "?", "REMOVE");
+				QuestionDialog removeAllDialog = new QuestionDialog("REMOVE ALL reservations related to " 
+				+ res.getName() + "?", "REMOVE");
 				
 				removeAllDialog.getConfirmButton().addClickListener(e -> {
 

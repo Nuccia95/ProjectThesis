@@ -4,6 +4,7 @@ import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.notification.Notification.Position;
@@ -34,8 +35,10 @@ import org.vaadin.stefan.fullcalendar.FullCalendar;
 import org.vaadin.stefan.fullcalendar.FullCalendarBuilder;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
+import com.demo.frontend.utils.AppButton;
 import com.demo.frontend.utils.OtherOwnerDialog;
 import com.demo.frontend.utils.QuestionDialog;
+import com.demo.frontend.utils.SpanDescription;
 import com.demo.frontend.view.login.CurrentUser;
 import com.demo.frontend.views.main.MainView;
 
@@ -306,11 +309,15 @@ public class FullCalendarView extends VerticalLayout {
 	
 	public void showMoreReservations() {
 		/* SHOW MORE RESERVATIONS */
+		SpanDescription spanDescription = new SpanDescription();
+		AppButton appButton = new AppButton();
 		calendar.addLimitedEntriesClickedListener(event -> {
 			Collection<Entry> entries = calendar.getEntries(event.getClickedDate());
 			if (!entries.isEmpty()) {
 				Dialog dialog = new Dialog();
+				dialog.add(spanDescription.build("LIMITED"));
 				VerticalLayout dialogLayout = new VerticalLayout();
+				dialogLayout.setSpacing(true);
 				dialogLayout.setDefaultHorizontalComponentAlignment(Alignment.STRETCH);
 				for (Entry e : entries) {
 					Button b = createClickableEntry(e);
@@ -325,6 +332,10 @@ public class FullCalendarView extends VerticalLayout {
 					}
 					dialogLayout.add(b);
 				}
+				Button close = appButton.set("Close", VaadinIcon.CLOSE.create());
+				close.addClickListener(ev -> dialog.close());
+				dialogLayout.add(close);
+				dialogLayout.setAlignSelf(Alignment.END, close);
 				dialog.add(dialogLayout);
 				dialog.open();
 			}

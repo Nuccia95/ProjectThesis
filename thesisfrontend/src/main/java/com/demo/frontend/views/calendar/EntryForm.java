@@ -58,9 +58,7 @@ public class EntryForm extends Dialog {
 	
 	public EntryForm(LocalDateTime date) {
 		
-		setWidth("580px");
-		setHeight("450px");
-
+		setId("entryForm");
 		container = new VerticalLayout();
 		container.setSizeFull();
 		container.setSpacing(false);
