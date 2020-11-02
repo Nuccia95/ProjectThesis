@@ -3,6 +3,23 @@
 }
 
 #grid{
-	font-size: 14px;
-	display: inline-block;
+	font-size: 14px;	
+	color: black;
+}
+
+
+#statusbtn{
+	cursor: pointer;
+	font-style: italic;
+	color: #1f3d7a;
+}
+
+#relatedbtn{
+	cursor: pointer;
+	color: #1f3d7a;
+}
+
+#relatedbtn:hover{
+	cursor: pointer;
+	color: #80dfff;
 }

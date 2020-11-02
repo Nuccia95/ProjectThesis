@@ -45,19 +45,16 @@ public class InviteFriendsForm extends VerticalLayout {
 		boxFriends.setPlaceholder("@choose friends..");
 		
 		AppButton appButton = new AppButton();
-		HorizontalLayout c2 = new HorizontalLayout();
-		Button plus = appButton.set("", VaadinIcon.PLUS_CIRCLE_O.create());
-		plus.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		c2.add(plus, new Text("Friend not present? Add"));
-		c2.setAlignItems(Alignment.BASELINE);
+		Button plus = appButton.set("New friend?", VaadinIcon.PLUS_CIRCLE_O.create());
 		
-		add(c1, boxFriends, c2);
+		add(c1, boxFriends, plus);
 		
 		EmailField newFriendField = new EmailField();
 		newFriendField.setInvalid(true);
 		newFriendField.setPlaceholder("email");
 		
 		Button addButton = appButton.set("", VaadinIcon.PLUS.create());
+		addButton.setId("add");
 		addButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		
 		addedManually = new ArrayList<>();

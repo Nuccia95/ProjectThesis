@@ -27,6 +27,7 @@ public class SingleEntryForm extends VerticalLayout {
 		
 		HorizontalLayout container = new HorizontalLayout();
 		container.setSpacing(false);
+		container.setJustifyContentMode(JustifyContentMode.BETWEEN);
 		setId("singleform");
 		startDatePicker = new DatePicker();
 		startDatePicker.setLabel("Start Date");
@@ -39,8 +40,8 @@ public class SingleEntryForm extends VerticalLayout {
 		reservationTitle.setMaxLength(20);
 
 		VerticalLayout l1 = new VerticalLayout();
-		l1.setSpacing(false);
 		VerticalLayout l2 = new VerticalLayout();
+		l1.setSpacing(false);
 		l2.setSpacing(false);
 		
 		/* Resources */
@@ -50,7 +51,7 @@ public class SingleEntryForm extends VerticalLayout {
 
 		/* Event Colors */
 		comboBoxColors = new ComboBox<>();
-		comboBoxColors.setItems("Tomato", "DodgerBlue", "DarkCyan", "DeepPink", "DarkOrange");
+		comboBoxColors.setItems("DarkCyan","DarkOrange", "DeepPink", "DodgerBlue", "Tomato");
 		comboBoxColors.setLabel("Color");
 		l1.add(reservationTitle, comboBoxResources, comboBoxColors);
 

@@ -59,10 +59,9 @@ public class EntryForm extends Dialog {
 	public EntryForm(LocalDateTime date) {
 		
 		setId("entryForm");
+		
 		container = new VerticalLayout();
-		container.setSizeFull();
 		container.setSpacing(false);
-		container.setAlignItems(Alignment.CENTER);
 		
 		ld = date.toLocalDate();
 		LocalTime lt0 = LocalTime.parse("00:00");
@@ -122,7 +121,6 @@ public class EntryForm extends Dialog {
 	}
 
 	public EntryForm(LocalDate date) {
-		setSizeFull();
 		ld = date;
 	}
 
@@ -137,7 +135,7 @@ public class EntryForm extends Dialog {
 		}
 
 		Entry newEntry = new Entry();
-		newEntry.setTitle(page1.getReservationTitle().getValue() + " - " + page1.getComboBoxResources().getValue());
+		newEntry.setTitle(page1.getReservationTitle().getValue());
 		newEntry.setColor(page1.getComboBoxColors().getValue());
 		newEntry.setEditable(true);
 

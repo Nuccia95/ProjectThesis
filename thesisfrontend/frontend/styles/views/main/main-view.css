@@ -54,6 +54,7 @@ vaadin-tab[selected] {
   text-align: center;
   cursor: pointer;
   border-radius: 12px;
+  border: 1px solid #cce5ff;
 
 }
 
@@ -67,6 +68,5 @@ vaadin-tab[selected] {
 }
 
 H3{
-	color: #1f3d7a;
+	color: black;
 }
-

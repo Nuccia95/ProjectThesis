@@ -34,11 +34,6 @@ public class SpanDescription{
 			description.getElement().getStyle().set(COLOR, "#24478f");
 			description.getElement().getStyle().set(BACKGROUND, "#99bbff");
 			break;
-		case "OTHER":
-			description.setText("OWNED by another user");
-			description.getElement().getStyle().set(COLOR, "#4775d1");
-			description.getElement().getStyle().set(BACKGROUND, "#d6e0f5");
-			break;
 		case "DISABLE":
 			description.setText("Disable Resource");
 			description.getElement().getStyle().set(COLOR, "#b30000");
@@ -50,7 +45,7 @@ public class SpanDescription{
 			description.getElement().getStyle().set(BACKGROUND, "var(--lumo-success-color-10pct)");
 			break;
 		case "CARD":
-			description.setText("Reservation Card");
+			description.setText("Reservation");
 			description.getElement().getStyle().set(COLOR,"var(--lumo-success-color)");
 			description.getElement().getStyle().set(BACKGROUND, "var(--lumo-success-color-10pct)");
 			break;

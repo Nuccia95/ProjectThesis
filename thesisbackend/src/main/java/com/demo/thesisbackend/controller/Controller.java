@@ -54,9 +54,9 @@ public class Controller implements WebServicesInterface {
 	}
 	
 	@Override
-	@PostMapping("/deleteReservation")
-	public void deleteReservation(long id) {
-		 reservationManager.deleteReservation(id);
+	@GetMapping("/deleteReservation")
+	public long deleteReservation(long id) {
+		 return reservationManager.deleteReservation(id);
 	}
 	
 	@Override
@@ -142,5 +142,11 @@ public class Controller implements WebServicesInterface {
 	@PostMapping(value="/checkReservation")
 	public boolean checkAvailableResource(HttpEntity<Reservation> res) {
 		return reservationManager.checkReservation(res.getBody());
+	}
+
+	@Override
+	@GetMapping(value="/getReservationById")
+	public Reservation getReservationById(long id) {
+		return reservationManager.getReservationById(id);
 	}
 }

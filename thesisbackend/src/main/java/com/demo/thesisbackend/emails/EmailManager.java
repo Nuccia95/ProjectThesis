@@ -92,12 +92,30 @@ public class EmailManager {
 		LocalDateTime end = LocalDateTime.of(res.getEndDate(), res.getEndTime());
 		String formattedEnd = end.format(formatter); 
 		
-		int ending = res.getTitle().indexOf("-");
-		String title = res.getTitle().substring(0, ending);
+		String title = res.getTitle();
+//		String email = res.getOwner().getEmail();
+//		String name = res.getOwner().getFirstName() + " " + res.getOwner().getLastName();
 		
-		final String calendarContent = "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: BCP - Meeting\n" +  "VERSION:2.0\n" + "BEGIN:VEVENT\n" + "DTSTAMP:" + formattedStart + "\n" + "DTSTART:" + formattedStart + "\n" + "DTEND:" + formattedEnd + "\n" + "SUMMARY:"+ title + "\n" +
-				"LOCATION:Sede\n" + "BEGIN:VALARM\n" + "ACTION:DISPLAY\n" + "DESCRIPTION:REMINDER\n" + "END:VALARM\n" + "END:VEVENT\n" + "END:VCALENDAR";
+//		final String calendarContent = "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: BCP - Meeting\n" +  "VERSION:2.0\n" + "BEGIN:VEVENT\n" + "DTSTAMP:" + formattedStart + "\n" + "DTSTART:" + formattedStart + "\n" + "DTEND:" + formattedEnd + "\n" 
+//				+ "SUMMARY:"+ title + "\n"
+//				+ "LOCATION:Sede\n" + "BEGIN:VALARM\n" + "ACTION:DISPLAY\n" 
+//				+ "DESCRIPTION:REMINDER\n" + "END:VALARM\n" + "END:VEVENT\n" + "END:VCALENDAR";
 	
+		final String calendarContent = "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: Meeting\n" 
+				+  "VERSION:2.0\n" + "BEGIN:VEVENT\n" 
+				+ "DTSTAMP:" + formattedStart + "\n" 
+				+ "DTSTART:" + formattedStart + "\n" 
+				+ "DTEND:" + formattedEnd + "\n" 
+				+ "SUMMARY:" + title  + "\n" + "UID:324\n" 
+				+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:infoshareinfoshare2@gmail.com\n"
+				+ "ORGANIZER:MAILTO:infoshareinfoshare2@gmail.com\n"
+				+ "LOCATION:Sede centrale, Rende Cs\n" + "DESCRIPTION:" + "Meeting\n" 
+				+ "SEQUENCE:0\n" + "PRIORITY:5\n" + "CLASS:PUBLIC\n" 
+				+ "STATUS:CONFIRMED\n" + "TRANSP:OPAQUE\n" + "BEGIN:VALARM\n" 
+				+ "ACTION:DISPLAY\n" + "DESCRIPTION:REMINDER\n" + "END:VALARM\n" 
+				+ "TRIGGER;RELATED=START:-PT00H15M00S\n" + "END:VEVENT\n" + "END:VCALENDAR";
+
+		
 		try {
 			calendarPart.addHeader("Content-Class", "urn:content-classes:calendarmessage");
 			calendarPart.setContent(calendarContent, "text/calendar;method=CANCEL");

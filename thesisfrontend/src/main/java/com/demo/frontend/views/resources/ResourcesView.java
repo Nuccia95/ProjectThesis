@@ -112,8 +112,9 @@ public class ResourcesView extends VerticalLayout {
 
 	public Button enableResource(Resource res) {
 
-		Icon banIcon = VaadinIcon.BAN.create();
+		Icon banIcon = VaadinIcon.CIRCLE.create();
 		Button statusButton = appButton.set(ENABLE, banIcon);
+		statusButton.setId("statusbtn");
 
 		if (Boolean.TRUE.equals(res.getEnable()))
 			setStatusButton(statusButton, ENABLE);
@@ -195,6 +196,7 @@ public class ResourcesView extends VerticalLayout {
 		int number = reservations.size();
 
 		Button relatedButton = new Button(String.valueOf(number));
+		relatedButton.setId("relatedbtn");
 		relatedButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
 		relatedButton.addClickListener(click -> {
@@ -240,7 +242,6 @@ public class ResourcesView extends VerticalLayout {
 
 		if (CurrentUser.isAdmin()) {
 			Button newResourceButton = appButton.set("New Resource", VaadinIcon.PLUS_CIRCLE.create());
-			newResourceButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 			newResourceButton.addClickListener(ev -> {
 				setForm();
 				formDialog.open();

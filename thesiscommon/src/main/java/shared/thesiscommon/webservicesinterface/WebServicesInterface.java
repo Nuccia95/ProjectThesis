@@ -19,7 +19,7 @@ public interface WebServicesInterface {
 
 	Reservation updateSingleReservation(HttpEntity<Reservation> reservation);
 
-	void deleteReservation(long id);
+	long deleteReservation(long id);
 
 	void deleteRecurringReservations(HttpEntity<Reservation> reservation);
 
@@ -48,5 +48,7 @@ public interface WebServicesInterface {
 	public Resource getRelatedResource(long id);
 	
 	public boolean checkAvailableResource(HttpEntity<Reservation> res);
+	
+	public Reservation getReservationById(long id);
 	
 }

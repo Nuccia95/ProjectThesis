@@ -60,6 +60,8 @@ public class FullCalendarView extends VerticalLayout {
 	private QuestionDialog resizeEntryDialog;
 
 	public FullCalendarView() {
+
+		getStyle().set("flex-grow", "1");
 		setSpacing(false);
 		setClassName("fullcalendar-view");
 
@@ -79,16 +81,15 @@ public class FullCalendarView extends VerticalLayout {
 
 	public void createCalendar() {
 		calendar = FullCalendarBuilder.create().withEntryLimit(3).build();
-		calendar.setId("calendar");
 		calendar.setNumberClickable(false);
 		calendar.setFirstDay(DayOfWeek.MONDAY);
-		calendar.setSizeFull();
-		calendar.setMinTime(LocalTime.of(7, 0));
-		calendar.changeView(CalendarViewImpl.TIME_GRID_WEEK);
-		calendar.setBusinessHours(new BusinessHours(LocalTime.of(8, 0), LocalTime.of(19, 0)));
+		calendar.setMinTime(LocalTime.of(8, 0));
+		calendar.setMaxTime(LocalTime.of(20, 0));
+		calendar.setBusinessHours(new BusinessHours(LocalTime.of(8, 0), LocalTime.of(20, 0)));
 		calendar.setNowIndicatorShown(true);
 		add(calendar);
 		setFlexGrow(1, calendar);
+		setDefaultHorizontalComponentAlignment(Alignment.STRETCH);
 		
 		topBar.getViewBox().addValueChangeListener(e -> {
 			CalendarView value = e.getValue();
@@ -156,8 +157,9 @@ public class FullCalendarView extends VerticalLayout {
 					deleteRecurringReservation(entry);
 				if (entry.isEditable())
 					editSingleReservation(entry);
-			} else {				
-				new OtherOwnerDialog(entry);
+			} else {
+				Reservation res = clientService.getReservationById(Long.parseLong(entry.getId()));
+				new OtherOwnerDialog(res);
 			}
 		});
 	}

@@ -1,50 +1,31 @@
 package com.demo.frontend.utils;
 
-import org.vaadin.stefan.fullcalendar.Entry;
-
+import com.demo.frontend.views.resources.ReservationCard;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+
+import shared.thesiscommon.bean.Reservation;
 
 public class OtherOwnerDialog extends Dialog {
 	
 	private static final long serialVersionUID = 1L;
 
-	public OtherOwnerDialog(Entry entry) {
-		VerticalLayout container = new VerticalLayout();
-		container.setSpacing(false);
+	public OtherOwnerDialog(Reservation res) {
 		
-		SpanDescription description = new SpanDescription();
-		add(description.build("OTHER"));
-		
-		container.add(setText("Title", entry.getTitle()));
-		
-		if(entry.isRecurring())
-			container.add(setText("Recurrig", "Yes"));
-		
-		container.add(setText("Start", entry.getStart().toLocalDate() + " | " + entry.getStart().toLocalTime()));
-		container.add(setText("End", entry.getEnd().toLocalDate() + " | " + entry.getEnd().toLocalTime()));
-	
+		ReservationCard card = new ReservationCard(res);
+		card.setId("card-other");
 		
 		AppButton appButton = new AppButton();
-		Button closeButton = appButton.set("", VaadinIcon.CLOSE.create());
+		Button closeButton = appButton.set("Close", VaadinIcon.CLOSE.create());
 		closeButton.addClickListener(click -> close());
 		
-		
-		container.add(closeButton);
-		container.setAlignSelf(Alignment.END, closeButton);
-		add(container);
+		HorizontalLayout buttcont = new HorizontalLayout();
+		buttcont.add(closeButton);
+		buttcont.getElement().getStyle().set("padding-left", "80%");
+		add(card, buttcont);
 		open();
 	}
-	
-	public TextField setText(String label, String value) {
-		TextField tf = new TextField();
-		tf.setLabel(label);
-		tf.setValue(value);
-		tf.setReadOnly(true);
-		return tf;
-	}
+
 }

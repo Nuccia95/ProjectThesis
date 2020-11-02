@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -50,7 +51,9 @@ public class CardsContainer extends VerticalLayout {
 		removeAllButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		removeAllButton.setId("btnremove");
 
-		titleCont.add(title, close, removeAllButton);
+		Icon info = VaadinIcon.INFO_CIRCLE.create();
+		info.setId("info");
+		titleCont.add(info, title, close, removeAllButton);
 		titleCont.setAlignItems(Alignment.BASELINE);
 		add(titleCont);
 

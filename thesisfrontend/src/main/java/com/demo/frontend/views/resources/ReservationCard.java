@@ -22,9 +22,9 @@ public class ReservationCard extends VerticalLayout {
 
 		Span title;
 		if(res.isRecurring())
-			title = new Span(res.getTitle() + " | " + "Recurrent");		
+			title = new Span(res.getTitle() + "-" + res.getResource().getName() + " | " + "Recurrent");		
 		else
-			title = new Span(res.getTitle());	
+			title = new Span(res.getTitle() + "-" + res.getResource().getName() );	
 		
 		title.setId("titleCard");
 
@@ -37,12 +37,13 @@ public class ReservationCard extends VerticalLayout {
 
 		infoContainer.add(setLineInfo("Start", res.getStartDate() + "   " + res.getStartTime()));
 		infoContainer.add(setLineInfo("End", res.getEndDate() + "   " + res.getEndTime()));
-		infoContainer.add(setLineInfo("Owner", res.getOwner().getFirstName() + " " + res.getOwner().getLastName()));
+		infoContainer.add(setLineInfo("Created by", res.getOwner().getFirstName() + " " + res.getOwner().getLastName()));
 		
 		add(titleCont, infoContainer);
 	}
 
 	public VerticalLayout setLineInfo(String label, String value) {
+
 		VerticalLayout l = new VerticalLayout();
 		l.setSpacing(false);
 		Span labelSpan = new Span(label);
@@ -50,7 +51,7 @@ public class ReservationCard extends VerticalLayout {
 		Span valueSpan = new Span(value);
 		valueSpan.setId("value");
 		l.add(labelSpan, valueSpan);
-		
+
 		return l;
 	}
 }

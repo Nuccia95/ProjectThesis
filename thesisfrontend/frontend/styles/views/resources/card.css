@@ -1,30 +1,55 @@
-#container{
+#container {
 	box-shadow: black;
 	box-shadow: 2px 1px 5px 0px grey;
-	max-width: 400px;
+	max-width: 450px;
 	overflow: auto;
 	background-color: #ecf2f9;
 }
 
-#card{
+#titleCard{
+	font-size: 14px;
+	font-weight: bold;
+}
+
+#card {
 	background: #ffff;
 	box-shadow: black;
 	box-shadow: 4px 1px 5px 0px grey;
 }
 
-span#label,#title{
-	font-weight: bold;
+span#label{
+	font-size: 14px;
+	color:black;
 }
 
-span#value{
-	font-size: 12px;
+span#value {
+	font-size: 13px;
+	color:#808080;
 }
 
-#btnremove{
+#close {
+	cursor: pointer;
+}
+
+#title {
+	color: #1f3d7a;
+	font-size: 17px;
+	font-style: italic;
+}
+
+#info {
+	color: #1f3d7a;
+	width: 13px;
+	height: 13px;
+	margin-right: 10px;
+}
+
+#btnremove {
 	margin-left: auto;
 	color: #1f3d7a;
+	cursor: pointer;
 }
 
-#titleCont{
-	width:350px;
+#titleCont {
+	width: 350px;
 }

@@ -56,8 +56,9 @@ public class ReservationManagerImpl implements ReservationManager {
 	}
 
 	@Override
-	public void deleteReservation(long id) {
+	public long deleteReservation(long id) {
 		reservationDAO.deleteById(id);
+		return id;
 	}
 
 	@Override
@@ -135,6 +136,14 @@ public class ReservationManagerImpl implements ReservationManager {
 		}
 
 		return true;
+	}
+
+	@Override
+	public Reservation getReservationById(long id) {
+		Optional<Reservation> res = reservationDAO.findById(id);
+		if(res.isPresent())
+			return res.get();
+		return null;
 	}
 
 }

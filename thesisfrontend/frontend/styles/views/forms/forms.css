@@ -1,5 +1,6 @@
 #entryForm{
 	background-color: #e3fffe;
+	padding: inherit;
 }
 
 iron-icon#icon{
@@ -20,4 +21,16 @@ vaadin-tab#tab{
 #cont{
 	font-size: 15px;
 	padding-top: 40px;
+	color:black;
+}
+
+#add, #plus{
+	cursor:pointer;
+	width: 30px;
+	height: 30px;
+	color: #1f3d7a;
+}
+
+#addnewfriends{
+	color:black;
 }

@@ -46,11 +46,11 @@ public class ClientService implements WebServicesInterface {
 	}
 
 	@Override
-	public void deleteReservation(long id) {
-		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationsByOwner")
+	public long deleteReservation(long id) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "deleteReservation")
 				.queryParam("id", String.valueOf(id));
 
-		restTemplate.getForObject(builder.toUriString(), Void.class);
+		return restTemplate.getForObject(builder.toUriString(), Long.class);
 	}
 
 	@Override
@@ -157,5 +157,12 @@ public class ClientService implements WebServicesInterface {
 	@Override
 	public boolean checkAvailableResource(HttpEntity<Reservation> res) {
 		return restTemplate.postForObject(URL + "checkReservation", res, Boolean.class);
+	}
+
+	@Override
+	public Reservation getReservationById(long id) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationById")
+				.queryParam("id", String.valueOf(id));
+		return restTemplate.getForObject(builder.toUriString(), Reservation.class);
 	}
 }

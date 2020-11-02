@@ -11,7 +11,7 @@ public interface ReservationManager {
 	
 	public Reservation updateReservation(Reservation reservation);
 	
-	public void deleteReservation(long id);
+	public long deleteReservation(long id);
 	
 	public void deleteRecurringReservation(Reservation reservation);
 	
@@ -24,4 +24,6 @@ public interface ReservationManager {
 	public Resource getRelatedResource(long id);
 	
 	public Boolean checkReservation(Reservation res);
+	
+	public Reservation getReservationById(long id);
 }
