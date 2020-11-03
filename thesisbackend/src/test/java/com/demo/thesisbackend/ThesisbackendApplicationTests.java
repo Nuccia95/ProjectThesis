@@ -57,10 +57,17 @@ class ThesisbackendApplicationTests {
 		
 		Reservation res = new Reservation();
 		res.setTitle("Reunion - Lab");
-		res.setStartDate(LocalDate.of(2020, 11, 3));
+		List<String> days = new ArrayList<String>();
+		res.setDays(days);
+		
+		res.setStartDate(LocalDate.of(2020, 11, 2));
+		
 		res.setStartTime(LocalTime.of(17, 00));
-		res.setEndDate(LocalDate.of(2020, 10, 30));
-		res.setEndTime(LocalTime.of(19, 00));
+		
+		res.setEndDate(LocalDate.of(2020, 11, 2));
+		
+		res.setEndTime(LocalTime.of(19, 00));		
+		
 		res.setOwner(u);
 		res.setReceivers(emails);
 		

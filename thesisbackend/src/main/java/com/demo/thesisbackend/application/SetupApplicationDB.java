@@ -51,8 +51,8 @@ public class SetupApplicationDB {
 		User adminUser = userDAO.findByUsername(User.ADMIN_USERNAME);
 		if (adminUser == null) {
 			adminUser = new User();
-			adminUser.setFirstName("Admin");
-			adminUser.setLastName("Admin");
+			adminUser.setFirstName("Nuccia");
+			adminUser.setLastName("Oliverio");
 			adminUser.setEmail("nucciaoliverio95@gmail.com");
 			adminUser.setAdmin(Boolean.TRUE);
 			adminUser.setPassword(PasswordEncoder.encode("admin"));

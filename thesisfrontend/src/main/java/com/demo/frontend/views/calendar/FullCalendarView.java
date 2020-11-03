@@ -120,6 +120,7 @@ public class FullCalendarView extends VerticalLayout {
 		editReservation();
 		changeReservationDateTime();
 		showMoreReservations();
+		searchReservation();
 		resizeEntry();
 	}
 
@@ -309,6 +310,23 @@ public class FullCalendarView extends VerticalLayout {
 		});
 	}
 	
+	public void searchReservation() {
+		topBar.getSearchReservation().addValueChangeListener(click -> {
+			String resTitle = topBar.getSearchReservation().getValue();
+			Reservation output = clientService.gerReservationByTitle(resTitle);
+			if(output != null) {
+				Optional<Entry> e = calendar.getEntryById(String.valueOf(output.getId()));
+				if(e.isPresent()) {
+					Entry entry = e.get();
+					editSingleReservation(entry);
+				}
+			}
+			topBar.getSearchReservation().clear();
+			topBar.getSearchReservation().setVisible(false);
+		});
+	}
+
+	
 	public void showMoreReservations() {
 		/* SHOW MORE RESERVATIONS */
 		SpanDescription spanDescription = new SpanDescription();
@@ -393,9 +411,10 @@ public class FullCalendarView extends VerticalLayout {
 				reservation.setEditable(false);
 				if (groupId != null)
 					reservation.setGroupId(groupId);
-
+				
 				reservation.setOwner(CurrentUser.get());
 				HttpEntity<Reservation> res = new HttpEntity<>(reservation);
+				
 				
 				if(clientService.checkAvailableResource(res)) {
 					Reservation createdReservation = clientService.createReservation(res);

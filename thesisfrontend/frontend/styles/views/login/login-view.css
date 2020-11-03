@@ -8,8 +8,24 @@
     background: #1f3d7a;
 }
 
-.login-information H1,H2{
+#logo-login{
+	height: var(--lumo-size-l);
+  	margin: 0 var(--lumo-space-s);
+}
+
+#conttitle{
 	color:white;
+	margin-top: 25%;
+	font-weight: bold;
+	font-size: 30px;
+	font-style: oblique;
+}
+
+#info-login{
+	color:white;
+	margin-top: 20%;
+	font-size: 23px;
+	font-style: oblique;
 }
 
 /* Stack login-screen vertically on narrow screen */

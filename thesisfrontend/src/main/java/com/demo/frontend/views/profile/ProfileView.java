@@ -15,7 +15,6 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -118,8 +117,11 @@ public class ProfileView extends VerticalLayout {
 
 		H4 title = new H4("Profile");
 		HorizontalLayout titleContainer = new HorizontalLayout();
+		Icon profile = getAvatar();
+		profile.setId("avatar");
+		titleContainer.add(title, profile);
+		titleContainer.setAlignItems(Alignment.BASELINE);
 	
-		titleContainer.add(title, getAvatar());
 		infoContainer.add(titleContainer, setTextField("First Name", CurrentUser.get().getFirstName()),
 				setTextField("Last Name", CurrentUser.get().getLastName()), setTextField("Email", CurrentUser.get().getEmail()),
 				setTextField("Role", CurrentUser.get().getProfile().getName()));
@@ -266,19 +268,18 @@ public class ProfileView extends VerticalLayout {
 		return tf;
 	}
 
-	public Image getAvatar() {
+	public Icon getAvatar() {
 
-		Image avatar = new Image();
-		avatar.setId("avatar");
+		Icon avatar = new Icon();
 		switch (CurrentUser.get().getProfile().getName()) {
 		case User.ADMIN_PROFILE:
-			avatar.setSrc("images/admin.png");
+			avatar = VaadinIcon.SPECIALIST.create();
 			break;
 		case User.USER_PROFILE:
-			avatar.setSrc("images/simpleUser.png");
+			avatar = VaadinIcon.USER.create();
 			break;
 		case User.VIEWER_PROFILE:
-			avatar.setSrc("images/viewer.png");
+			avatar = VaadinIcon.BOOK.create();
 			break;
 		default:
 			break;

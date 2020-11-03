@@ -66,12 +66,12 @@ public class MainView extends AppLayout {
         header.setWidthFull();
         header.setAlignItems(FlexComponent.Alignment.CENTER);
         header.setId("header");
-        Image logo = new Image("images/logo.png", "My Project logo");
+        Image logo = new Image("images/calogo.png", "My Project logo");
         logo.setId("logo");
         header.add(logo);
-        header.add(new H1("APP-NAME"));
+        header.add(new H1("InfoCalendar"));
         
-        Button logoutButton = new Button("", VaadinIcon.SIGN_OUT.create());
+        Button logoutButton = new Button("Logout", VaadinIcon.SIGN_OUT.create());
         logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         logoutButton.setId("logout");
         logoutButton.addClickListener(e -> signOut());

@@ -1,7 +1,7 @@
 #container {
 	box-shadow: black;
 	box-shadow: 2px 1px 5px 0px grey;
-	max-width: 450px;
+	max-width: 420px;
 	overflow: auto;
 	background-color: #ecf2f9;
 }
@@ -24,7 +24,7 @@ span#label{
 
 span#value {
 	font-size: 13px;
-	color:#808080;
+	color:rgb(75, 75, 75);
 }
 
 #close {

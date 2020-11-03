@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.dependency.CssImport;
-import com.vaadin.flow.component.html.H1;
-import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -62,12 +63,34 @@ public class LoginView extends FlexLayout {
 	private Component buildPanel() {
 		VerticalLayout loginInformation = new VerticalLayout();
 		loginInformation.setClassName("login-information");
-
-		H1 title = new H1("Welcome in APP-NAME");
-		H2 info = new H2("description");
-
-		loginInformation.add(title);
-		loginInformation.add(info);
+		
+		Image logo = new Image("images/calogo.png", "My Project logo");
+        logo.setId("logo-login");
+		
+        
+        VerticalLayout cont1 = new VerticalLayout();
+        cont1.setId("conttitle");
+        cont1.setSpacing(false);
+        Span welcome = new Span("Welcome in");
+        Span title = new Span("InfoCalendar");
+        HorizontalLayout titleCont = new HorizontalLayout();
+        titleCont.setAlignItems(Alignment.BASELINE);
+        titleCont.add(title, logo);
+        cont1.add(welcome, titleCont);
+        
+        Span info1 = new Span("Organize your work");
+		Span info2 = new Span("Book resources");
+		Span info3 = new Span("Invite your friends");
+		VerticalLayout cont2 = new VerticalLayout();
+		cont2.setSpacing(false);
+		cont2.add(info1, info2, info3);
+		cont2.setId("info-login");
+		
+		
+		loginInformation.setAlignSelf(Alignment.CENTER, logo);
+		
+		loginInformation.add(cont1, cont2);
+		
 		return loginInformation;
 	}	
 	

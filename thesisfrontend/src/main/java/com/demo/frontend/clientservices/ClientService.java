@@ -165,4 +165,11 @@ public class ClientService implements WebServicesInterface {
 				.queryParam("id", String.valueOf(id));
 		return restTemplate.getForObject(builder.toUriString(), Reservation.class);
 	}
+
+	@Override
+	public Reservation gerReservationByTitle(String title) {
+		UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(URL + "getReservationByTitle")
+				.queryParam("title", title);
+		return restTemplate.getForObject(builder.toUriString(), Reservation.class);
+	}
 }

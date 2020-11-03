@@ -13,14 +13,7 @@ vaadin-tab#tab{
 	color:#1f3d7a;
 }
 
-img#avatar {
-  border-radius: 50%;
-  height: var(--lumo-size-s);
-  margin-left: 5px;
-  margin-top: 20px;
-}
-
-iron-icon#users, #settings{
+iron-icon#avatar, #users, #settings{
   width: 20px;
   height: 20px;
   margin-left: 10px;

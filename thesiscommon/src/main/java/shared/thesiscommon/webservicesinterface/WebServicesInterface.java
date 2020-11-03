@@ -45,10 +45,11 @@ public interface WebServicesInterface {
 	
 	boolean updateResource(HttpEntity<Resource> resource);
 	
-	public Resource getRelatedResource(long id);
+	Resource getRelatedResource(long id);
 	
-	public boolean checkAvailableResource(HttpEntity<Reservation> res);
+	boolean checkAvailableResource(HttpEntity<Reservation> res);
 	
-	public Reservation getReservationById(long id);
+	Reservation getReservationById(long id);
 	
+	Reservation gerReservationByTitle(String title);
 }

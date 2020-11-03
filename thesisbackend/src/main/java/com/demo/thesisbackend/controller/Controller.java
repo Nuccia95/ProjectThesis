@@ -149,4 +149,10 @@ public class Controller implements WebServicesInterface {
 	public Reservation getReservationById(long id) {
 		return reservationManager.getReservationById(id);
 	}
+
+	@Override
+	@GetMapping(value="/getReservationByTitle")
+	public Reservation gerReservationByTitle(String title) {
+		return reservationManager.getReservationByTitle(title);
+	}
 }

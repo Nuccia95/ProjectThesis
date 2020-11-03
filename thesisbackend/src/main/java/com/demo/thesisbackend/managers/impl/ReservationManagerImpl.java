@@ -30,7 +30,7 @@ public class ReservationManagerImpl implements ReservationManager {
 		Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 		reservation.setResource(resource);
 
-		if (reservation.getGroupId() == 0) {
+		if (reservation.getGroupId() == 0 && !reservation.getReceivers().isEmpty()) {
 			EmailManager emailManager = new EmailManager();
 			emailManager.sendEmail(reservation);
 		}
@@ -45,6 +45,7 @@ public class ReservationManagerImpl implements ReservationManager {
 			Reservation res = r.get();
 			Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 			res.setResource(resource);
+			res.setTitle(reservation.getTitle());
 			res.setColor(reservation.getColor());
 			res.setStartDate(reservation.getStartDate());
 			res.setEndDate(reservation.getEndDate());
@@ -143,6 +144,14 @@ public class ReservationManagerImpl implements ReservationManager {
 		Optional<Reservation> res = reservationDAO.findById(id);
 		if(res.isPresent())
 			return res.get();
+		return null;
+	}
+
+	@Override
+	public Reservation getReservationByTitle(String title) {
+		Reservation res = reservationDAO.findByTitle(title);
+		if(res != null)
+			return res;
 		return null;
 	}
 

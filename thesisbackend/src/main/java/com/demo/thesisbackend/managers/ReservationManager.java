@@ -26,4 +26,6 @@ public interface ReservationManager {
 	public Boolean checkReservation(Reservation res);
 	
 	public Reservation getReservationById(long id);
+	
+	public Reservation getReservationByTitle(String title);
 }

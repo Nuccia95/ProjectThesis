@@ -1,7 +1,9 @@
 package com.demo.thesisbackend.emails;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
@@ -15,13 +17,23 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-
 import shared.thesiscommon.bean.Reservation;
 
 public class EmailManager {
 
-	public void sendEmail(Reservation reservation) {
+	private static HashMap<String, String> daysMap;
 
+	public EmailManager() {
+		daysMap = new HashMap<>();
+		daysMap.put(DayOfWeek.MONDAY.toString(), "MO");
+		daysMap.put(DayOfWeek.TUESDAY.toString(), "TU");
+		daysMap.put(DayOfWeek.WEDNESDAY.toString(), "WE");
+		daysMap.put(DayOfWeek.THURSDAY.toString(), "TH");
+		daysMap.put(DayOfWeek.FRIDAY.toString(), "FR");
+		daysMap.put(DayOfWeek.SATURDAY.toString(), "SA");
+	}
+
+	public void sendEmail(Reservation reservation) {
 
 		/* Setup mail server */
 		String host = "smtp.gmail.com";
@@ -39,15 +51,19 @@ public class EmailManager {
 
 		try {
 			MimeMessage message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
-			message.setSubject("InfoShare New Meeting");
-			/*String from = reservation.getOwner().getFirstName() + " " + reservation.getOwner().getLastName();
-			message.setText(setMessage(reservation, from));*/
-			
-			Multipart multipart = new MimeMultipart("alternative");
+			Multipart multipart = new MimeMultipart();
+			String from = reservation.getOwner().getFirstName() + " " + reservation.getOwner().getLastName();
 
-			BodyPart messageBodyPart = buildCalendarPart(reservation);
-			multipart.addBodyPart(messageBodyPart);
+			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
+			message.setSubject("InfoShare - Join The Meeting");
+
+			BodyPart textBodyPart = new MimeBodyPart();
+			textBodyPart.setText(setMessage(reservation, from));
+
+			BodyPart attachBodyPart = buildCalendarPart(reservation);
+
+			multipart.addBodyPart(textBodyPart);
+			multipart.addBodyPart(attachBodyPart);
 			message.setContent(multipart);
 
 			for (String email : reservation.getReceivers()) {
@@ -66,56 +82,33 @@ public class EmailManager {
 	}
 
 	public String setMessage(Reservation reservation, String from) {
-		String text = "You are invited to join the meeting " + "\n" + "START DATE: " + reservation.getStartDate() + "\n"
-				+ "END DATE: " + reservation.getEndDate() + "\n" + "START TIME: " + reservation.getStartTime() + "\n"
-				+ "END TIME: " + reservation.getEndTime() + "\n" + "ORGANIZED by " + from;
+		String text = from + " " + "has created a new meeting. Do you want to partecipate? ";
 
 		if (reservation.isRecurring()) {
 			String days = "";
 			for (String d : reservation.getDays())
 				days += d + " ";
 			days += "\n";
-			text += "Each: " + days;
+			text += "Days of the event: " + days;
 		}
 		return text;
 	}
 
-	private static BodyPart buildCalendarPart(Reservation res){
+	private static BodyPart buildCalendarPart(Reservation res) {
 
 		BodyPart calendarPart = new MimeBodyPart();
-		
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd'T'HHmmss");
-		
+
 		LocalDateTime start = LocalDateTime.of(res.getStartDate(), res.getStartTime());
-		String formattedStart = start.format(formatter); 
-		
+		String formattedStart = start.format(formatter);
+
 		LocalDateTime end = LocalDateTime.of(res.getEndDate(), res.getEndTime());
-		String formattedEnd = end.format(formatter); 
+		String formattedEnd = end.format(formatter);
 		
 		String title = res.getTitle();
-//		String email = res.getOwner().getEmail();
-//		String name = res.getOwner().getFirstName() + " " + res.getOwner().getLastName();
-		
-//		final String calendarContent = "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: BCP - Meeting\n" +  "VERSION:2.0\n" + "BEGIN:VEVENT\n" + "DTSTAMP:" + formattedStart + "\n" + "DTSTART:" + formattedStart + "\n" + "DTEND:" + formattedEnd + "\n" 
-//				+ "SUMMARY:"+ title + "\n"
-//				+ "LOCATION:Sede\n" + "BEGIN:VALARM\n" + "ACTION:DISPLAY\n" 
-//				+ "DESCRIPTION:REMINDER\n" + "END:VALARM\n" + "END:VEVENT\n" + "END:VCALENDAR";
-	
-		final String calendarContent = "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: Meeting\n" 
-				+  "VERSION:2.0\n" + "BEGIN:VEVENT\n" 
-				+ "DTSTAMP:" + formattedStart + "\n" 
-				+ "DTSTART:" + formattedStart + "\n" 
-				+ "DTEND:" + formattedEnd + "\n" 
-				+ "SUMMARY:" + title  + "\n" + "UID:324\n" 
-				+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:infoshareinfoshare2@gmail.com\n"
-				+ "ORGANIZER:MAILTO:infoshareinfoshare2@gmail.com\n"
-				+ "LOCATION:Sede centrale, Rende Cs\n" + "DESCRIPTION:" + "Meeting\n" 
-				+ "SEQUENCE:0\n" + "PRIORITY:5\n" + "CLASS:PUBLIC\n" 
-				+ "STATUS:CONFIRMED\n" + "TRANSP:OPAQUE\n" + "BEGIN:VALARM\n" 
-				+ "ACTION:DISPLAY\n" + "DESCRIPTION:REMINDER\n" + "END:VALARM\n" 
-				+ "TRIGGER;RELATED=START:-PT00H15M00S\n" + "END:VEVENT\n" + "END:VCALENDAR";
 
-		
+		final String calendarContent = setCalendarContent(formattedStart, formattedEnd, title);
+
 		try {
 			calendarPart.addHeader("Content-Class", "urn:content-classes:calendarmessage");
 			calendarPart.setContent(calendarContent, "text/calendar;method=CANCEL");
@@ -126,4 +119,15 @@ public class EmailManager {
 		return calendarPart;
 	}
 
+	public static String setCalendarContent(String formattedStart, String formattedEnd, String title) {
+		return "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: Meeting\n" + "VERSION:2.0\n" + "BEGIN:VEVENT\n"
+				+ "DTSTART:" + formattedStart + "\n" + "DTEND:" + formattedEnd + "\n" + "DTSTAMP:" + formattedStart
+				+ "\n" + "SUMMARY:" + title + "\n" /*+ "UID:324\n"*/
+				+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:\n"
+				+ "LOCATION:Sede centrale, Rende Cs\n" + "DESCRIPTION:Meeting\n" + "SEQUENCE:0\n" + "PRIORITY:5\n"
+				+ "CLASS:PUBLIC\n" + "STATUS:CONFIRMED\n" + "TRANSP:OPAQUE\n" + "BEGIN:VALARM\n" + "ACTION:DISPLAY\n"
+				+ "DESCRIPTION:REMINDER\n" + "END:VALARM\n" + "TRIGGER;RELATED=START:-PT00H15M00S\n" + "END:VEVENT\n"
+				+ "END:VCALENDAR";
+	}
+	
 }

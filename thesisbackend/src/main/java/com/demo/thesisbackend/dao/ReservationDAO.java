@@ -12,6 +12,8 @@ public interface ReservationDAO extends CrudRepository<Reservation, Long> {
 	
 	Set<Reservation> findByOwnerId(Long id);
 	
+	Reservation findByTitle(String title);
+	
 	Set<Reservation> findByResourceId(Long resourceId);
 
 	void deleteByGroupId(Long groupId);

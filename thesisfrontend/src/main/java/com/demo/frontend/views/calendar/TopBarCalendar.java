@@ -12,6 +12,7 @@ import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 
 public class TopBarCalendar {
 
@@ -21,12 +22,17 @@ public class TopBarCalendar {
 	private ComboBox<CalendarView> viewBox;
 	private Button previousButton;
 	private Button nextButton;
+	private Button searchButton;
+	private TextField searchReservation;
 
 	public TopBarCalendar() {
 		appButton = new AppButton();
 		goToPicker = new DatePicker();
 		goToPicker.setValue(LocalDate.now());
 		viewBox = new ComboBox<>();
+		searchReservation = new TextField();
+		searchReservation.setPlaceholder("Search by title");
+		searchReservation.setVisible(false);
 	}
 
 	public HorizontalLayout buildTopBar() {
@@ -53,10 +59,20 @@ public class TopBarCalendar {
 		previousButton = appButton.set("Prev", VaadinIcon.ARROW_LEFT.create());
 		nextButton = appButton.set("Next", VaadinIcon.ARROW_RIGHT.create());
 
+		/* search */
+		searchButton = appButton.set("", VaadinIcon.SEARCH.create());
+		
 		HorizontalLayout buttonsContainer = new HorizontalLayout();
-		buttonsContainer.add(viewsButton, viewBox, goToButton, goToPicker, previousButton, nextButton);
-		buttonsContainer.getElement().getStyle().set("margin-left", "auto");
+		buttonsContainer.setId("buttons-container-calendar");
+		buttonsContainer.add(viewsButton, viewBox, goToButton, goToPicker, previousButton, nextButton, searchButton, searchReservation);
 
+		searchButton.addClickListener(ev -> {
+			if(searchReservation.isVisible())
+				searchReservation.setVisible(false);
+			else
+				searchReservation.setVisible(true);
+		});
+		
 		topBarContainer.add(title, buttonsContainer);
 		return topBarContainer;
 	}
@@ -137,5 +153,13 @@ public class TopBarCalendar {
 
 	public ComboBox<CalendarView> getViewBox() {
 		return viewBox;
+	}
+
+	public TextField getSearchReservation() {
+		return searchReservation;
+	}
+
+	public void setSearchReservation(TextField searchReservation) {
+		this.searchReservation = searchReservation;
 	}
 }
