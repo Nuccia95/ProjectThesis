@@ -69,7 +69,7 @@ public class MainView extends AppLayout {
         Image logo = new Image("images/calogo.png", "My Project logo");
         logo.setId("logo");
         header.add(logo);
-        header.add(new H1("InfoCalendar"));
+        header.add(new H1("GeRiCo"));
         
         Button logoutButton = new Button("Logout", VaadinIcon.SIGN_OUT.create());
         logoutButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);

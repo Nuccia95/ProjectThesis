@@ -2,8 +2,10 @@ package com.demo.thesisbackend.emails;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 
 import javax.mail.BodyPart;
@@ -21,10 +23,9 @@ import shared.thesiscommon.bean.Reservation;
 
 public class EmailManager {
 
-	private static HashMap<String, String> daysMap;
+	private static HashMap<String, String> daysMap = new HashMap<>(); 
 
 	public EmailManager() {
-		daysMap = new HashMap<>();
 		daysMap.put(DayOfWeek.MONDAY.toString(), "MO");
 		daysMap.put(DayOfWeek.TUESDAY.toString(), "TU");
 		daysMap.put(DayOfWeek.WEDNESDAY.toString(), "WE");
@@ -35,7 +36,7 @@ public class EmailManager {
 
 	public void sendEmail(Reservation reservation) {
 
-		/* Setup mail server */
+		/* Setup */
 		String host = "smtp.gmail.com";
 		Properties properties = System.getProperties();
 		properties.put("mail.smtp.host", host);
@@ -55,10 +56,10 @@ public class EmailManager {
 			String from = reservation.getOwner().getFirstName() + " " + reservation.getOwner().getLastName();
 
 			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
-			message.setSubject("InfoShare - Join The Meeting");
+			message.setSubject("GeDiCo - Join The Meeting");
 
 			BodyPart textBodyPart = new MimeBodyPart();
-			textBodyPart.setText(setMessage(reservation, from));
+			textBodyPart.setText(from + " has created a new meeting. Do you want to partecipate?");
 
 			BodyPart attachBodyPart = buildCalendarPart(reservation);
 
@@ -81,19 +82,6 @@ public class EmailManager {
 		}
 	}
 
-	public String setMessage(Reservation reservation, String from) {
-		String text = from + " " + "has created a new meeting. Do you want to partecipate? ";
-
-		if (reservation.isRecurring()) {
-			String days = "";
-			for (String d : reservation.getDays())
-				days += d + " ";
-			days += "\n";
-			text += "Days of the event: " + days;
-		}
-		return text;
-	}
-
 	private static BodyPart buildCalendarPart(Reservation res) {
 
 		BodyPart calendarPart = new MimeBodyPart();
@@ -104,10 +92,20 @@ public class EmailManager {
 
 		LocalDateTime end = LocalDateTime.of(res.getEndDate(), res.getEndTime());
 		String formattedEnd = end.format(formatter);
+	
 		
 		String title = res.getTitle();
-
-		final String calendarContent = setCalendarContent(formattedStart, formattedEnd, title);
+		String uid = res.getId().toString();
+		
+		final String calendarContent;
+		if(res.isRecurring()) {
+			LocalTime endRecTime = LocalTime.of(0, 0);
+			LocalDateTime endRecurring = LocalDateTime.of(res.getEndRecurring(), endRecTime);
+			String formattedRecEnd = endRecurring.format(formatter);
+			calendarContent = setRecurringCalendarContent(res.getDays(), formattedStart, formattedEnd, formattedRecEnd, title, uid);
+		}
+		else 
+			calendarContent = setCalendarContent(formattedStart, formattedEnd, title, uid);			
 
 		try {
 			calendarPart.addHeader("Content-Class", "urn:content-classes:calendarmessage");
@@ -119,15 +117,81 @@ public class EmailManager {
 		return calendarPart;
 	}
 
-	public static String setCalendarContent(String formattedStart, String formattedEnd, String title) {
-		return "BEGIN:VCALENDAR\n" + "METHOD:REQUEST\n" + "PRODID: Meeting\n" + "VERSION:2.0\n" + "BEGIN:VEVENT\n"
-				+ "DTSTART:" + formattedStart + "\n" + "DTEND:" + formattedEnd + "\n" + "DTSTAMP:" + formattedStart
-				+ "\n" + "SUMMARY:" + title + "\n" /*+ "UID:324\n"*/
-				+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:\n"
-				+ "LOCATION:Sede centrale, Rende Cs\n" + "DESCRIPTION:Meeting\n" + "SEQUENCE:0\n" + "PRIORITY:5\n"
-				+ "CLASS:PUBLIC\n" + "STATUS:CONFIRMED\n" + "TRANSP:OPAQUE\n" + "BEGIN:VALARM\n" + "ACTION:DISPLAY\n"
-				+ "DESCRIPTION:REMINDER\n" + "END:VALARM\n" + "TRIGGER;RELATED=START:-PT00H15M00S\n" + "END:VEVENT\n"
-				+ "END:VCALENDAR";
+	public static String setCalendarContent(String formattedStart, String formattedEnd, String title,
+			String uid) {
+		return "BEGIN:VCALENDAR\n" 
+		+ "METHOD:REQUEST\n" 
+		+ "PRODID: GEDICO - Meeting\n" 
+		+  "VERSION:2.0\n" 
+		+ "BEGIN:VEVENT\n" 
+		+ "DTSTAMP:" + formattedStart + "\n" 
+		+ "DTSTART:" + formattedStart + "\n" 
+		+ "DTEND:" + formattedEnd + "\n" 
+		+ "SUMMARY:" + title + "\n" 
+		+ "UID:" + uid +"X\n" 
+		+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:infoshareinfoshare2@gmail.com\n" 
+		+ "ORGANIZER:MAILTO:infoshareinfoshare2@gmail.com\n"
+		+ "LOCATION:Company\n" 
+		+ "DESCRIPTION:Meeting\n"
+		+ "SEQUENCE:0\n" 
+		+ "PRIORITY:5\n" 
+		+ "CLASS:PUBLIC\n" 
+		+ "STATUS:CONFIRMED\n" 
+		+ "TRANSP:OPAQUE\n" 
+		+ "BEGIN:VALARM\n" 
+		+ "ACTION:DISPLAY\n" 
+		+ "DESCRIPTION:REMINDER\n" 
+		+ "END:VALARM\n" 
+		+ "TRIGGER;RELATED=START:-PT00H15M00S\n" 
+		+ "END:VEVENT\n" 
+		+ "END:VCALENDAR";
 	}
 	
+	public static String setRecurringCalendarContent(List<String> days, String formattedStart, String formattedEnd,
+			String formattedRecEnd, String title, String uid) {
+		
+		/* GENERETING RULE FOR RECURRING EVENT */
+		StringBuilder builder = new StringBuilder();
+		builder.append("RRULE:FREQ=WEEKLY;BYDAY=");
+
+		for(int i=0; i < days.size(); i++) {
+			builder.append(daysMap.get(days.get(i)));
+			if(i == days.size() - 1)
+				builder.append(";");
+			else
+				builder.append(",");
+		}
+		
+		builder.append("INTERVAL=1;UNTIL=" + formattedRecEnd + "\n");
+		
+		String rule = builder.toString();
+		
+		return "BEGIN:VCALENDAR\n" 
+		+ "METHOD:REQUEST\n" 
+		+ "PRODID: GEDICO - Meeting\n" 
+		+  "VERSION:2.0\n" 
+		+ "BEGIN:VEVENT\n" 
+		+ "DTSTAMP:" + formattedStart + "\n" 
+		+ "DTSTART:" + formattedStart + "\n" 
+		+ "DTEND:" + formattedEnd + "\n" 
+		+ rule
+		+ "SUMMARY:" + title + "\n" 
+		+ "UID:" + uid +"Y\n" 
+		+ "ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE:MAILTO:infoshareinfoshare2@gmail.com\n" 
+		+ "ORGANIZER:MAILTO:infoshareinfoshare2@gmail.com\n"
+		+ "LOCATION:Company\n" 
+		+ "DESCRIPTION:Meeting\n"
+		+ "SEQUENCE:0\n" 
+		+ "PRIORITY:5\n" 
+		+ "CLASS:PUBLIC\n" 
+		+ "STATUS:CONFIRMED\n" 
+		+ "TRANSP:OPAQUE\n" 
+		+ "BEGIN:VALARM\n" 
+		+ "ACTION:DISPLAY\n" 
+		+ "DESCRIPTION:REMINDER\n" 
+		+ "END:VALARM\n" 
+		+ "TRIGGER;RELATED=START:-PT00H15M00S\n" 
+		+ "END:VEVENT\n" 
+		+ "END:VCALENDAR";
+	}
 }

@@ -72,7 +72,7 @@ public class LoginView extends FlexLayout {
         cont1.setId("conttitle");
         cont1.setSpacing(false);
         Span welcome = new Span("Welcome in");
-        Span title = new Span("InfoCalendar");
+        Span title = new Span("GeRiCo");
         HorizontalLayout titleCont = new HorizontalLayout();
         titleCont.setAlignItems(Alignment.BASELINE);
         titleCont.add(title, logo);

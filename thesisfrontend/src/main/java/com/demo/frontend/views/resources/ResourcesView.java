@@ -96,14 +96,14 @@ public class ResourcesView extends VerticalLayout {
 		grid.setDataProvider(resourceProvider);
 
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name").setFlexGrow(2);
-		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(5);
+		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(3);
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true)
-				.setKey("Seats Available").setFlexGrow(1);
+				.setKey("Seats Available").setFlexGrow(2);
 		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
-				.setKey("Related Reservatios").setFlexGrow(1);
+				.setKey("Related Reservatios").setFlexGrow(2);
 
 		if (CurrentUser.isAdmin()) {
-			grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(1).setSortable(true).setKey("Status")
+			grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(2).setSortable(true).setKey("Status")
 					.setComparator(Comparator.comparing(Resource::getEnable));
 		}
 

@@ -93,7 +93,16 @@ public class FullCalendarView extends VerticalLayout {
 		
 		topBar.getViewBox().addValueChangeListener(e -> {
 			CalendarView value = e.getValue();
-	        calendar.changeView(value == null ? CalendarViewImpl.TIME_GRID_WEEK : value);
+	        calendar.changeView(value == null ? CalendarViewImpl.DAY_GRID_MONTH : value);
+		});
+		
+		topBar.getTodayButton().addClickListener(e -> {
+			calendar.today();
+			topBar.getGoToPicker().setValue(LocalDate.now());
+			topBar.getTitle()
+			.setText(LocalDate.now().getMonth() + " "
+					+ LocalDate.now().getDayOfMonth() + ", "
+					+ LocalDate.now().getYear());
 		});
 	}
 
@@ -120,7 +129,6 @@ public class FullCalendarView extends VerticalLayout {
 		editReservation();
 		changeReservationDateTime();
 		showMoreReservations();
-		searchReservation();
 		resizeEntry();
 	}
 
@@ -309,24 +317,7 @@ public class FullCalendarView extends VerticalLayout {
 			
 		});
 	}
-	
-	public void searchReservation() {
-		topBar.getSearchReservation().addValueChangeListener(click -> {
-			String resTitle = topBar.getSearchReservation().getValue();
-			Reservation output = clientService.gerReservationByTitle(resTitle);
-			if(output != null) {
-				Optional<Entry> e = calendar.getEntryById(String.valueOf(output.getId()));
-				if(e.isPresent()) {
-					Entry entry = e.get();
-					editSingleReservation(entry);
-				}
-			}
-			topBar.getSearchReservation().clear();
-			topBar.getSearchReservation().setVisible(false);
-		});
-	}
 
-	
 	public void showMoreReservations() {
 		/* SHOW MORE RESERVATIONS */
 		SpanDescription spanDescription = new SpanDescription();
@@ -393,7 +384,7 @@ public class FullCalendarView extends VerticalLayout {
 		LocalDate start = newEntry.getRecurringStartDate(Timezone.UTC);
 		LocalDate end = newEntry.getRecurringEndDate(Timezone.UTC);
 		Long groupId = null;
-
+		reservation.setEndRecurring(end);
 		if (entryForm.getFriendsEmails() != null)
 			reservation.setReceivers(entryForm.getFriendsEmails());
 
@@ -481,7 +472,7 @@ public class FullCalendarView extends VerticalLayout {
 			calendar.next();
 			if(view.equals(CalendarViewImpl.DAY_GRID_MONTH) || view.equals(CalendarViewImpl.LIST_MONTH))
 				topBar.nextDate("MONTH");
-			else if(view.equals(CalendarViewImpl.DAY_GRID_WEEK))
+			else if(view.equals(CalendarViewImpl.TIME_GRID_WEEK))
 					topBar.nextDate("WEEK");
 			else if(view.equals(CalendarViewImpl.TIME_GRID_DAY))
 				topBar.nextDate("DAY");

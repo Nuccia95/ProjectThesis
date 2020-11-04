@@ -30,12 +30,14 @@ public class ReservationManagerImpl implements ReservationManager {
 		Resource resource = resourceDAO.findByName(reservation.getResource().getName());
 		reservation.setResource(resource);
 
-		if (reservation.getGroupId() == 0 && !reservation.getReceivers().isEmpty()) {
+		Reservation created = reservationDAO.save(reservation);
+
+		if (created.getGroupId() == 0 && !reservation.getReceivers().isEmpty()) {
 			EmailManager emailManager = new EmailManager();
-			emailManager.sendEmail(reservation);
+			emailManager.sendEmail(created);
 		}
 
-		return reservationDAO.save(reservation);
+		return created;
 	}
 
 	@Override
@@ -112,7 +114,7 @@ public class ReservationManagerImpl implements ReservationManager {
 
 	@Override
 	public Boolean checkReservation(Reservation res) {
-		
+
 		LocalDateTime startNew = LocalDateTime.of(res.getStartDate(), res.getStartTime());
 		LocalDateTime endNew = LocalDateTime.of(res.getEndDate(), res.getEndTime());
 
@@ -142,7 +144,7 @@ public class ReservationManagerImpl implements ReservationManager {
 	@Override
 	public Reservation getReservationById(long id) {
 		Optional<Reservation> res = reservationDAO.findById(id);
-		if(res.isPresent())
+		if (res.isPresent())
 			return res.get();
 		return null;
 	}
@@ -150,7 +152,7 @@ public class ReservationManagerImpl implements ReservationManager {
 	@Override
 	public Reservation getReservationByTitle(String title) {
 		Reservation res = reservationDAO.findByTitle(title);
-		if(res != null)
+		if (res != null)
 			return res;
 		return null;
 	}

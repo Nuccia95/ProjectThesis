@@ -37,7 +37,7 @@ public class SingleEntryForm extends VerticalLayout {
 		reservationTitle = new TextField();
 		reservationTitle.setLabel("Title");
 		reservationTitle.setPlaceholder("Reservation Title");
-		reservationTitle.setMaxLength(20);
+		reservationTitle.setMaxLength(25);
 
 		VerticalLayout l1 = new VerticalLayout();
 		VerticalLayout l2 = new VerticalLayout();

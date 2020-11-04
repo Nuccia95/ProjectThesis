@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -25,7 +24,6 @@ public class Reservation extends AbstractIdentifiedBean {
 	private Resource resource;
 
 	private String dayOfWeek;
-	@Column(unique = true, nullable = false)
 	private String title;
 	private String color;
 	private LocalDate startDate;
@@ -41,6 +39,8 @@ public class Reservation extends AbstractIdentifiedBean {
 	private List<String> receivers;
 	@Transient
 	private List<String> days;
+	@Transient
+	private LocalDate endRecurring;
 	
 	public Reservation() {
 		
@@ -158,6 +158,14 @@ public class Reservation extends AbstractIdentifiedBean {
 		this.title = title;
 	}
 
+	public LocalDate getEndRecurring() {
+		return endRecurring;
+	}
+
+	public void setEndRecurring(LocalDate endRecurring) {
+		this.endRecurring = endRecurring;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -167,6 +175,7 @@ public class Reservation extends AbstractIdentifiedBean {
 		result = prime * result + ((days == null) ? 0 : days.hashCode());
 		result = prime * result + (editable ? 1231 : 1237);
 		result = prime * result + ((endDate == null) ? 0 : endDate.hashCode());
+		result = prime * result + ((endRecurring == null) ? 0 : endRecurring.hashCode());
 		result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
 		result = prime * result + (int) (groupId ^ (groupId >>> 32));
 		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
@@ -209,6 +218,11 @@ public class Reservation extends AbstractIdentifiedBean {
 			if (other.endDate != null)
 				return false;
 		} else if (!endDate.equals(other.endDate))
+			return false;
+		if (endRecurring == null) {
+			if (other.endRecurring != null)
+				return false;
+		} else if (!endRecurring.equals(other.endRecurring))
 			return false;
 		if (endTime == null) {
 			if (other.endTime != null)
@@ -257,7 +271,7 @@ public class Reservation extends AbstractIdentifiedBean {
 		return "Reservation [owner=" + owner + ", resource=" + resource + ", dayOfWeek=" + dayOfWeek + ", title="
 				+ title + ", color=" + color + ", startDate=" + startDate + ", startTime=" + startTime + ", endTime="
 				+ endTime + ", groupId=" + groupId + ", recurring=" + recurring + ", endDate=" + endDate + ", editable="
-				+ editable + ", receivers=" + receivers + ", days=" + days + "]";
+				+ editable + ", receivers=" + receivers + ", days=" + days + ", endRecurring=" + endRecurring + "]";
 	}
 
 }

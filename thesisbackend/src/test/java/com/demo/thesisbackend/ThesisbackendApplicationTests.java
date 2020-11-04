@@ -1,5 +1,6 @@
 package com.demo.thesisbackend;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -56,17 +57,25 @@ class ThesisbackendApplicationTests {
 		emails.add(u.getEmail());
 		
 		Reservation res = new Reservation();
-		res.setTitle("Reunion - Lab");
+		res.setId((long) 12);
+		
+		res.setTitle("p12");
+		
 		List<String> days = new ArrayList<String>();
+		days.add(DayOfWeek.THURSDAY.toString());
+		days.add(DayOfWeek.FRIDAY.toString());
+		
 		res.setDays(days);
 		
-		res.setStartDate(LocalDate.of(2020, 11, 2));
+		res.setRecurring(true);
 		
-		res.setStartTime(LocalTime.of(17, 00));
+		res.setStartDate(LocalDate.of(2020, 11, 19));
+		res.setEndDate(LocalDate.of(2020, 11, 19));
 		
-		res.setEndDate(LocalDate.of(2020, 11, 2));
-		
+		res.setStartTime(LocalTime.of(17, 00));		
 		res.setEndTime(LocalTime.of(19, 00));		
+		
+		res.setEndRecurring(LocalDate.of(2020, 11, 28));
 		
 		res.setOwner(u);
 		res.setReceivers(emails);
