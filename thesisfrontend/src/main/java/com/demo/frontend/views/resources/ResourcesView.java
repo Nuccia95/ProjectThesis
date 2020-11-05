@@ -101,11 +101,9 @@ public class ResourcesView extends VerticalLayout {
 				.setKey("Seats Available").setFlexGrow(2);
 		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
 				.setKey("Related Reservatios").setFlexGrow(2);
-
-		if (CurrentUser.isAdmin()) {
-			grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(2).setSortable(true).setKey("Status")
+		grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(2).setSortable(true).setKey("Status")
 					.setComparator(Comparator.comparing(Resource::getEnable));
-		}
+		
 
 		container.add(grid);
 	}
@@ -115,6 +113,9 @@ public class ResourcesView extends VerticalLayout {
 		Icon banIcon = VaadinIcon.CIRCLE.create();
 		Button statusButton = appButton.set(ENABLE, banIcon);
 		statusButton.setId("statusbtn");
+		
+		if(Boolean.FALSE.equals(CurrentUser.isAdmin()))
+			statusButton.setEnabled(false);
 
 		if (Boolean.TRUE.equals(res.getEnable()))
 			setStatusButton(statusButton, ENABLE);
@@ -197,25 +198,24 @@ public class ResourcesView extends VerticalLayout {
 
 		Button relatedButton = new Button(String.valueOf(number));
 		relatedButton.setId("relatedbtn");
-		relatedButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
+		relatedButton.addThemeVariants(ButtonVariant.LUMO_SMALL, ButtonVariant.LUMO_TERTIARY);
 		relatedButton.addClickListener(click -> {
 			cardsContainer.setCards(reservations, res.getName());
 			
-			cardsContainer.getRemoveAllButton().addClickListener(ev -> {			
+			cardsContainer.getNotifyAllButton().addClickListener(ev -> {
 				
-				QuestionDialog removeAllDialog = new QuestionDialog("REMOVE ALL reservations related to " 
-				+ res.getName() + "?", "REMOVE");
+				QuestionDialog notifyAllDialog = new QuestionDialog("Some users have related reservations" 
+						+ " to this resource, notify them that the resource will be disabled", "NOTIFY");
 				
-				removeAllDialog.getConfirmButton().addClickListener(e -> {
-
+				notifyAllDialog.getConfirmButton().addClickListener(e -> {
 					HttpEntity<Resource> resource = new HttpEntity<>(res);
-					clientService.deleteRelatedReservations(resource);
-					cardsContainer.cleanPanel(res.getName());
-					grid.getDataProvider().refreshAll();
-					removeAllDialog.close();
+					clientService.notifyEnabledResource(resource);
+					Notification.show("Users advised", 2000, Position.BOTTOM_START);
+					notifyAllDialog.close();
 				});
-				removeAllDialog.getCloseButton().addClickListener(e -> removeAllDialog.close());
+				
+				notifyAllDialog.getCloseButton().addClickListener(e -> notifyAllDialog.close());
+				
 			});
 		});
 		return relatedButton;

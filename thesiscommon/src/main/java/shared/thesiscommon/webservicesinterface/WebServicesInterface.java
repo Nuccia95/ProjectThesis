@@ -52,4 +52,6 @@ public interface WebServicesInterface {
 	Reservation getReservationById(long id);
 	
 	Reservation gerReservationByTitle(String title);
+	
+	void notifyEnabledResource(HttpEntity<Resource> resource);
 }

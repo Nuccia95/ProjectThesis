@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import com.demo.frontend.utils.AppButton;
+import com.demo.frontend.view.login.CurrentUser;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -22,7 +23,7 @@ public class CardsContainer extends VerticalLayout {
 
 	AppButton appButton;
 	Span title;
-	Button removeAllButton;
+	Button notifyAllButton;
 	Button close;
 
 	public CardsContainer() {
@@ -47,34 +48,36 @@ public class CardsContainer extends VerticalLayout {
 		close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		close.addClickListener(click -> setVisible(false));
 
-		removeAllButton = appButton.set("Clean all", VaadinIcon.TRASH.create());
-		removeAllButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-		removeAllButton.setId("btnremove");
-
+		Icon bell = VaadinIcon.BELL.create();
+		bell.setId("bell");
+		notifyAllButton = new Button("Notify Users", bell);
+		notifyAllButton.addThemeVariants(ButtonVariant.LUMO_SMALL);
+		notifyAllButton.setId("btnnotify");
+		
 		Icon info = VaadinIcon.INFO_CIRCLE.create();
 		info.setId("info");
-		titleCont.add(info, title, close, removeAllButton);
+		titleCont.add(info, title, close, notifyAllButton);
 		titleCont.setAlignItems(Alignment.BASELINE);
 		add(titleCont);
-
+	
 		/* ADD NEW */
 		if (reservations.isEmpty()) {
-			removeAllButton.setVisible(false);
+			notifyAllButton.setVisible(false);
 			add(new Span("None reservations to display"));
 		} else {
-			removeAllButton.setVisible(true);
+			notifyAllButton.setVisible(true);
 			for (Reservation reservation : reservations)
 				add(new ReservationCard(reservation));
 		}
+	
+		if(Boolean.FALSE.equals(CurrentUser.isAdmin()))
+			notifyAllButton.setVisible(false);
+		
 		setVisible(true);
 	}
-	
-	public Button getRemoveAllButton() {
-		return removeAllButton;
-	}
 
-	public void setRemoveAllButton(Button removeAllButton) {
-		this.removeAllButton = removeAllButton;
+	public Button getNotifyAllButton() {
+		return notifyAllButton;
 	}
 
 	public void cleanPanel(String resName) {

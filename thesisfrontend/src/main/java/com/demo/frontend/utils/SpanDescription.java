@@ -49,6 +49,11 @@ public class SpanDescription{
 			description.getElement().getStyle().set(COLOR,"var(--lumo-success-color)");
 			description.getElement().getStyle().set(BACKGROUND, "var(--lumo-success-color-10pct)");
 			break;
+		case "NOTIFY":
+			description.setText("Notification");
+			description.getElement().getStyle().set(COLOR,"#ffcc00");
+			description.getElement().getStyle().set(BACKGROUND, "#fff5cc");
+			break;
 		default:
 			break;
 		}

@@ -173,7 +173,6 @@ public class EntryForm extends Dialog {
 		page1.getEndTimePicker().setValue(entry.getEnd().toLocalTime());
 
 		page2.setEnabled(false);
-		page3.setEnabled(false);
 		
 		deleteButton.setVisible(true);
 	}

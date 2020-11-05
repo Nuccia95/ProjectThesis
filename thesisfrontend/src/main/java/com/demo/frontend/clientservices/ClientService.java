@@ -172,4 +172,9 @@ public class ClientService implements WebServicesInterface {
 				.queryParam("title", title);
 		return restTemplate.getForObject(builder.toUriString(), Reservation.class);
 	}
+
+	@Override
+	public void notifyEnabledResource(HttpEntity<Resource> resource) {
+		restTemplate.postForLocation(URL + "notityEnabledResource", resource);
+	}
 }

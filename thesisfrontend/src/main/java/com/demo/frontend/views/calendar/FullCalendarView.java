@@ -21,6 +21,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -269,6 +270,7 @@ public class FullCalendarView extends VerticalLayout {
 						Reservation reservation = mapCalEvent.mapEntryToReservation(entry, relatedResource.getName());
 						reservation.setId(Long.parseLong(e.getEntry().getId()));
 						reservation.setOwner(CurrentUser.get());
+						reservation.setReceivers(new ArrayList<>());
 
 						HttpEntity<Reservation> res = new HttpEntity<>(reservation);
 						clientService.updateSingleReservation(res);
@@ -301,6 +303,7 @@ public class FullCalendarView extends VerticalLayout {
 					Reservation reservation = mapCalEvent.mapEntryToReservation(entry, relatedResource.getName());
 					reservation.setId(Long.parseLong(e.getEntry().getId()));
 					reservation.setOwner(CurrentUser.get());
+					reservation.setReceivers(new ArrayList<>());
 
 					HttpEntity<Reservation> res = new HttpEntity<>(reservation);
 					clientService.updateSingleReservation(res);

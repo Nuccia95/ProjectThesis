@@ -28,4 +28,6 @@ public interface ReservationManager {
 	public Reservation getReservationById(long id);
 	
 	public Reservation getReservationByTitle(String title);
+	
+	public void notifyEnabledResource(Resource res);
 }

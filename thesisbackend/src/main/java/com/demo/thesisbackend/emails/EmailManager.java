@@ -15,40 +15,62 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import shared.thesiscommon.bean.Reservation;
+import shared.thesiscommon.bean.Resource;
 
 public class EmailManager {
 
 	private static HashMap<String, String> daysMap = new HashMap<>(); 
+	private Properties properties;
+	private Session session;
 
 	public EmailManager() {
-		daysMap.put(DayOfWeek.MONDAY.toString(), "MO");
-		daysMap.put(DayOfWeek.TUESDAY.toString(), "TU");
-		daysMap.put(DayOfWeek.WEDNESDAY.toString(), "WE");
-		daysMap.put(DayOfWeek.THURSDAY.toString(), "TH");
-		daysMap.put(DayOfWeek.FRIDAY.toString(), "FR");
-		daysMap.put(DayOfWeek.SATURDAY.toString(), "SA");
-	}
-
-	public void sendEmail(Reservation reservation) {
-
 		/* Setup */
 		String host = "smtp.gmail.com";
-		Properties properties = System.getProperties();
+		properties = System.getProperties();
 		properties.put("mail.smtp.host", host);
 		properties.put("mail.smtp.port", "465");
 		properties.put("mail.smtp.ssl.enable", "true");
 		properties.put("mail.smtp.auth", "true");
 
-		Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+		session = Session.getInstance(properties, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication("infoshareinfoshare2@gmail.com", "infoshare2.");
 			}
 		});
+		
+		setUpDays();
+	}
+	
+	public void sendEmailEnabledResource(List<String> emails , Resource res) {
+
+		try {
+			MimeMessage message = new MimeMessage(session);
+			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
+			message.setSubject("GeDiCo - Notification Enabled Resource");
+			message.setText("The resource " + res.getName() + " will be disabled. You have some related "
+					+ "reservations to it. Change them.");
+			
+			for (String email : emails) {
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
+				System.out.println("sending...");
+				Transport.send(message);
+				System.out.println("Sent message successfully....");
+			}
+
+		} catch (AddressException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendEmail(Reservation reservation) {
 
 		try {
 			MimeMessage message = new MimeMessage(session);
@@ -68,11 +90,8 @@ public class EmailManager {
 			message.setContent(multipart);
 
 			for (String email : reservation.getReceivers()) {
-
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));
-
 				System.out.println("sending...");
-				// Send message
 				Transport.send(message);
 				System.out.println("Sent message successfully....");
 			}
@@ -194,4 +213,15 @@ public class EmailManager {
 		+ "END:VEVENT\n" 
 		+ "END:VCALENDAR";
 	}
+	
+	public void setUpDays() {
+		daysMap.put(DayOfWeek.MONDAY.toString(), "MO");
+		daysMap.put(DayOfWeek.TUESDAY.toString(), "TU");
+		daysMap.put(DayOfWeek.WEDNESDAY.toString(), "WE");
+		daysMap.put(DayOfWeek.THURSDAY.toString(), "TH");
+		daysMap.put(DayOfWeek.FRIDAY.toString(), "FR");
+		daysMap.put(DayOfWeek.SATURDAY.toString(), "SA");
+	}
+	
+	
 }

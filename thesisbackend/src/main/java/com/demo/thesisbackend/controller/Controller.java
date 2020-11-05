@@ -155,4 +155,11 @@ public class Controller implements WebServicesInterface {
 	public Reservation gerReservationByTitle(String title) {
 		return reservationManager.getReservationByTitle(title);
 	}
+
+	@Override
+	@PostMapping("/notityEnabledResource")
+	public void notifyEnabledResource(HttpEntity<Resource> resource) {
+		reservationManager.notifyEnabledResource(resource.getBody());
+	}
+
 }

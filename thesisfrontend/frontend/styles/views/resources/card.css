@@ -6,7 +6,7 @@
 	background-color: #ecf2f9;
 }
 
-#titleCard{
+#titleCard {
 	font-size: 14px;
 	font-weight: bold;
 }
@@ -17,14 +17,14 @@
 	box-shadow: 4px 1px 5px 0px grey;
 }
 
-span#label{
+span#label {
 	font-size: 14px;
-	color:black;
+	color: black;
 }
 
 span#value {
 	font-size: 13px;
-	color:rgb(75, 75, 75);
+	color: rgb(75, 75, 75);
 }
 
 #close {
@@ -44,12 +44,24 @@ span#value {
 	margin-right: 10px;
 }
 
-#btnremove {
+#bell {
+	color: #FFD700;
+}
+
+#btnnotify{
 	margin-left: auto;
-	color: #1f3d7a;
+	color: #e6b800;
 	cursor: pointer;
+	background-color: white;
+	border-radius: 12px;
+	border: 1px solid #f4f5ef;
+	box-shadow: 2px 1px 2px 0px grey;
+}
+
+#btnnotify:hover {
+	color:  #FFD700;
 }
 
 #titleCont {
-	width: 350px;
+	width: 370px;
 }

@@ -2,7 +2,9 @@ package com.demo.thesisbackend.managers.impl;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -53,7 +55,14 @@ public class ReservationManagerImpl implements ReservationManager {
 			res.setEndDate(reservation.getEndDate());
 			res.setStartTime(reservation.getStartTime());
 			res.setEndTime(reservation.getEndTime());
-			return reservationDAO.save(res);
+			Reservation updated = reservationDAO.save(res);
+			
+			if (!reservation.getReceivers().isEmpty()) {
+				EmailManager emailManager = new EmailManager();
+				emailManager.sendEmail(updated);
+			}
+			
+			return updated;
 		}
 		return null;
 	}
@@ -155,6 +164,21 @@ public class ReservationManagerImpl implements ReservationManager {
 		if (res != null)
 			return res;
 		return null;
+	}
+
+	@Override
+	public void notifyEnabledResource(Resource res) {
+		Set<Reservation> reservationsList = getReservationsByResource(res.getId());
+		List<String> usersToNotify = new ArrayList<>();
+		
+		for (Reservation r: reservationsList) {
+			if(!usersToNotify.contains(r.getOwner().getEmail()))
+				usersToNotify.add(r.getOwner().getEmail());
+		}
+		
+		EmailManager emailManager = new EmailManager();
+		emailManager.sendEmailEnabledResource(usersToNotify, res);
+		
 	}
 
 }

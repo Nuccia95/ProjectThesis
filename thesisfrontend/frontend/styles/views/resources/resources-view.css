@@ -17,6 +17,8 @@
 #relatedbtn{
 	cursor: pointer;
 	color: #1f3d7a;
+	text-align: center;
+	text-decoration: underline;
 }
 
 #relatedbtn:hover{
