@@ -122,7 +122,7 @@ public class Controller implements WebServicesInterface {
 
 	@Override
 	@PostMapping("/updateResource")
-	public boolean updateResource(HttpEntity<Resource> resource) {
+	public Resource updateResource(HttpEntity<Resource> resource) {
 		 return resourceManager.updateResource(resource.getBody());
 	}
 

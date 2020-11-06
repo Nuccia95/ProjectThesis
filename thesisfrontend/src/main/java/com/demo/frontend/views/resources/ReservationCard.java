@@ -22,9 +22,9 @@ public class ReservationCard extends VerticalLayout {
 
 		Span title;
 		if(res.isRecurring())
-			title = new Span(res.getTitle() + "-" + res.getResource().getName() + " | " + "Recurrent");		
+			title = new Span(res.getTitle() + " | " + "Recurrent");		
 		else
-			title = new Span(res.getTitle() + "-" + res.getResource().getName() );	
+			title = new Span(res.getTitle());	
 		
 		title.setId("titleCard");
 

@@ -14,5 +14,5 @@ public interface ResourceManager {
 
 	public List<Resource> getAllResources();
 	
-	public boolean updateResource(Resource res);
+	public Resource updateResource(Resource res);
 }

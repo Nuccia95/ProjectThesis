@@ -51,8 +51,8 @@ public class TopBarCalendar {
 		goToButton.addClickListener(e -> goToPicker.open());
 
 		/* previous / next month */
-		previousButton = appButton.set("Prev", VaadinIcon.ARROW_LEFT.create());
-		nextButton = appButton.set("Next", VaadinIcon.ARROW_RIGHT.create());
+		previousButton = appButton.set("Prev", VaadinIcon.ANGLE_LEFT.create());
+		nextButton = appButton.set("Next", VaadinIcon.ANGLE_RIGHT.create());
 		
 		/* today */
 		todayButton = appButton.set("Today", VaadinIcon.CALENDAR.create());

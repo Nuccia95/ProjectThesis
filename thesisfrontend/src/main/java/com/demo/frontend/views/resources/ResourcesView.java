@@ -96,15 +96,14 @@ public class ResourcesView extends VerticalLayout {
 		grid.setDataProvider(resourceProvider);
 
 		grid.addColumn(Resource::getName).setHeader("Name").setSortable(true).setKey("Name").setFlexGrow(2);
-		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(3);
+		grid.addColumn(Resource::getDescription).setHeader("Description").setFlexGrow(2);
 		grid.addColumn(Resource::getSeatsAvailable).setHeader("Seats Available").setSortable(true)
 				.setKey("Seats Available").setFlexGrow(2);
 		grid.addComponentColumn(this::relatedReservations).setHeader("Related Reservatios").setSortable(true)
 				.setKey("Related Reservatios").setFlexGrow(2);
-		grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(2).setSortable(true).setKey("Status")
+		grid.addComponentColumn(this::enableResource).setHeader(ENABLE).setFlexGrow(4).setSortable(true).setKey("Status")
 					.setComparator(Comparator.comparing(Resource::getEnable));
 		
-
 		container.add(grid);
 	}
 
@@ -118,12 +117,10 @@ public class ResourcesView extends VerticalLayout {
 			statusButton.setEnabled(false);
 
 		if (Boolean.TRUE.equals(res.getEnable()))
-			setStatusButton(statusButton, ENABLE);
+			setStatusButton(statusButton, ENABLE, res);
 		else
-			setStatusButton(statusButton, DISABLE);
+			setStatusButton(statusButton, DISABLE, res);
 		
-		statusButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-
 		statusButton.addClickListener(click -> {
 
 			Set<Reservation> reservations = clientService.getReservationsByResource(res.getId());
@@ -140,20 +137,17 @@ public class ResourcesView extends VerticalLayout {
 			} else
 				setEnableDialog(res, statusButton);
 		});
-
 		return statusButton;
-
 	}
 
 	public boolean setEnableDialog(Resource res, Button statusButton) {
-		
 		QuestionDialog enableDialog = new QuestionDialog("ENABLE " + res.getName() + "?", "ENABLE");
 		
 		enableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(true);
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
 			clientService.updateResource(resource);
-			setStatusButton(statusButton, ENABLE);
+			setStatusButton(statusButton, ENABLE, res);
 			enableDialog.close();
 		});
 
@@ -167,23 +161,30 @@ public class ResourcesView extends VerticalLayout {
 
 		disableDialog.getConfirmButton().addClickListener(ev -> {
 			res.setEnable(false);
+			res.setDisabledUntil(null);
+			if(disableDialog.getDatePicker().getValue() != null)
+				res.setDisabledUntil(disableDialog.getDatePicker().getValue());
 			HttpEntity<Resource> resource = new HttpEntity<>(res);
 			clientService.updateResource(resource);
-			setStatusButton(statusButton, DISABLE);
+			setStatusButton(statusButton, DISABLE, res);
 			disableDialog.close();
 		});
 
 		disableDialog.getCloseButton().addClickListener(ev -> disableDialog.close());
 	}
 	
-	public void setStatusButton(Button statusButton, String type) {
+	public void setStatusButton(Button statusButton, String type, Resource res) {
+		statusButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 		switch (type) {
 		case ENABLE:
 			statusButton.setText(ENABLE);
 			statusButton.getIcon().getElement().getStyle().set("color", ENABLE_COLOR);
 			break;
 		case DISABLE:
-			statusButton.setText(DISABLE);
+			if(res.getDisabledUntil()!=null)
+				statusButton.setText(DISABLE + " > " + res.getDisabledUntil());
+			else
+				statusButton.setText(DISABLE);
 			statusButton.getIcon().getElement().getStyle().set("color", DISABLE_COLOR);
 			break;
 		default:

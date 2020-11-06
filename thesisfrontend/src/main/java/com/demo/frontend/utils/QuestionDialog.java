@@ -1,6 +1,7 @@
 package com.demo.frontend.utils;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Span;
@@ -20,6 +21,7 @@ public class QuestionDialog extends Dialog {
 	private SpanDescription spanDescription;
 	private Button confirmButton;
 	private Button closeButton;
+	private DatePicker dp;
 	
 	/* Question Dialog */
 	public QuestionDialog(String quest, String type) {
@@ -47,12 +49,23 @@ public class QuestionDialog extends Dialog {
 		buttonsContainer.add(confirmButton, closeButton);	
 		
 		container.add(question);
+
+		if(type.equals("DISABLE")) {
+			dp = new DatePicker();
+			dp.setLabel("Disable until?");
+			container.setSpacing(false);
+			container.add(dp);
+		}
 		
 		add(container, buttonsContainer);
 		
 		closeButton.addClickListener(click -> close());
 		
 		open();
+	}
+	
+	public DatePicker getDatePicker() {
+		return dp;
 	}
 	
 	public Button getConfirmButton() {

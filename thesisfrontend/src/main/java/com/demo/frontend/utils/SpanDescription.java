@@ -30,9 +30,9 @@ public class SpanDescription{
 			description.getElement().getStyle().set(BACKGROUND, "#ffebe6");
 			break;
 		case "LIMITED":
-			description.setText("Limited");
-			description.getElement().getStyle().set(COLOR, "#24478f");
-			description.getElement().getStyle().set(BACKGROUND, "#99bbff");
+			description.setText("All Reservations");
+			description.getElement().getStyle().set(COLOR, "#0066cc");
+			description.getElement().getStyle().set(BACKGROUND, "#b3d9ff");
 			break;
 		case "DISABLE":
 			description.setText("Disable Resource");

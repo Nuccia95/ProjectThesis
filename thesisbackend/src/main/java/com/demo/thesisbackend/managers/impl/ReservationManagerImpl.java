@@ -100,7 +100,7 @@ public class ReservationManagerImpl implements ReservationManager {
 	@Override
 	public Set<Reservation> getReservationsByResource(long id) {
 		Iterable<Reservation> res = reservationDAO.findByResourceId(id);
-		Set<Reservation> reservationsList = new HashSet<Reservation>();
+		Set<Reservation> reservationsList = new HashSet<>();
 		for (Reservation reservation : res)
 			if (reservation.getStartDate().isAfter(LocalDate.now()))
 				reservationsList.add(reservation);
@@ -132,7 +132,7 @@ public class ReservationManagerImpl implements ReservationManager {
 
 		for (Reservation r : others) {
 
-			if (r.getStartDate().equals(res.getStartDate()) && r.getEndDate().equals(res.getEndDate())) {
+			if (!r.getId().equals(res.getId()) && r.getStartDate().equals(res.getStartDate()) && r.getEndDate().equals(res.getEndDate())) {
 
 				LocalDateTime startOther = LocalDateTime.of(res.getStartDate(), r.getStartTime());
 				LocalDateTime endOther = LocalDateTime.of(r.getEndDate(), r.getEndTime());

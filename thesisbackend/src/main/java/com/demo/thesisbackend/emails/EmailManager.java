@@ -53,8 +53,14 @@ public class EmailManager {
 			MimeMessage message = new MimeMessage(session);
 			message.setFrom(new InternetAddress("infoshareinfoshare2@gmail.com"));
 			message.setSubject("GeDiCo - Notification Enabled Resource");
-			message.setText("The resource " + res.getName() + " will be disabled. You have some related "
-					+ "reservations to it. Change them.");
+			
+			if(res.getDisabledUntil() != null) {
+				message.setText("The resource " + res.getName() + " will be disabled until " + res.getDisabledUntil().toString()
+						+ ". You have some related "
+						+ "reservations to it. Change them.");				
+			}else
+				message.setText("The resource " + res.getName() + " will be disabled. You have "
+						+ "some related reservations to it. Change them.");
 			
 			for (String email : emails) {
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(email));

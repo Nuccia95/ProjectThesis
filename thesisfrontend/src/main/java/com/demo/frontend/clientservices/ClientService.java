@@ -137,8 +137,8 @@ public class ClientService implements WebServicesInterface {
 	}
 
 	@Override
-	public boolean updateResource(HttpEntity<Resource> resource) {
-		return restTemplate.postForObject(URL + "updateResource", resource, Boolean.class);
+	public Resource updateResource(HttpEntity<Resource> resource) {
+		return restTemplate.postForObject(URL + "updateResource", resource, Resource.class);
 	}
 
 	@Override

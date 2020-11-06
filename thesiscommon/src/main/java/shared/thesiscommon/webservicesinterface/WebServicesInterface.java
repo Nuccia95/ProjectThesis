@@ -43,7 +43,7 @@ public interface WebServicesInterface {
 
 	boolean updatePassword(HttpEntity<User> user);
 	
-	boolean updateResource(HttpEntity<Resource> resource);
+	Resource updateResource(HttpEntity<Resource> resource);
 	
 	Resource getRelatedResource(long id);
 	

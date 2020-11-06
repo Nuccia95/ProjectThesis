@@ -51,7 +51,7 @@ public class SingleEntryForm extends VerticalLayout {
 
 		/* Event Colors */
 		comboBoxColors = new ComboBox<>();
-		comboBoxColors.setItems("DarkCyan","DarkOrange", "DeepPink", "DodgerBlue", "Tomato");
+		comboBoxColors.setItems("DarkCyan","DarkOrange", "DarkViolet", "DeepPink", "DodgerBlue", "Turquoise");
 		comboBoxColors.setLabel("Color");
 		l1.add(reservationTitle, comboBoxResources, comboBoxColors);
 

@@ -1,5 +1,7 @@
 package shared.thesiscommon.bean;
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -17,6 +19,7 @@ public class Resource extends AbstractIdentifiedBean {
 	private String description;
 	private Integer seatsAvailable;
 	private Boolean enable;
+	private LocalDate disabledUntil;
 	
 	public Resource() {}
 	
@@ -56,11 +59,20 @@ public class Resource extends AbstractIdentifiedBean {
 		this.enable = enable;
 	}
 
+	public LocalDate getDisabledUntil() {
+		return disabledUntil;
+	}
+
+	public void setDisabledUntil(LocalDate disabledUntil) {
+		this.disabledUntil = disabledUntil;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((disabledUntil == null) ? 0 : disabledUntil.hashCode());
 		result = prime * result + ((enable == null) ? 0 : enable.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((seatsAvailable == null) ? 0 : seatsAvailable.hashCode());
@@ -80,6 +92,11 @@ public class Resource extends AbstractIdentifiedBean {
 			if (other.description != null)
 				return false;
 		} else if (!description.equals(other.description))
+			return false;
+		if (disabledUntil == null) {
+			if (other.disabledUntil != null)
+				return false;
+		} else if (!disabledUntil.equals(other.disabledUntil))
 			return false;
 		if (enable == null) {
 			if (other.enable != null)
@@ -102,7 +119,6 @@ public class Resource extends AbstractIdentifiedBean {
 	@Override
 	public String toString() {
 		return "Resource [name=" + name + ", description=" + description + ", seatsAvailable=" + seatsAvailable
-				+ ", enable=" + enable + "]";
+				+ ", enable=" + enable + ", disabledUntil=" + disabledUntil + "]";
 	}
-
 }

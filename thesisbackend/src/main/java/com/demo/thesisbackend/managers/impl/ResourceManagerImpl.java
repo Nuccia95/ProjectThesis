@@ -53,15 +53,16 @@ public class ResourceManagerImpl implements ResourceManager {
 	}
 
 	@Override
-	public boolean updateResource(Resource res) {
+	public Resource updateResource(Resource res) {
 		Optional<Resource> r = resourceDAO.findById(res.getId());
 		if(r.isPresent()) {
 			Resource resource = r.get();
+			if(res.getDisabledUntil()!=null)
+				resource.setDisabledUntil(res.getDisabledUntil());
 			resource.setEnable(res.getEnable());
-			resourceDAO.save(resource);
-			return true;
+			return resourceDAO.save(resource);
 		}
-		return false;
+		return null;
 	}
 
 	@Override
