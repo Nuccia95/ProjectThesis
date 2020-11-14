@@ -5,8 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.demo.frontend.utils.AppButton;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -22,6 +25,10 @@ public class SingleEntryForm extends VerticalLayout {
 	private DatePicker startDatePicker;
 	private TimePicker startTimePicker;
 	private TimePicker endTimePicker;
+	private AppButton appButton;
+	private Button saveEntryButton;
+	private Button closeButton;
+	private Button deleteButton;
 	
 	public SingleEntryForm(LocalDate date, LocalTime time) {
 		
@@ -87,8 +94,17 @@ public class SingleEntryForm extends VerticalLayout {
 		l2.add(startDatePicker, startTimePicker, endTimePicker);
 		
 		container.add(l1, l2);
-		
 		add(container);
+		appButton = new AppButton();
+		
+		HorizontalLayout buttContainer = new HorizontalLayout();
+		saveEntryButton = appButton.set("Save", VaadinIcon.CHECK.create());
+		closeButton = appButton.set("Close", VaadinIcon.CLOSE.create());
+		deleteButton = appButton.set("Delete", VaadinIcon.TRASH.create());
+		deleteButton.setVisible(false);
+		buttContainer.add(saveEntryButton, deleteButton, closeButton);
+		add(buttContainer);
+		setAlignSelf(Alignment.END, buttContainer);
 	}
 	
 	public TextField getReservationTitle() {
@@ -130,4 +146,18 @@ public class SingleEntryForm extends VerticalLayout {
 	public void setEndTimePicker(TimePicker endTimePicker) {
 		this.endTimePicker = endTimePicker;
 	}
+	
+	public Button getSaveButton() {
+		return saveEntryButton;
+	}
+	
+	public Button getDeleteEntryButton() {
+		return deleteButton;
+	}
+	
+	public Button getCloseButton() {
+		return closeButton;
+	}
+	
+	
 }

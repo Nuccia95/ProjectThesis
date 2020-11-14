@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.2.4" icons="true" always-add-relationships="false" generalizations="true" realizations="true" 
+  associations="true" dependencies="false" nesting-relationships="true" router="FAN">  
+  <class id="1" language="java" name="com.demo.frontend.clientservices.ClientService" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/clientservices/ClientService.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="317" width="326" x="29" y="162"/>    
+    <display autosize="false" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="com.demo.frontend.view.login.LoginView" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/view/login/LoginView.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="541" y="148"/>    
+    <display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="3" language="java" name="com.demo.frontend.views.calendar.FullCalendarView" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/views/calendar/FullCalendarView.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="319" width="276" x="399" y="268"/>    
+    <display autosize="false" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="4" language="java" name="com.demo.frontend.views.main.MainView" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/views/main/MainView.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="216" width="332" x="692" y="38"/>    
+    <display autosize="false" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="5" language="java" name="com.demo.frontend.views.profile.ProfileView" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/views/profile/ProfileView.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="322" width="335" x="690" y="264"/>    
+    <display autosize="false" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="com.demo.frontend.views.resources.ResourcesView" project="thesisfrontend" 
+    file="/thesisfrontend/src/main/java/com/demo/frontend/views/resources/ResourcesView.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="549" width="316" x="1045" y="37"/>    
+    <display autosize="false" stereotype="false" package="false" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <classifier-display autosize="true" stereotype="false" package="false" initial-value="false" signature="true" 
+    sort-features="false" accessors="true" visibility="true">    
+    <attributes public="true" package="true" protected="true" private="true" static="true"/>    
+    <operations public="true" package="true" protected="true" private="true" static="true"/>  
+  </classifier-display>  
+  <association-display labels="true" multiplicity="true"/>
+</class-diagram>

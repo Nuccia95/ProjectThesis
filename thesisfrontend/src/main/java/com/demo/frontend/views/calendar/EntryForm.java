@@ -12,7 +12,6 @@ import java.util.Map;
 import org.vaadin.stefan.fullcalendar.Entry;
 import org.vaadin.stefan.fullcalendar.Timezone;
 
-import com.demo.frontend.utils.AppButton;
 import com.demo.frontend.views.reservationforms.InviteFriendsForm;
 import com.demo.frontend.views.reservationforms.RecurringEntryForm;
 import com.demo.frontend.views.reservationforms.SingleEntryForm;
@@ -21,12 +20,9 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -49,12 +45,6 @@ public class EntryForm extends Dialog {
 	private Tab tab3;
 	private InviteFriendsForm page3;
 	private Map<Tab, Component> tabsToPages;
-	
-	private AppButton appButton;
-	private Button saveEntryButton;
-	private Button closeButton;
-	private Button deleteButton;
-	private HorizontalLayout buttContainer;
 	
 	public EntryForm(LocalDateTime date) {
 		
@@ -101,23 +91,8 @@ public class EntryForm extends Dialog {
 		});
 		
 		container.add(tabs, pages);
-		
+		page1.getCloseButton().addClickListener(ev -> close());
 		add(container);
-		
-		appButton = new AppButton();
-		buttContainer = new HorizontalLayout();
-		
-		saveEntryButton = appButton.set("Save", VaadinIcon.CHECK.create());
-		
-		closeButton = appButton.set("Close", VaadinIcon.CLOSE.create());
-		closeButton.addClickListener(click -> close());
-		
-		deleteButton = appButton.set("Delete", VaadinIcon.TRASH.create());
-		deleteButton.setVisible(false);
-		
-		buttContainer.add(saveEntryButton, deleteButton, closeButton);
-		container.add(buttContainer);
-		container.setAlignSelf(Alignment.END, buttContainer);
 	}
 
 	public EntryForm(LocalDate date) {
@@ -154,6 +129,7 @@ public class EntryForm extends Dialog {
 			newEntry.setStart(lstart);
 			newEntry.setEnd(lend);
 		}
+		
 		return newEntry;
 	}
 	
@@ -174,7 +150,7 @@ public class EntryForm extends Dialog {
 
 		page2.setEnabled(false);
 		
-		deleteButton.setVisible(true);
+		page1.getDeleteEntryButton().setVisible(true);
 	}
 	
 	public List<String> getFriendsEmails(){
@@ -189,15 +165,15 @@ public class EntryForm extends Dialog {
 	}
 	
 	public Button getSaveButton() {
-		return saveEntryButton;
+		return page1.getSaveButton();
 	}
 	
 	public Button getDeleteEntryButton() {
-		return deleteButton;
+		return page1.getDeleteEntryButton();
 	}
 	
 	public Button getCloseButton() {
-		return closeButton;
+		return page1.getCloseButton();
 	}
 
 	public void setResources(List<String> resources) {
